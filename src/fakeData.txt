@@ -1,0 +1,14 @@
+mutation CreateEntry {
+  createLink(
+    mistake: ["Overextended twice."]
+    positive: ["Didn't waste time grouping", "Good early cs"]
+    lesson: ["Respect Irelia all in more"]
+    deathReason: ["Poked out and got dove under turret"]
+    roam: ["Lane pushed, good look", "Overstayed, small chance of success"]
+    gank: []
+    csFail: ["Tried to push wave after kill in lane"]
+    video: "https://youtu.be/CB26kmhsuPI"
+  ) {
+    id
+  }
+}
