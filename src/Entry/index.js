@@ -1,2 +1,1 @@
-export { default as EntryDetail } from "./EntryDetail";
-export { default as Entry } from "./Entry";
+export { default as EntriesMain } from "./EntriesMain";
