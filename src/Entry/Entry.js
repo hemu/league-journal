@@ -1,29 +1,29 @@
 import React from "react";
-import { graphql } from "react-apollo";
-
 import { EntryDetail } from ".";
-import { allEntriesQuery } from "./entryQuery";
-
-import { LocalForm, Control } from "react-redux-form";
+import { inject, observer } from "mobx-react";
 
 class Entry extends React.Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
-  handleSubmit(values) {}
+  // handleChange(values) {}
+  // handleUpdate(form) {}
+  // handleSubmit(values) {}
   render() {
-    if (this.props.allEntriesQuery && this.props.allEntriesQuery.loading) {
+    if (!this.props.entries) {
+      return <div>No entires prop found</div>;
+    }
+
+    if (this.props.entries.fetching) {
       return <div>Loading</div>;
     }
 
-    if (this.props.allEntriesQuery && this.props.allEntriesQuery.error) {
-      return <div>Error</div>;
-    }
+    // if (this.props.entries && this.props.entries.error) {
+    //   return <div>Error</div>;
+    // }
 
-    const entries = this.props.allEntriesQuery.allEntries;
+    const entries = this.props.entries.entries;
     return (
       <div>
         {entries.map(entry => <EntryDetail key={entry.id} entry={entry} />)}
-        <div>
+        {/* <div>
           <LocalForm
             onUpdate={form => this.handleUpdate(form)}
             onChange={values => this.handleChange(values)}
@@ -47,10 +47,11 @@ class Entry extends React.Component {
             <Control.text model=".csFail" />
             <Control.text model=".video" />
           </LocalForm>
-        </div>
+        </div> */}
       </div>
     );
   }
 }
 
-export default graphql(allEntriesQuery, { name: "allEntriesQuery" })(Entry);
+// export default graphql(allEntriesQuery, { name: "allEntriesQuery" })(Entry);
+export default inject("entries")(observer(Entry));
