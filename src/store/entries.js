@@ -2,6 +2,37 @@ import { types, flow } from "mobx-state-tree";
 import client from "../api/client";
 import gql from "graphql-tag";
 
+export const entryFields = {
+  gameDate: types.optional(types.string, new Date().toString()),
+  rank: types.optional(types.string, ""),
+  outcome: types.optional(
+    types.union(types.literal("W"), types.literal("L")),
+    "W"
+  ),
+  lpChange: types.optional(types.number, 0),
+  role: types.optional(types.string, ""),
+  kills: types.optional(types.number, 0),
+  deaths: types.optional(types.number, 0),
+  assists: types.optional(types.number, 0),
+  champion: types.optional(types.string, ""),
+  opponentChampion: types.optional(types.string, ""),
+  jungler: types.optional(types.string, ""),
+  opponentJungler: types.optional(types.string, ""),
+  csPerMin: types.optional(types.number, 0),
+  csAt5Min: types.optional(types.number, 0),
+  csAt10Min: types.optional(types.number, 0),
+  csAt15Min: types.optional(types.number, 0),
+  csAt20Min: types.optional(types.number, 0),
+
+  mistakes: types.optional(types.array(types.string), []),
+  positives: types.optional(types.array(types.string), []),
+  lessons: types.optional(types.array(types.string), []),
+  deathReasons: types.optional(types.array(types.string), []),
+  roams: types.optional(types.array(types.string), []),
+  csReasons: types.optional(types.array(types.string), []),
+  video: types.optional(types.string, "")
+};
+
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
     allEntries {
@@ -17,33 +48,7 @@ export const Entry = types.model("Entry", {
   id: types.string,
   createdAt: types.maybe(types.Date),
   updatedAt: types.maybe(types.Date),
-
-  gameDate: types.maybe(types.string),
-  rank: types.maybe(types.string),
-  outcome: types.maybe(types.union(types.literal("W"), types.literal("L"))),
-  lpChange: types.maybe(types.number),
-  role: types.maybe(types.string),
-  kills: types.maybe(types.number),
-  deaths: types.maybe(types.number),
-  assists: types.maybe(types.number),
-  champion: types.maybe(types.string),
-  opponentChampion: types.maybe(types.string),
-  jungler: types.maybe(types.string),
-  opponentJungler: types.maybe(types.string),
-  csPerMin: types.maybe(types.number),
-  csAt5Min: types.maybe(types.number),
-  csAt10Min: types.maybe(types.number),
-  csAt15Min: types.maybe(types.number),
-  csAt20Min: types.maybe(types.number),
-
-  mistakes: types.maybe(types.array(types.string)),
-  positives: types.maybe(types.array(types.string)),
-  lessons: types.maybe(types.array(types.string)),
-  deathReasons: types.maybe(types.array(types.string)),
-  roams: types.maybe(types.array(types.string)),
-  ganks: types.maybe(types.array(types.string)),
-  csReasons: types.maybe(types.array(types.string)),
-  video: types.maybe(types.string)
+  ...entryFields
 });
 
 const Entries = types

@@ -20,6 +20,14 @@ class EntryDetail extends React.Component {
   render() {
     const { entryDetail: entry } = this.props;
 
+    if (entry.detailEntryId == "" && !entry.fetching) {
+      return <div>Choose an Entry</div>;
+    }
+
+    if (entry.detailEntryId == "" && entry.fetching) {
+      return <div>Fetching entry details...</div>;
+    }
+
     const multiElemSections = [
       {
         key: "mistakes",
@@ -68,6 +76,9 @@ class EntryDetail extends React.Component {
     return (
       <div>
         <Form>
+          <Button type="submit" onClick={entry.saveEntry}>
+            Save
+          </Button>
           {multiElemSections.map(section => (
             <EntrySection title={section.title} key={section.title}>
               <Button size="mini" onClick={section.addCallback}>
@@ -87,8 +98,6 @@ class EntryDetail extends React.Component {
               ))}
             </EntrySection>
           ))}
-          <Divider />
-          <Button type="submit">Submit</Button>
         </Form>
       </div>
     );

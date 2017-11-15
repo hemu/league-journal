@@ -1,40 +1,122 @@
-import { types, flow } from "mobx-state-tree";
+import { types, flow, getSnapshot } from "mobx-state-tree";
 import { Entry } from "./entries";
 import client from "../api/client";
 import gql from "graphql-tag";
+import { entryFields } from "./entries";
 
-export const entryQuery = gql`
+const fullEntryFragment = gql`
+  fragment FullEntry on Entry {
+    id
+    createdAt
+    updatedAt
+    gameDate
+    rank
+    outcome
+    lpChange
+    role
+    kills
+    deaths
+    assists
+    champion
+    opponentChampion
+    jungler
+    opponentJungler
+    csPerMin
+    csAt5Min
+    csAt10Min
+    csAt15Min
+    csAt20Min
+    mistakes
+    positives
+    lessons
+    deathReasons
+    roams
+    ganks
+    csReasons
+    video
+  }
+`;
+
+const entryQuery = gql`
   query EntryQuery($entryId: ID!) {
     Entry(id: $entryId) {
+      ...FullEntry
+    }
+  }
+  ${fullEntryFragment}
+`;
+
+const saveEntryMutation = gql`
+  mutation SaveEntry(
+    $id: ID!
+    $gameDate: DateTime!
+    $rank: String
+    $outcome: String
+    $lpChange: Int
+    $role: String!
+    $kills: Int
+    $deaths: Int
+    $assists: Int
+    $champion: String!
+    $opponentChampion: String!
+    $jungler: String
+    $opponentJungler: String
+    $csPerMin: Float
+    $csAt5Min: Int
+    $csAt10Min: Int
+    $csAt15Min: Int
+    $csAt20Min: Int
+    $mistakes: [String!]
+    $positives: [String!]
+    $lessons: [String!]
+    $deathReasons: [String!]
+    $roams: [String!]
+    $csReasons: [String!]
+    $video: String
+  ) {
+    updateEntry(
+      id: $id
+      gameDate: $gameDate
+      rank: $rank
+      outcome: $outcome
+      lpChange: $lpChange
+      role: $role
+      kills: $kills
+      deaths: $deaths
+      assists: $assists
+      champion: $champion
+      opponentChampion: $opponentChampion
+      jungler: $jungler
+      opponentJungler: $opponentJungler
+      csPerMin: $csPerMin
+      csAt5Min: $csAt5Min
+      csAt10Min: $csAt10Min
+      csAt15Min: $csAt15Min
+      csAt20Min: $csAt20Min
+      mistakes: $mistakes
+      positives: $positives
+      lessons: $lessons
+      deathReasons: $deathReasons
+      roams: $roams
+      csReasons: $csReasons
+      video: $video
+    ) {
       id
-      mistakes
-      positives
-      lessons
-      deathReasons
-      roams
-      csReasons
-      video
     }
   }
 `;
 
-const EditEntry = types
-  .model("EditEntry", {
+const EntryDetail = types
+  .model("EntryDetail", {
     detailEntryId: types.optional(types.string, ""),
     fetching: types.optional(types.boolean, false),
     loaded: types.optional(types.boolean, false),
-    mistakes: types.optional(types.array(types.string), []),
-    positives: types.optional(types.array(types.string), []),
-    lessons: types.optional(types.array(types.string), []),
-    deathReasons: types.optional(types.array(types.string), []),
-    roams: types.optional(types.array(types.string), []),
-    csReasons: types.optional(types.array(types.string), []),
-    video: types.optional(types.string, "")
+    id: types.optional(types.string, ""),
+    ...entryFields
   })
   .views(self => ({}))
   .actions(self => {
     const setEntry = entryId => {
-      console.log(`trying to set entry with id ${entryId}`);
       const fetchEntry = flow(function*() {
         self.fetching = true;
         self.loaded = false;
@@ -45,21 +127,24 @@ const EditEntry = types
           fetchPolicy: "network-only"
         });
 
-        console.log(results);
-
         const { data: { Entry: fetchedEntry } } = results;
         self.fetching = false;
         self.loaded = true;
-
-        self.mistakes = fetchedEntry.mistakes;
-        self.positives = fetchedEntry.positives;
-        self.lessons = fetchedEntry.lessons;
-        self.deathReasons = fetchedEntry.deathReasons;
-        self.roams = fetchedEntry.roams;
-        self.csReasons = fetchedEntry.csReasons;
-        self.video = fetchedEntry.video;
+        self.detailEntryId = entryId;
+        console.log(results);
+        Object.assign(self, fetchedEntry);
       });
       fetchEntry();
+    };
+
+    const saveEntry = () => {
+      const saveEntry = flow(function*() {
+        const results = yield client.mutate({
+          mutation: saveEntryMutation,
+          variables: getSnapshot(self)
+        });
+      });
+      saveEntry();
     };
 
     const addString = stringKey => {
@@ -103,6 +188,7 @@ const EditEntry = types
 
     return {
       setEntry,
+      saveEntry,
       addMistake,
       changeMistake,
       addPositive,
@@ -121,4 +207,4 @@ const EditEntry = types
     };
   });
 
-export default EditEntry;
+export default EntryDetail;
