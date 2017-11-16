@@ -3,6 +3,7 @@ import { Entry } from "./entries";
 import client from "../api/client";
 import gql from "graphql-tag";
 import { entryFields } from "./entries";
+import moment from "moment";
 
 const fullEntryFragment = gql`
   fragment FullEntry on Entry {
@@ -108,13 +109,44 @@ const saveEntryMutation = gql`
 
 const EntryDetail = types
   .model("EntryDetail", {
-    detailEntryId: types.optional(types.string, ""),
+    entryDetailId: types.optional(types.string, ""),
     fetching: types.optional(types.boolean, false),
     loaded: types.optional(types.boolean, false),
     id: types.optional(types.string, ""),
-    ...entryFields
+    gameDate: types.optional(types.Date, new Date()),
+    rank: types.optional(types.string, ""),
+    outcome: types.optional(
+      types.union(types.literal("W"), types.literal("L")),
+      "W"
+    ),
+    role: types.optional(types.string, ""),
+    champion: types.optional(types.string, ""),
+    opponentChampion: types.optional(types.string, ""),
+    jungler: types.optional(types.string, ""),
+    opponentJungler: types.optional(types.string, ""),
+    kills: types.optional(types.union(types.number, types.string), ""),
+    deaths: types.optional(types.union(types.number, types.string), 0),
+    assists: types.optional(types.union(types.number, types.string), 0),
+    lpChange: types.optional(types.union(types.number, types.string), ""),
+    csPerMin: types.optional(types.union(types.number, types.string), 0),
+    csAt5Min: types.optional(types.union(types.number, types.string), 0),
+    csAt10Min: types.optional(types.union(types.number, types.string), 0),
+    csAt15Min: types.optional(types.union(types.number, types.string), 0),
+    csAt20Min: types.optional(types.union(types.number, types.string), 0),
+
+    mistakes: types.optional(types.array(types.string), []),
+    positives: types.optional(types.array(types.string), []),
+    lessons: types.optional(types.array(types.string), []),
+    deathReasons: types.optional(types.array(types.string), []),
+    roams: types.optional(types.array(types.string), []),
+    csReasons: types.optional(types.array(types.string), []),
+    video: types.optional(types.string, "")
   })
-  .views(self => ({}))
+  .views(self => ({
+    get formattedGameDate(): string {
+      return moment(new Date(self.gameDate)).format("MMM Do");
+    }
+  }))
   .actions(self => {
     const setEntry = entryId => {
       const fetchEntry = flow(function*() {
@@ -128,20 +160,39 @@ const EntryDetail = types
         });
 
         const { data: { Entry: fetchedEntry } } = results;
+        Object.assign(self, {
+          ...fetchedEntry,
+          gameDate: new Date(fetchedEntry.gameDate)
+        });
         self.fetching = false;
         self.loaded = true;
-        self.detailEntryId = entryId;
-        console.log(results);
-        Object.assign(self, fetchedEntry);
+        self.entryDetailId = entryId;
       });
       fetchEntry();
     };
 
     const saveEntry = () => {
+      const tryInt = inpString => {
+        const num = parseInt(inpString, 10);
+        return num ? num : 0;
+      };
+
       const saveEntry = flow(function*() {
         const results = yield client.mutate({
           mutation: saveEntryMutation,
-          variables: getSnapshot(self)
+          variables: {
+            ...getSnapshot(self),
+            kills: tryInt(self.kills),
+            deaths: tryInt(self.deaths),
+            assists: tryInt(self.assists),
+            lpChange: tryInt(self.lpChange),
+            csPerMin: tryInt(self.csPerMin),
+            csAt5Min: tryInt(self.csAt5Min),
+            csAt10Min: tryInt(self.csAt10Min),
+            csAt15Min: tryInt(self.csAt15Min),
+            csAt20Min: tryInt(self.csAt20Min),
+            gameDate: self.gameDate.toISOString()
+          }
         });
       });
       saveEntry();
@@ -186,6 +237,27 @@ const EntryDetail = types
 
     const changeVideo = newText => (self.video = newText);
 
+    const changeGameDate = newDate => (self.gameDate = newDate);
+    const changeRank = newRank => (self.rank = newRank);
+    const changeOutcome = newOutcome => (self.outcome = newOutcome);
+    const changeLp = newLp => (self.lpChange = newLp);
+    const changeRole = newRole => (self.role = newRole);
+    const changeKills = newKills => (self.kills = newKills);
+    const changeDeaths = newDeaths => (self.deaths = newDeaths);
+    const changeAssists = newAssists => (self.assists = newAssists);
+
+    const changeChampion = newChamp => (self.champion = newChamp);
+    const changeOpponentChampion = newChamp =>
+      (self.opponentChampion = newChamp);
+    const changeJungler = newChamp => (self.jungler = newChamp);
+    const changeOpponentJungler = newChamp => (self.opponentJungler = newChamp);
+
+    const changeCsPerMin = newVal => (self.csPerMin = newVal);
+    const changeCsAt5Min = newVal => (self.csAt5Min = newVal);
+    const changeCsAt10Min = newVal => (self.csAt10Min = newVal);
+    const changeCsAt15Min = newVal => (self.csAt15Min = newVal);
+    const changeCsAt20Min = newVal => (self.csAt20Min = newVal);
+
     return {
       setEntry,
       saveEntry,
@@ -203,7 +275,25 @@ const EntryDetail = types
       changeGank,
       addCsReason,
       changeCsReason,
-      changeVideo
+      changeVideo,
+      changeGameDate,
+
+      changeRank,
+      changeOutcome,
+      changeLp,
+      changeRole,
+      changeKills,
+      changeDeaths,
+      changeAssists,
+      changeChampion,
+      changeOpponentChampion,
+      changeJungler,
+      changeOpponentJungler,
+      changeCsPerMin,
+      changeCsAt5Min,
+      changeCsAt10Min,
+      changeCsAt15Min,
+      changeCsAt20Min
     };
   });
 

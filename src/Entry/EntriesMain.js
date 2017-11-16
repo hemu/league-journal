@@ -1,5 +1,5 @@
 import React from "react";
-import EditEntryDetail from "./EditEntryDetail";
+import EntryDetail from "./EntryDetail";
 import EntriesList from "./EntriesList";
 
 import { Grid, Image } from "semantic-ui-react";
@@ -13,7 +13,7 @@ class EntriesMain extends React.Component {
             <EntriesList />
           </Grid.Column>
           <Grid.Column width={8}>
-            <EditEntryDetail />
+            <EntryDetail />
           </Grid.Column>
         </Grid.Row>
       </Grid>

@@ -18,7 +18,9 @@ class EntriesList extends React.Component {
       return <div>Loading</div>;
     }
 
-    const { entries, entryDetail } = this.props;
+    const { entries } = this.props;
+    const entryDetail = entries.entryDetail;
+
     return (
       <List
         selection
@@ -34,4 +36,4 @@ class EntriesList extends React.Component {
   }
 }
 
-export default inject("entries", "entryDetail")(observer(EntriesList));
+export default inject("entries")(observer(EntriesList));
