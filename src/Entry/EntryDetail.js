@@ -91,6 +91,9 @@ class EntryDetail extends React.Component {
           <Button type="submit" onClick={entry.saveEntry}>
             Save
           </Button>
+          <Button type="submit" onClick={() => entries.removeEntry(entry.id)}>
+            Delete
+          </Button>
           <EntrySection title={"Game Stats"}>
             <EntryDetailBaseStats />
           </EntrySection>

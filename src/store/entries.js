@@ -41,42 +41,36 @@ export const allEntriesQuery = gql`
       champion
       opponentChampion
       gameDate
+      outcome
+      role
+      kills
+      deaths
+      assists
+    }
+  }
+`;
+
+export const deleteEntryMutation = gql`
+  mutation DeleteEntry($id: ID!) {
+    deleteEntry(id: $id) {
+      id
     }
   }
 `;
 
 export const Entry = types.model("Entry", {
-  id: types.string,
-  createdAt: types.maybe(types.Date),
-  updatedAt: types.maybe(types.Date),
+  id: types.optional(types.string, "TEMP_LOCAL_ID"),
   gameDate: types.optional(types.string, new Date().toString()),
-  rank: types.optional(types.string, ""),
   outcome: types.optional(
     types.union(types.literal("W"), types.literal("L")),
     "W"
   ),
-  lpChange: types.optional(types.union(types.number, types.string), ""),
   role: types.optional(types.string, ""),
   kills: types.optional(types.union(types.number, types.string), ""),
   deaths: types.optional(types.union(types.number, types.string), 0),
   assists: types.optional(types.union(types.number, types.string), 0),
   champion: types.optional(types.string, ""),
-  opponentChampion: types.optional(types.string, ""),
-  jungler: types.optional(types.string, ""),
-  opponentJungler: types.optional(types.string, ""),
-  csPerMin: types.optional(types.union(types.number, types.string), 0),
-  csAt5Min: types.optional(types.union(types.number, types.string), 0),
-  csAt10Min: types.optional(types.union(types.number, types.string), 0),
-  csAt15Min: types.optional(types.union(types.number, types.string), 0),
-  csAt20Min: types.optional(types.union(types.number, types.string), 0),
-
-  mistakes: types.optional(types.array(types.string), []),
-  positives: types.optional(types.array(types.string), []),
-  lessons: types.optional(types.array(types.string), []),
-  deathReasons: types.optional(types.array(types.string), []),
-  roams: types.optional(types.array(types.string), []),
-  csReasons: types.optional(types.array(types.string), []),
-  video: types.optional(types.string, "")
+  opponentChampion: types.optional(types.string, "")
 });
 
 const Entries = types
@@ -103,11 +97,21 @@ const Entries = types
       }
     });
 
-    const newEntry = () => {
+    const createEntry = () => {
       self.entries.push(Entry.create());
     };
 
-    return { fetchEntries, newEntry };
+    const removeEntry = flow(function*(entryId) {
+      const results = yield client.mutate({
+        mutation: deleteEntryMutation,
+        variables: {
+          id: entryId
+        }
+      });
+      self.fetchEntries();
+    });
+
+    return { fetchEntries, createEntry, removeEntry };
   });
 
 export default Entries;

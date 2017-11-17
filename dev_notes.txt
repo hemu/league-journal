@@ -1,0 +1,3 @@
+api_key: RGAPI-52eb9c9f-470e-4965-8c21-9f668c07e451
+accountID: 232004309
+gameID: 2647374909

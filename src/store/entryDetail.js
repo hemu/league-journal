@@ -1,4 +1,4 @@
-import { types, flow, getSnapshot } from "mobx-state-tree";
+import { types, flow, getSnapshot, applySnapshot } from "mobx-state-tree";
 import { Entry } from "./entries";
 import client from "../api/client";
 import gql from "graphql-tag";
@@ -45,6 +45,64 @@ const entryQuery = gql`
     }
   }
   ${fullEntryFragment}
+`;
+
+const createEntryMutation = gql`
+  mutation CreateEntry(
+    $gameDate: DateTime!
+    $rank: String
+    $outcome: String
+    $lpChange: Int
+    $role: String!
+    $kills: Int
+    $deaths: Int
+    $assists: Int
+    $champion: String!
+    $opponentChampion: String!
+    $jungler: String
+    $opponentJungler: String
+    $csPerMin: Float
+    $csAt5Min: Int
+    $csAt10Min: Int
+    $csAt15Min: Int
+    $csAt20Min: Int
+    $mistakes: [String!]
+    $positives: [String!]
+    $lessons: [String!]
+    $deathReasons: [String!]
+    $roams: [String!]
+    $csReasons: [String!]
+    $video: String
+  ) {
+    createEntry(
+      gameDate: $gameDate
+      rank: $rank
+      outcome: $outcome
+      lpChange: $lpChange
+      role: $role
+      kills: $kills
+      deaths: $deaths
+      assists: $assists
+      champion: $champion
+      opponentChampion: $opponentChampion
+      jungler: $jungler
+      opponentJungler: $opponentJungler
+      csPerMin: $csPerMin
+      csAt5Min: $csAt5Min
+      csAt10Min: $csAt10Min
+      csAt15Min: $csAt15Min
+      csAt20Min: $csAt20Min
+      mistakes: $mistakes
+      positives: $positives
+      lessons: $lessons
+      deathReasons: $deathReasons
+      roams: $roams
+      csReasons: $csReasons
+      video: $video
+    ) {
+      id
+    }
+  }
 `;
 
 const saveEntryMutation = gql`
@@ -112,7 +170,7 @@ const EntryDetail = types
     entryDetailId: types.optional(types.string, ""),
     fetching: types.optional(types.boolean, false),
     loaded: types.optional(types.boolean, false),
-    id: types.optional(types.string, ""),
+    id: types.optional(types.string, "TEMP_LOCAL_ID"),
     gameDate: types.optional(types.Date, new Date()),
     rank: types.optional(types.string, ""),
     outcome: types.optional(
@@ -153,17 +211,24 @@ const EntryDetail = types
         self.fetching = true;
         self.loaded = false;
         // const { data: { Entry: fetchedEntry } } = yield client.query({
-        const results = yield client.query({
-          query: entryQuery,
-          variables: { entryId: entryId },
-          fetchPolicy: "network-only"
-        });
+        if (entryId === "TEMP_LOCAL_ID") {
+          applySnapshot(self, {
+            id: entryId,
+            gameDate: new Date()
+          });
+        } else {
+          const results = yield client.query({
+            query: entryQuery,
+            variables: { entryId: entryId },
+            fetchPolicy: "network-only"
+          });
 
-        const { data: { Entry: fetchedEntry } } = results;
-        Object.assign(self, {
-          ...fetchedEntry,
-          gameDate: new Date(fetchedEntry.gameDate)
-        });
+          const { data: { Entry: fetchedEntry } } = results;
+          Object.assign(self, {
+            ...fetchedEntry,
+            gameDate: new Date(fetchedEntry.gameDate)
+          });
+        }
         self.fetching = false;
         self.loaded = true;
         self.entryDetailId = entryId;
@@ -179,7 +244,10 @@ const EntryDetail = types
 
       const saveEntry = flow(function*() {
         const results = yield client.mutate({
-          mutation: saveEntryMutation,
+          mutation:
+            self.id === "TEMP_LOCAL_ID"
+              ? createEntryMutation
+              : saveEntryMutation,
           variables: {
             ...getSnapshot(self),
             kills: tryInt(self.kills),
@@ -194,6 +262,7 @@ const EntryDetail = types
             gameDate: self.gameDate.toISOString()
           }
         });
+        self.id === results.createEntry.id;
       });
       saveEntry();
     };
