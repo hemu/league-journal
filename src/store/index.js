@@ -1,12 +1,13 @@
 import Entries from "./entries";
-// import EntryDetail from "./entryDetail";
+import RecentGames from "./recentGames";
 import makeInspectable from "mobx-devtools-mst";
 
 const entries = Entries.create();
 entries.fetchEntries();
 makeInspectable(entries);
 
-// const entryDetail = EntryDetail.create();
-// makeInspectable(entryDetail);
+const recentGames = RecentGames.create();
+// recentGames.fetchRecentGames();
+makeInspectable(recentGames);
 //
-export default { entries };
+export default { entries, recentGames };

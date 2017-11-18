@@ -262,7 +262,9 @@ const EntryDetail = types
             gameDate: self.gameDate.toISOString()
           }
         });
-        self.id === results.createEntry.id;
+        if (self.id === "TEMP_LOCAL_ID") {
+          self.id = results.data.createEntry.id;
+        }
       });
       saveEntry();
     };
