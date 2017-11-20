@@ -190,7 +190,7 @@ class EntryDetail extends React.Component {
             </EntrySection>
           ))}
 
-          <EntrySection title={"Video"}>
+          {/* <EntrySection title={"Video"}>
             <Input
               size="mini"
               value={entry.video}
@@ -202,7 +202,7 @@ class EntryDetail extends React.Component {
               entry.video && (
                 <YoutubePlayer videoId={entry.video.split("/").pop()} />
               )}
-          </EntrySection>
+          </EntrySection> */}
         </Form>
       </div>
     );

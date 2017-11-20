@@ -1,4 +1,4 @@
-import championList from "./championList";
+import champList from "./champList";
 
 export const rankOptions = [
   "Bronze",
@@ -50,7 +50,7 @@ export const roleOptions = [
   }
 ];
 
-export const champOptions = championList.map(champ => ({
+export const champOptions = champList.map(champ => ({
   text: champ.name,
   value: champ.name
   // image: champ.img

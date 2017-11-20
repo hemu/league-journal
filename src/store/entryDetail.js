@@ -2,7 +2,7 @@ import { types, flow, getSnapshot, applySnapshot } from "mobx-state-tree";
 import { Entry } from "./entries";
 import client from "../api/client";
 import gql from "graphql-tag";
-import { entryFields } from "./entries";
+import { entryFields, isLocalEntry } from "./entries";
 import moment from "moment";
 
 const fullEntryFragment = gql`
@@ -211,7 +211,7 @@ const EntryDetail = types
         self.fetching = true;
         self.loaded = false;
         // const { data: { Entry: fetchedEntry } } = yield client.query({
-        if (entryId === "TEMP_LOCAL_ID") {
+        if (isLocalEntry(entryId)) {
           applySnapshot(self, {
             id: entryId,
             gameDate: new Date()

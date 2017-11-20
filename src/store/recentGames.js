@@ -1,14 +1,15 @@
 import { types, flow } from "mobx-state-tree";
 import client from "../api/client";
-import { getRecentGamesRequester } from "../api/riot";
+import { getRecentGames } from "../api/riot";
+import { getChampByKey } from "../staticData/champion";
+import { seasonMap, getQueue, roleToLane } from "../staticData/match";
 
 export const RecentGame = types.model("RecentGame", {
-  id: types.optional(types.string, ""),
   gameId: types.optional(types.number, 0),
-  champion: types.optional(types.number, 0),
+  champion: types.optional(types.string, ""),
   platformId: types.optional(types.string, ""),
-  season: types.optional(types.number, 0),
-  queue: types.optional(types.number, 0),
+  season: types.optional(types.string, ""),
+  queue: types.optional(types.string, ""),
   role: types.optional(types.string, ""),
   timestamp: types.optional(types.number, 0)
 });
@@ -25,21 +26,20 @@ const RecentGames = types
       self.fetching = true;
       self.loaded = false;
 
-      const resp = yield getRecentGamesRequester()();
+      const resp = yield getRecentGames("232004309");
+      const { data: { matches } } = resp;
 
-      console.log("recent games request done.......");
-      console.log(resp);
+      // transform data
+      self.games = matches.map(match => ({
+        ...match,
+        champion: getChampByKey(match.champion),
+        season: seasonMap[match.season],
+        queue: getQueue(match.queue),
+        role: roleToLane(match.role, match.lane)
+      }));
 
-      // const { data: { allEntries } } = yield client.query({
-      //   query: allEntriesQuery,
-      //   fetchPolicy: "network-only"
-      // });
-      // self.entries = allEntries;
       self.fetching = false;
       self.loaded = true;
-      // if (allEntries.length > 0) {
-      //   self.entryDetailStore.setEntry(allEntries[0].id);
-      // }
     });
 
     return { fetchRecentGames };

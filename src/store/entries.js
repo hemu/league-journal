@@ -3,6 +3,12 @@ import client from "../api/client";
 import gql from "graphql-tag";
 import EntryDetail from "./entryDetail";
 
+const LOCAL_ID_PREFIX = "LOCAL_ID";
+
+export function isLocalEntry(entryId) {
+  return entryId.startsWith(LOCAL_ID_PREFIX);
+}
+
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
     allEntries {
@@ -28,7 +34,7 @@ export const deleteEntryMutation = gql`
 `;
 
 export const Entry = types.model("Entry", {
-  id: types.optional(types.string, "TEMP_LOCAL_ID"),
+  id: types.optional(types.string, ""),
   gameDate: types.optional(types.string, new Date().toString()),
   outcome: types.optional(
     types.union(types.literal("W"), types.literal("L")),
@@ -67,7 +73,21 @@ const Entries = types
     });
 
     const createEntry = () => {
-      self.entries.push(Entry.create());
+      const newEntry = Entry.create({
+        id: `${LOCAL_ID_PREFIX}_${self.entries.length}`
+      });
+      self.entries.push(newEntry);
+      self.entryDetailStore.setEntry(newEntry.id);
+    };
+
+    const createEntryFromRecentGame = game => {
+      const newEntry = Entry.create({
+        id: `${LOCAL_ID_PREFIX}_${self.entries.length}`,
+        role: game.role,
+        champion: game.champion
+      });
+      self.entries.push(newEntry);
+      self.entryDetailStore.setEntry(newEntry.id);
     };
 
     const removeEntry = flow(function*(entryId) {
@@ -80,7 +100,12 @@ const Entries = types
       self.fetchEntries();
     });
 
-    return { fetchEntries, createEntry, removeEntry };
+    return {
+      fetchEntries,
+      createEntry,
+      createEntryFromRecentGame,
+      removeEntry
+    };
   });
 
 export default Entries;

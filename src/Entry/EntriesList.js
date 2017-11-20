@@ -1,14 +1,17 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { List, Button } from "semantic-ui-react";
+import { List, Button, Header } from "semantic-ui-react";
+import { isLocalEntry } from "../store/entries";
 
-const EntryListItem = ({ entry }) =>
-  entry.id !== "TEMP_LOCAL_ID" ? (
-    <List.Item data-id={entry.id}>
-      {entry.champion} vs {entry.opponentChampion}
+const EntryListItem = ({ entry, active }) =>
+  isLocalEntry(entry.id) ? (
+    <List.Item data-id={entry.id} active={active}>
+      New Entry (Unsaved)
     </List.Item>
   ) : (
-    <List.Item data-id={entry.id}>New Entry (Unsaved)</List.Item>
+    <List.Item data-id={entry.id} active={active}>
+      {entry.champion} vs {entry.opponentChampion}
+    </List.Item>
   );
 
 class EntriesList extends React.Component {
@@ -26,7 +29,8 @@ class EntriesList extends React.Component {
 
     return (
       <div>
-        <Button type="submit" onClick={entries.createEntry}>
+        <Header>Entries</Header>
+        <Button type="submit" onClick={entries.createEntry} size="tiny">
           New Entry
         </Button>
         <List
@@ -36,7 +40,11 @@ class EntriesList extends React.Component {
           }}
         >
           {entries.entries.map((entry, i) => (
-            <EntryListItem key={entry.id + i} entry={entry} />
+            <EntryListItem
+              key={entry.id + i}
+              entry={entry}
+              active={entryDetailStore.id === entry.id}
+            />
           ))}
         </List>
       </div>

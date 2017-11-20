@@ -7,7 +7,7 @@ entries.fetchEntries();
 makeInspectable(entries);
 
 const recentGames = RecentGames.create();
-// recentGames.fetchRecentGames();
+recentGames.fetchRecentGames();
 makeInspectable(recentGames);
 //
 export default { entries, recentGames };
