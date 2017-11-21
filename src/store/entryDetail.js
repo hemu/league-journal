@@ -272,39 +272,34 @@ const EntryDetail = types
     const addString = stringKey => {
       self[stringKey].push("");
     };
-    const changeString = (stringKey, elemIndex, newString) => {
-      if (self[stringKey].length > elemIndex - 1) {
-        self[stringKey][elemIndex] = newString;
-      }
+    const stringChanger = stringKey => {
+      return (elemIndex, newString) => {
+        if (self[stringKey].length > elemIndex - 1) {
+          self[stringKey][elemIndex] = newString;
+        }
+      };
     };
 
     const addMistake = () => addString("mistakes");
-    const changeMistake = (elemIndex, newText) =>
-      changeString("mistakes", elemIndex, newText);
+    const changeMistake = stringChanger("mistakes");
 
     const addPositive = () => addString("positives");
-    const changePositive = (elemIndex, newText) =>
-      changeString("positives", elemIndex, newText);
+    const changePositive = stringChanger("positives");
 
     const addLesson = () => addString("lessons");
-    const changeLesson = (elemIndex, newText) =>
-      changeString("lessons", elemIndex, newText);
+    const changeLesson = stringChanger("lessons");
 
     const addDeathReason = () => addString("deathReasons");
-    const changeDeathReason = (elemIndex, newText) =>
-      changeString("deathReasons", elemIndex, newText);
+    const changeDeathReason = stringChanger("deathReasons");
 
     const addRoam = () => addString("roams");
-    const changeRoam = (elemIndex, newText) =>
-      changeString("roams", elemIndex, newText);
+    const changeRoam = stringChanger("roams");
 
     const addGank = () => addString("ganks");
-    const changeGank = (elemIndex, newText) =>
-      changeString("ganks", elemIndex, newText);
+    const changeGank = stringChanger("ganks");
 
     const addCsReason = () => addString("csReasons");
-    const changeCsReason = (elemIndex, newText) =>
-      changeString("csReasons", elemIndex, newText);
+    const changeCsReason = stringChanger("csReasons");
 
     const changeVideo = newText => (self.video = newText);
 
