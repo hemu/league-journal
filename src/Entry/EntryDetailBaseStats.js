@@ -68,16 +68,6 @@ class EntryDetailBaseStats extends React.Component {
             />
           </Grid.Column>
           <Grid.Column>
-            <Input
-              size="small"
-              placeholder={"LP change"}
-              value={entry.lpChange}
-              onChange={(event, data) => {
-                entry.changeLp(data.value);
-              }}
-            />
-          </Grid.Column>
-          <Grid.Column>
             <Dropdown
               placeholder="Role"
               fluid

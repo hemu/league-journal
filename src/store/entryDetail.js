@@ -13,7 +13,6 @@ const fullEntryFragment = gql`
     gameDate
     rank
     outcome
-    lpChange
     role
     kills
     deaths
@@ -52,7 +51,6 @@ const createEntryMutation = gql`
     $gameDate: DateTime!
     $rank: String
     $outcome: String
-    $lpChange: Int
     $role: String!
     $kills: Int
     $deaths: Int
@@ -78,7 +76,6 @@ const createEntryMutation = gql`
       gameDate: $gameDate
       rank: $rank
       outcome: $outcome
-      lpChange: $lpChange
       role: $role
       kills: $kills
       deaths: $deaths
@@ -111,7 +108,6 @@ const saveEntryMutation = gql`
     $gameDate: DateTime!
     $rank: String
     $outcome: String
-    $lpChange: Int
     $role: String!
     $kills: Int
     $deaths: Int
@@ -138,7 +134,6 @@ const saveEntryMutation = gql`
       gameDate: $gameDate
       rank: $rank
       outcome: $outcome
-      lpChange: $lpChange
       role: $role
       kills: $kills
       deaths: $deaths
@@ -185,7 +180,6 @@ const EntryDetail = types
     kills: types.optional(types.union(types.number, types.string), ""),
     deaths: types.optional(types.union(types.number, types.string), 0),
     assists: types.optional(types.union(types.number, types.string), 0),
-    lpChange: types.optional(types.union(types.number, types.string), ""),
     csPerMin: types.optional(types.union(types.number, types.string), 0),
     csAt5Min: types.optional(types.union(types.number, types.string), 0),
     csAt10Min: types.optional(types.union(types.number, types.string), 0),
@@ -253,7 +247,6 @@ const EntryDetail = types
             kills: tryInt(self.kills),
             deaths: tryInt(self.deaths),
             assists: tryInt(self.assists),
-            lpChange: tryInt(self.lpChange),
             csPerMin: tryInt(self.csPerMin),
             csAt5Min: tryInt(self.csAt5Min),
             csAt10Min: tryInt(self.csAt10Min),
@@ -306,7 +299,6 @@ const EntryDetail = types
     const changeGameDate = newDate => (self.gameDate = newDate);
     const changeRank = newRank => (self.rank = newRank);
     const changeOutcome = newOutcome => (self.outcome = newOutcome);
-    const changeLp = newLp => (self.lpChange = newLp);
     const changeRole = newRole => (self.role = newRole);
     const changeKills = newKills => (self.kills = newKills);
     const changeDeaths = newDeaths => (self.deaths = newDeaths);
@@ -346,7 +338,6 @@ const EntryDetail = types
 
       changeRank,
       changeOutcome,
-      changeLp,
       changeRole,
       changeKills,
       changeDeaths,

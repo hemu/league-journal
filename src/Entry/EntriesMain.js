@@ -1,6 +1,6 @@
 import React from "react";
-import EntryDetail from "./EntryDetail";
-import EntriesList from "./EntriesList";
+import EntryDetailContainer from "./containers/EntryDetailContainer";
+import EntryListContainer from "./containers/EntryListContainer";
 import RecentGames from "./RecentGamesList";
 
 import { Grid, Image } from "semantic-ui-react";
@@ -10,14 +10,14 @@ class EntriesMain extends React.Component {
     return (
       <Grid columns={2} divided>
         <Grid.Row>
-          <Grid.Column width={3}>
+          {/* <Grid.Column width={3}>
             <RecentGames />
-          </Grid.Column>
+          </Grid.Column> */}
           <Grid.Column width={3}>
-            <EntriesList />
+            <EntryListContainer />
           </Grid.Column>
           <Grid.Column width={8}>
-            <EntryDetail />
+            <EntryDetailContainer />
           </Grid.Column>
         </Grid.Row>
       </Grid>

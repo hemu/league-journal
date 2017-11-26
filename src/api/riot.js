@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = "RGAPI-d33b8d20-3d2f-4357-994b-432e5595d1ef";
+const API_KEY = "RGAPI-4b6992c7-a00a-444e-8fb5-7af7fda7bdc8";
 const PROXY_ADDRESS = "http://localhost:8080";
 
 export function getRecentGames(accountId) {
