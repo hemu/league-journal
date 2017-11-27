@@ -8,7 +8,7 @@ const EntryListItem = ({ entry, isLocalEntry, active, entryIndex }) =>
     </List.Item>
   ) : (
     <List.Item data-id={entry.id} active={active} data-entry-index={entryIndex}>
-      {entry.champion} vs {entry.opponentChampion}
+      {entry.champion || "Unknown"} vs {entry.opponentChampion || "Unknown"}
     </List.Item>
   );
 

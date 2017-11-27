@@ -2,31 +2,40 @@ import React from "react";
 import EntryDetail from "../components/EntryDetail";
 import { connect } from "react-redux";
 import { actions } from "react-redux-form";
+import { saveEntry } from "../../modules/entry";
 import { RequestStatus } from "../../const";
 import { formModel } from "../helpers";
 
 class EntryDetailContainer extends React.Component {
   render() {
     const {
-      entry,
+      mistakes,
+      positives,
+      lessons,
+      deathReasons,
+      csReasons,
+      roams,
       removeEntry,
       saveEntry,
-      fetchEntryStatus,
       formChange,
       formAdd
     } = this.props;
 
-    if (fetchEntryStatus === RequestStatus.Request) {
-      return <div>Fetching entry details...</div>;
-    }
-
-    if (fetchEntryStatus !== RequestStatus.Success) {
-      return <div>Choose an Entry</div>;
-    }
-
+    // if (detailFormLoadStatus === RequestStatus.Request) {
+    //   return <div>Fetching entry details...</div>;
+    // }
+    //
+    // if (detailFormLoadStatus !== RequestStatus.Success) {
+    //   return <div>Choose an Entry</div>;
+    // }
     return (
       <EntryDetail
-        entry={entry}
+        mistakes={mistakes}
+        positives={positives}
+        lessons={lessons}
+        deathReasons={deathReasons}
+        csReasons={csReasons}
+        roams={roams}
         removeEntry={removeEntry}
         saveEntry={saveEntry}
         formChange={formChange}
@@ -37,13 +46,21 @@ class EntryDetailContainer extends React.Component {
 }
 
 export default connect(
-  ({ entry, forms: { entry: entryForm } }) => ({
-    entry: entryForm,
-    fetchEntryStatus: entry.fetchEntryStatus
+  ({
+    forms: {
+      entry: { mistakes, positives, lessons, deathReasons, csReasons, roams }
+    }
+  }) => ({
+    mistakes,
+    positives,
+    lessons,
+    deathReasons,
+    csReasons,
+    roams
   }),
   dispatch => ({
     removeEntry: () => console.log("remove Entry"),
-    saveEntry: entryIndex => console.log("save entry"),
+    saveEntry: entry => dispatch(saveEntry(entry)),
     formChange: formAction => dispatch(formAction),
     formAdd: model => dispatch(actions.push(formModel(model), ""))
   })

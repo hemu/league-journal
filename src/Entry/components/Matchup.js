@@ -4,9 +4,10 @@ import { champOptions } from "../../staticData";
 import { Grid } from "semantic-ui-react";
 import { Control, actions } from "react-redux-form";
 import { formModel } from "../helpers";
+import { handleDropdownChange } from "./entryHelpers";
 
 const ChampionDropdown = ({ model, formChange }) => (
-  <Control.custom
+  <Control.select
     component={Dropdown}
     model={model}
     fluid
@@ -14,10 +15,8 @@ const ChampionDropdown = ({ model, formChange }) => (
     selection
     options={champOptions}
     mapProps={{
-      value: props => props.modelValue
-    }}
-    onChange={(event, data) => {
-      formChange(actions.change(formModel(model), data.value));
+      value: props => props.modelValue,
+      onChange: props => handleDropdownChange(props)
     }}
   />
 );

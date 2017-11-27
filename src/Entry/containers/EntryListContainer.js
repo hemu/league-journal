@@ -2,16 +2,15 @@ import React from "react";
 import { connect } from "react-redux";
 import EntryList from "../components/EntryList";
 import { RequestStatus } from "../../const";
-import { fetchAllEntries, setEntryDetail } from "../../modules/entry";
+import { fetchAllEntries, setEntryDetail, addEntry } from "../../modules/entry";
 
 class EntryListContainer extends React.Component {
   componentDidMount() {
-    console.log(this.props);
     this.props.fetchAll();
   }
 
   render() {
-    const { entries, fetchAllStatus, setEntryDetail } = this.props;
+    const { entries, fetchAllStatus, setEntryDetail, addEntry } = this.props;
     if (!entries) {
       return <div>No entries</div>;
     }
@@ -20,7 +19,13 @@ class EntryListContainer extends React.Component {
       return <div>Finding entries...</div>;
     }
 
-    return <EntryList entries={entries} onSelectEntry={setEntryDetail} />;
+    return (
+      <EntryList
+        entries={entries}
+        onSelectEntry={setEntryDetail}
+        addEntry={addEntry}
+      />
+    );
   }
 }
 
@@ -31,6 +36,8 @@ export default connect(
   }),
   dispatch => ({
     fetchAll: () => dispatch(fetchAllEntries()),
-    setEntryDetail: entryIndex => dispatch(setEntryDetail(entryIndex))
+    setEntryDetail: (entryIndex, entryId) =>
+      dispatch(setEntryDetail(entryIndex, entryId)),
+    addEntry: () => dispatch(addEntry())
   })
 )(EntryListContainer);

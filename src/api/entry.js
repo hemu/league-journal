@@ -1,5 +1,6 @@
 import client from "../api/client";
 import gql from "graphql-tag";
+import { isLocalEntry } from "../helpers";
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
@@ -173,7 +174,6 @@ const saveEntryMutation = gql`
 `;
 
 export function fetchAllEntries() {
-  console.log("fetchAllEntriesAPI");
   return client.query({
     query: allEntriesQuery,
     fetchPolicy: "network-only"
@@ -185,5 +185,14 @@ export function fetchDetailEntry(entryId) {
     query: entryDetailQuery,
     variables: { entryId: entryId },
     fetchPolicy: "network-only"
+  });
+}
+
+export function saveEntry(entry) {
+  return client.mutate({
+    mutation: isLocalEntry(entry.id) ? createEntryMutation : saveEntryMutation,
+    variables: {
+      ...entry
+    }
   });
 }

@@ -62,12 +62,10 @@ const EntrySection = ({ title, children }) => (
   </FormSectionCont>
 );
 
-export default ({ entry, removeEntry, saveEntry, formChange, formAdd }) => {
+export default props => {
+  const { removeEntry, saveEntry, formChange, formAdd } = props;
   return (
-    <ReactForm
-      model={baseFormModel}
-      onSubmit={() => console.log("Entry form submitted")}
-    >
+    <ReactForm model={baseFormModel} onSubmit={saveEntry}>
       <Button type="submit">Save</Button>
 
       <EntrySection title={"Game Stats"}>
@@ -80,6 +78,7 @@ export default ({ entry, removeEntry, saveEntry, formChange, formAdd }) => {
           formChange={formChange}
         />
       </EntrySection>
+
       <EntrySection title={"Jungle Matchup"}>
         <ChampionMatchup
           model1=".jungler"
@@ -93,31 +92,57 @@ export default ({ entry, removeEntry, saveEntry, formChange, formAdd }) => {
           <Grid.Column width={2}>
             <Form.Field>
               <label>CS / Min</label>
-              <Control.text component={Input} size="mini" model=".csPerMin" />
+              <Control.text
+                component={Input}
+                size="mini"
+                model=".csPerMin"
+                updateOn="blur"
+              />
             </Form.Field>
           </Grid.Column>
           <Grid.Column width={2}>
             <Form.Field>
               <label>CS @ 5</label>
-              <Control.text component={Input} size="mini" model=".csAt5Min" />
+              <Control.text
+                component={Input}
+                size="mini"
+                model=".csAt5Min"
+                updateOn="blur"
+              />
             </Form.Field>
           </Grid.Column>
           <Grid.Column width={2}>
             <Form.Field>
               <label>CS @ 10</label>
-              <Control.text component={Input} size="mini" model=".csAt10Min" />
+              <Control.text
+                component={Input}
+                size="mini"
+                model=".csAt10Min"
+                updateOn="blur"
+              />
             </Form.Field>
           </Grid.Column>
           <Grid.Column width={2}>
             <Form.Field>
               <label>CS @ 15</label>
-              <Control.text component={Input} size="mini" model=".csAt15Min" />
+
+              <Control.text
+                component={Input}
+                size="mini"
+                model=".csAt15Min"
+                updateOn="blur"
+              />
             </Form.Field>
           </Grid.Column>
           <Grid.Column width={2}>
             <Form.Field>
               <label>CS @ 20</label>
-              <Control.text component={Input} size="mini" model=".csAt20Min" />
+              <Control.text
+                component={Input}
+                size="mini"
+                model=".csAt20Min"
+                updateOn="blur"
+              />
             </Form.Field>
           </Grid.Column>
         </Grid>
@@ -132,13 +157,14 @@ export default ({ entry, removeEntry, saveEntry, formChange, formAdd }) => {
           >
             Add New
           </Button>
-          {entry[section.model].map((elem, elemIndex) => (
+          {props[section.model].map((elem, elemIndex) => (
             <Form.Field key={elemIndex}>
               <Control.text
                 component={Input}
                 size="mini"
                 model={`.${section.model}[${elemIndex}]`}
                 placeholder={section.placeholder}
+                updateOn="blur"
               />
             </Form.Field>
           ))}

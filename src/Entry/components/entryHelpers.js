@@ -1,3 +1,5 @@
+import { actions } from "react-redux-form";
+
 export const intValidationWrapper = callback => {
   return (event, data) => {
     if (data.value !== "") {
@@ -6,3 +8,8 @@ export const intValidationWrapper = callback => {
     }
   };
 };
+
+export const handleDropdownChange = ({ model, dispatch }, options = {}) => (
+  event,
+  data
+) => dispatch(actions.change(model, event.target.innerText, options));

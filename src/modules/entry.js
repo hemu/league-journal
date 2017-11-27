@@ -1,12 +1,14 @@
 import PropTypes from "prop-types";
 import {
   fetchAllEntries as fetchAllEntriesApi,
-  fetchDetailEntry as fetchDetailEntryApi
+  fetchDetailEntry as fetchDetailEntryApi,
+  saveEntry as saveEntryApi
 } from "../api/entry";
 import { actions } from "react-redux-form";
 import { RequestStatus } from "../const";
 import { createAction } from "./helpers";
 import { LOCAL_ID_PREFIX } from "../const";
+import { entryFormInitialState } from "./entryForm";
 
 export function isLocalEntry(entryId) {
   return entryId.startsWith(LOCAL_ID_PREFIX);
@@ -23,18 +25,26 @@ const FETCH_DETAIL_ERROR = "entries/FETCH_DETAIL_ERROR";
 const SET_ENTRY_INDEX = "entries/SET_ENTRY_INDEX";
 const SET_INIT_ENTRY_FIELDS = "entries/SET_INIT_ENTRY_FIELDS";
 
+const SAVE_ENTRY = "entries/SAVE_ENTRY";
+const SAVE_ENTRY_SUCCESS = "entries/SAVE_ENTRY_SUCCESS";
+const ADD_ENTRY = "entries/ADD_ENTRY";
+
 export const fetchAllEntries = createAction(FETCH_ALL_REQUEST);
 export const fetchAllSuccess = createAction(FETCH_ALL_SUCCESS, "entries");
-export const fetchDetailRequest = createAction(FETCH_DETAIL_REQUEST, "entryId");
+export const fetchDetailRequest = createAction(
+  FETCH_DETAIL_REQUEST,
+  "entryIndex",
+  "entryId"
+);
 export const fetchDetailSuccess = createAction(FETCH_DETAIL_SUCCESS, "entry");
-export const setEntryDetail = createAction(SET_ENTRY_INDEX, "index");
-
-const initialState = {
-  entries: [],
-  fetchAllStatus: RequestStatus.None,
-  fetchEntryStatus: RequestStatus.None,
-  entryIndex: 0
-};
+export const setEntryDetail = createAction(
+  SET_ENTRY_INDEX,
+  "entryIndex",
+  "entryId"
+);
+export const saveEntry = createAction(SAVE_ENTRY, "entry");
+export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
+export const addEntry = createAction(ADD_ENTRY, "entry");
 
 export const fetchAllEpic = action$ =>
   action$.ofType(FETCH_ALL_REQUEST).mergeMap(action =>
@@ -45,24 +55,24 @@ export const fetchAllEpic = action$ =>
   );
 
 export const initialEntryEpic = action$ =>
-  action$.ofType(FETCH_ALL_SUCCESS).mapTo(setEntryDetail(0));
+  action$
+    .ofType(FETCH_ALL_SUCCESS)
+    .mergeMap(action =>
+      Promise.resolve(setEntryDetail(0, action.entries[0].id))
+    );
 
-export const setEntryDetailEpic = (action$, store) =>
-  action$.ofType(SET_ENTRY_INDEX).map(action => {
-    const { entry: { entries } } = store.getState();
-    const entry = entries[action.index];
-    const entryId = entry.id;
-    return fetchDetailRequest(entryId);
-  });
+export const setEntryDetailEpic = action$ =>
+  action$
+    .ofType(SET_ENTRY_INDEX)
+    // .filter(action => !isLocalEntry(action.entryId))
+    .map(action => fetchDetailRequest(action.entryIndex, action.entryId));
 
 export const fetchEntryEpic = (action$, store) =>
   action$.ofType(FETCH_DETAIL_REQUEST).mergeMap(action => {
-    const entryId = action.entryId;
+    const { entryIndex, entryId } = action;
     if (isLocalEntry(entryId)) {
-      return fetchDetailSuccess({
-        id: entryId,
-        gameDate: new Date()
-      });
+      const { entry: { entries } } = store.getState();
+      return Promise.resolve(fetchDetailSuccess(entries[entryIndex]));
     } else {
       return fetchDetailEntryApi(entryId).then(result => {
         const { data: { Entry: fetchedEntry } } = result;
@@ -76,6 +86,19 @@ export const populateFormEpic = action$ =>
     .ofType(FETCH_DETAIL_SUCCESS)
     .map(action => actions.load("forms.entry", action.entry));
 
+export const saveEntryEpic = action$ =>
+  action$
+    .ofType(SAVE_ENTRY)
+    .mergeMap(action =>
+      saveEntryApi(action.entry).then(() => saveEntrySuccess())
+    );
+
+const initialState = {
+  entries: [],
+  fetchAllStatus: RequestStatus.None,
+  fetchEntryStatus: RequestStatus.None,
+  entryIndex: 0
+};
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case FETCH_ALL_REQUEST:
@@ -92,7 +115,12 @@ export default function reducer(state = initialState, action = {}) {
     case SET_ENTRY_INDEX:
       return {
         ...state,
-        entryIndex: action.index
+        entryIndex: action.entryIndex
+      };
+    case FETCH_DETAIL_REQUEST:
+      return {
+        ...state,
+        fetchEntryStatus: RequestStatus.Request
       };
     case FETCH_DETAIL_SUCCESS:
       return {
@@ -105,6 +133,17 @@ export default function reducer(state = initialState, action = {}) {
         }),
         fetchEntryStatus: RequestStatus.Success
       };
+    case ADD_ENTRY: {
+      const newEntry = {
+        ...entryFormInitialState,
+        id: `${LOCAL_ID_PREFIX}_${state.entries.length}`,
+        gameDate: new Date()
+      };
+      return {
+        ...state,
+        entries: [...state.entries, newEntry]
+      };
+    }
 
     default:
       return state;

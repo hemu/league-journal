@@ -8,7 +8,8 @@ import entry, {
   fetchEntryEpic,
   setEntryDetailEpic,
   initialEntryEpic,
-  populateFormEpic
+  populateFormEpic,
+  saveEntryEpic
 } from "./entry";
 
 export const rootEpic = combineEpics(
@@ -16,7 +17,8 @@ export const rootEpic = combineEpics(
   fetchEntryEpic,
   setEntryDetailEpic,
   initialEntryEpic,
-  populateFormEpic
+  populateFormEpic,
+  saveEntryEpic
 );
 
 export const rootReducer = combineReducers({

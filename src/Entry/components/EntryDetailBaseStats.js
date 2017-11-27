@@ -17,6 +17,7 @@ import "react-day-picker/lib/style.css";
 
 import { formModel } from "../helpers";
 import { rankOptions, outcomeOptions, roleOptions } from "../../staticData";
+import { handleDropdownChange } from "./entryHelpers";
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {
@@ -29,7 +30,7 @@ export default ({ formChange }) => (
     <Grid.Row>
       <Grid.Column width={3}>
         <DatePickerCont>
-          <Control
+          <Control.text
             component={DayPickerInput}
             model=".gameDate"
             format={"MMM Do"}
@@ -43,7 +44,7 @@ export default ({ formChange }) => (
         </DatePickerCont>
       </Grid.Column>
       <Grid.Column width={4}>
-        <Control.custom
+        <Control.select
           component={Dropdown}
           model=".rank"
           placeholder="Rank"
@@ -51,16 +52,15 @@ export default ({ formChange }) => (
           search
           selection
           options={rankOptions}
+          selectOnBlur={false}
           mapProps={{
-            value: props => props.modelValue
-          }}
-          onChange={(event, data) => {
-            formChange(actions.change(formModel(".rank"), data.value));
+            value: props => props.modelValue,
+            onChange: props => handleDropdownChange(props)
           }}
         />
       </Grid.Column>
       <Grid.Column width={2}>
-        <Control.custom
+        <Control.select
           component={Dropdown}
           model=".outcome"
           fluid
@@ -68,15 +68,13 @@ export default ({ formChange }) => (
           selection
           options={outcomeOptions}
           mapProps={{
-            value: props => props.modelValue
-          }}
-          onChange={(event, data) => {
-            formChange(actions.change(formModel(".outcome"), data.value));
+            value: props => props.modelValue,
+            onChange: props => handleDropdownChange(props)
           }}
         />
       </Grid.Column>
       <Grid.Column>
-        <Control.custom
+        <Control.select
           component={Dropdown}
           model=".role"
           fluid
@@ -84,10 +82,8 @@ export default ({ formChange }) => (
           selection
           options={roleOptions}
           mapProps={{
-            value: props => props.modelValue
-          }}
-          onChange={(event, data) => {
-            formChange(actions.change(formModel(".role"), data.value));
+            value: props => props.modelValue,
+            onChange: props => handleDropdownChange(props)
           }}
         />
       </Grid.Column>
@@ -96,19 +92,34 @@ export default ({ formChange }) => (
       <Grid.Column width={2}>
         <Form.Field>
           <label>Kills</label>
-          <Control.text component={Input} size="mini" model=".kills" />
+          <Control.text
+            component={Input}
+            size="mini"
+            model=".kills"
+            updateOn="blur"
+          />
         </Form.Field>
       </Grid.Column>
       <Grid.Column width={2}>
         <Form.Field>
           <label>Deaths</label>
-          <Control.text component={Input} size="mini" model=".deaths" />
+          <Control.text
+            component={Input}
+            size="mini"
+            model=".deaths"
+            updateOn="blur"
+          />
         </Form.Field>
       </Grid.Column>
       <Grid.Column width={2}>
         <Form.Field>
           <label>Assists</label>
-          <Control.text component={Input} size="mini" model=".assists" />
+          <Control.text
+            component={Input}
+            size="mini"
+            model=".assists"
+            updateOn="blur"
+          />
         </Form.Field>
       </Grid.Column>
     </Grid.Row>
