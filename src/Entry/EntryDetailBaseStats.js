@@ -15,7 +15,7 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
 
 import { rankOptions, outcomeOptions, roleOptions } from "../staticData";
-import { intValidationWrapper } from "./entryHelpers";
+import { intValidationWrapper } from "../helpers";
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {

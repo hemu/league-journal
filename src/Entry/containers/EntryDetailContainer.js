@@ -2,13 +2,14 @@ import React from "react";
 import EntryDetail from "../components/EntryDetail";
 import { connect } from "react-redux";
 import { actions } from "react-redux-form";
-import { saveEntry } from "../../modules/entry";
+import { saveEntry, removeEntry } from "../../modules/entry";
 import { RequestStatus } from "../../const";
 import { formModel } from "../helpers";
 
 class EntryDetailContainer extends React.Component {
   render() {
     const {
+      id,
       mistakes,
       positives,
       lessons,
@@ -30,6 +31,7 @@ class EntryDetailContainer extends React.Component {
     // }
     return (
       <EntryDetail
+        entryId={id}
         mistakes={mistakes}
         positives={positives}
         lessons={lessons}
@@ -48,9 +50,18 @@ class EntryDetailContainer extends React.Component {
 export default connect(
   ({
     forms: {
-      entry: { mistakes, positives, lessons, deathReasons, csReasons, roams }
+      entry: {
+        id,
+        mistakes,
+        positives,
+        lessons,
+        deathReasons,
+        csReasons,
+        roams
+      }
     }
   }) => ({
+    id,
     mistakes,
     positives,
     lessons,
@@ -59,7 +70,7 @@ export default connect(
     roams
   }),
   dispatch => ({
-    removeEntry: () => console.log("remove Entry"),
+    removeEntry: entryId => dispatch(removeEntry(entryId)),
     saveEntry: entry => dispatch(saveEntry(entry)),
     formChange: formAction => dispatch(formAction),
     formAdd: model => dispatch(actions.push(formModel(model), ""))

@@ -9,7 +9,10 @@ import entry, {
   setEntryDetailEpic,
   initialEntryEpic,
   populateFormEpic,
-  saveEntryEpic
+  saveEntryEpic,
+  removeEntryEpic,
+  removeEntrySuccessEpic,
+  entryListUpdateEpic
 } from "./entry";
 
 export const rootEpic = combineEpics(
@@ -18,7 +21,10 @@ export const rootEpic = combineEpics(
   setEntryDetailEpic,
   initialEntryEpic,
   populateFormEpic,
-  saveEntryEpic
+  saveEntryEpic,
+  removeEntryEpic,
+  removeEntrySuccessEpic,
+  entryListUpdateEpic
 );
 
 export const rootReducer = combineReducers({

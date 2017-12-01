@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import {
   fetchAllEntries as fetchAllEntriesApi,
   fetchDetailEntry as fetchDetailEntryApi,
-  saveEntry as saveEntryApi
+  saveEntry as saveEntryApi,
+  removeEntry as removeEntryApi
 } from "../api/entry";
 import { actions } from "react-redux-form";
 import { RequestStatus } from "../const";
@@ -27,8 +28,15 @@ const SET_INIT_ENTRY_FIELDS = "entries/SET_INIT_ENTRY_FIELDS";
 
 const SAVE_ENTRY = "entries/SAVE_ENTRY";
 const SAVE_ENTRY_SUCCESS = "entries/SAVE_ENTRY_SUCCESS";
+
+const REMOVE_ENTRY = "entries/REMOVE_ENTRY";
+const REMOVE_ENTRY_SUCCESS = "entries/REMOVE_ENTRY_SUCCESS";
+const REMOVE_ENTRY_WITH_API_SUCCESS = "entries/REMOVE_ENTRY_WITH_API_SUCCESS";
+
 const ADD_ENTRY = "entries/ADD_ENTRY";
 
+// ----- ACTION CREATORS -------------------------------
+// ----------------------------------------------------------
 export const fetchAllEntries = createAction(FETCH_ALL_REQUEST);
 export const fetchAllSuccess = createAction(FETCH_ALL_SUCCESS, "entries");
 export const fetchDetailRequest = createAction(
@@ -44,8 +52,17 @@ export const setEntryDetail = createAction(
 );
 export const saveEntry = createAction(SAVE_ENTRY, "entry");
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
+
+export const removeEntry = createAction(REMOVE_ENTRY, "entryId");
+export const removeEntrySuccess = createAction(REMOVE_ENTRY_SUCCESS);
+export const removeEntryWithApiSuccess = createAction(
+  REMOVE_ENTRY_WITH_API_SUCCESS
+);
+
 export const addEntry = createAction(ADD_ENTRY, "entry");
 
+// ----- EPICS ----------------------------------------------
+// ----------------------------------------------------------
 export const fetchAllEpic = action$ =>
   action$.ofType(FETCH_ALL_REQUEST).mergeMap(action =>
     fetchAllEntriesApi().then(result => {
@@ -64,7 +81,6 @@ export const initialEntryEpic = action$ =>
 export const setEntryDetailEpic = action$ =>
   action$
     .ofType(SET_ENTRY_INDEX)
-    // .filter(action => !isLocalEntry(action.entryId))
     .map(action => fetchDetailRequest(action.entryIndex, action.entryId));
 
 export const fetchEntryEpic = (action$, store) =>
@@ -92,6 +108,29 @@ export const saveEntryEpic = action$ =>
     .mergeMap(action =>
       saveEntryApi(action.entry).then(() => saveEntrySuccess())
     );
+
+export const removeEntryEpic = (action$, store) =>
+  action$.ofType(REMOVE_ENTRY).mergeMap(action => {
+    const { entryId } = action;
+    if (isLocalEntry(entryId)) {
+      return Promise.resolve(removeEntrySuccess());
+    } else {
+      return removeEntryApi(entryId).then(() => removeEntryWithApiSuccess());
+    }
+  });
+
+export const removeEntrySuccessEpic = (action$, store) =>
+  action$
+    .ofType(REMOVE_ENTRY_SUCCESS)
+    .map(action => setEntryDetail(0, store.getState().entry.entries[0].id));
+
+export const entryListUpdateEpic = action$ =>
+  action$
+    .ofType(REMOVE_ENTRY_WITH_API_SUCCESS, SAVE_ENTRY_SUCCESS)
+    .mapTo(fetchAllEntries());
+
+// ------- REDUCER -----------------------------------------------
+// ----------------------------------------------------------
 
 const initialState = {
   entries: [],
@@ -143,6 +182,16 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         entries: [...state.entries, newEntry]
       };
+    }
+
+    case REMOVE_ENTRY: {
+      if (isLocalEntry(action.entryId)) {
+        return {
+          ...state,
+          entries: state.entries.filter(({ id }) => id != action.entryId)
+        };
+      }
+      return state;
     }
 
     default:

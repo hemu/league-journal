@@ -63,10 +63,13 @@ const EntrySection = ({ title, children }) => (
 );
 
 export default props => {
-  const { removeEntry, saveEntry, formChange, formAdd } = props;
+  const { entryId, removeEntry, saveEntry, formChange, formAdd } = props;
   return (
     <ReactForm model={baseFormModel} onSubmit={saveEntry}>
       <Button type="submit">Save</Button>
+      <Button type="button" onClick={() => removeEntry(entryId)}>
+        Delete
+      </Button>
 
       <EntrySection title={"Game Stats"}>
         <EntryDetailBaseStats formChange={formChange} />

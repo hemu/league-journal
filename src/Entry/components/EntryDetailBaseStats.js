@@ -17,7 +17,7 @@ import "react-day-picker/lib/style.css";
 
 import { formModel } from "../helpers";
 import { rankOptions, outcomeOptions, roleOptions } from "../../staticData";
-import { handleDropdownChange } from "./entryHelpers";
+import { handleDropdownChange } from "../helpers";
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {

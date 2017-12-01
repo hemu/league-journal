@@ -4,7 +4,7 @@ import { champOptions } from "../../staticData";
 import { Grid } from "semantic-ui-react";
 import { Control, actions } from "react-redux-form";
 import { formModel } from "../helpers";
-import { handleDropdownChange } from "./entryHelpers";
+import { handleDropdownChange } from "../helpers";
 
 const ChampionDropdown = ({ model, formChange }) => (
   <Control.select

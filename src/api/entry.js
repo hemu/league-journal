@@ -173,6 +173,14 @@ const saveEntryMutation = gql`
   }
 `;
 
+const deleteEntryMutation = gql`
+  mutation DeleteEntry($id: ID!) {
+    deleteEntry(id: $id) {
+      id
+    }
+  }
+`;
+
 export function fetchAllEntries() {
   return client.query({
     query: allEntriesQuery,
@@ -193,6 +201,15 @@ export function saveEntry(entry) {
     mutation: isLocalEntry(entry.id) ? createEntryMutation : saveEntryMutation,
     variables: {
       ...entry
+    }
+  });
+}
+
+export function removeEntry(entryId) {
+  return client.mutate({
+    mutation: deleteEntryMutation,
+    variables: {
+      id: entryId
     }
   });
 }
