@@ -63,7 +63,14 @@ const EntrySection = ({ title, children }) => (
 );
 
 export default props => {
-  const { entryId, removeEntry, saveEntry, formChange, formAdd } = props;
+  const {
+    entryId,
+    removeEntry,
+    saveEntry,
+    formChange,
+    formAdd,
+    formRemove
+  } = props;
   return (
     <ReactForm model={baseFormModel} onSubmit={saveEntry}>
       <Button type="submit">Save</Button>
@@ -162,6 +169,13 @@ export default props => {
           </Button>
           {props[section.model].map((elem, elemIndex) => (
             <Form.Field key={elemIndex}>
+              <Button
+                type="button"
+                size="mini"
+                onClick={() => formRemove(`.${section.model}`, elemIndex)}
+              >
+                X
+              </Button>
               <Control.text
                 component={Input}
                 size="mini"

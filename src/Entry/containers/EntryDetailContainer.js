@@ -19,7 +19,8 @@ class EntryDetailContainer extends React.Component {
       removeEntry,
       saveEntry,
       formChange,
-      formAdd
+      formAdd,
+      formRemove
     } = this.props;
 
     // if (detailFormLoadStatus === RequestStatus.Request) {
@@ -42,6 +43,7 @@ class EntryDetailContainer extends React.Component {
         saveEntry={saveEntry}
         formChange={formChange}
         formAdd={formAdd}
+        formRemove={formRemove}
       />
     );
   }
@@ -73,6 +75,8 @@ export default connect(
     removeEntry: entryId => dispatch(removeEntry(entryId)),
     saveEntry: entry => dispatch(saveEntry(entry)),
     formChange: formAction => dispatch(formAction),
-    formAdd: model => dispatch(actions.push(formModel(model), ""))
+    formAdd: model => dispatch(actions.push(formModel(model), "")),
+    formRemove: (model, index) =>
+      dispatch(actions.remove(formModel(model), index))
   })
 )(EntryDetailContainer);
