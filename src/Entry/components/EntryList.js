@@ -1,9 +1,10 @@
-import React from "react";
-import { List, Button, Header } from "semantic-ui-react";
-import { isLocalEntry } from "../../helpers";
-import EntryListItem from "./EntryListItem";
+import React from 'react';
+import { List, Button, Header } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import { isLocalEntry } from '../../helpers';
+import EntryListItem from './EntryListItem';
 
-export default ({ entries, onSelectEntry, addEntry }) => (
+const EntryList = ({ entries, onSelectEntry, addEntry }) => (
   <div>
     <Header>Entries</Header>
     <Button type="submit" onClick={addEntry} size="tiny">
@@ -14,7 +15,7 @@ export default ({ entries, onSelectEntry, addEntry }) => (
       onClick={(event, _) => {
         onSelectEntry(
           parseInt(event.target.dataset.entryIndex, 10),
-          event.target.dataset.id
+          event.target.dataset.id,
         );
       }}
     >
@@ -30,3 +31,11 @@ export default ({ entries, onSelectEntry, addEntry }) => (
     </List>
   </div>
 );
+
+EntryList.propTypes = {
+  entries: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onSelectEntry: PropTypes.func.isRequired,
+  addEntry: PropTypes.func.isRequired,
+};
+
+export default EntryList;

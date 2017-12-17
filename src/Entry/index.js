@@ -1,1 +1,1 @@
-export { default as EntriesMain } from "./EntriesMain";
+export { default as EntriesMain } from './components/EntriesMain';

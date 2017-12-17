@@ -1,23 +1,15 @@
-import React from "react";
-import { Control, actions } from "react-redux-form";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Divider,
-  Dropdown,
-  Grid
-} from "semantic-ui-react";
-import styled from "styled-components";
-import moment from "moment";
+import React from 'react';
+import { Control, actions } from 'react-redux-form';
+import { Form, Input, Dropdown, Grid } from 'semantic-ui-react';
+import styled from 'styled-components';
+import moment from 'moment';
+import PropTypes from 'prop-types';
 
-import DayPickerInput from "react-day-picker/DayPickerInput";
-import "react-day-picker/lib/style.css";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
 
-import { formModel } from "../helpers";
-import { rankOptions, outcomeOptions, roleOptions } from "../../staticData";
-import { handleDropdownChange } from "../helpers";
+import { formModel, handleDropdownChange } from '../helpers';
+import { rankOptions, outcomeOptions, roleOptions } from '../../staticData';
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {
@@ -25,7 +17,7 @@ const DatePickerCont = styled.div`
   }
 `;
 
-export default ({ formChange }) => (
+const EntryDetailBaseStats = ({ formChange }) => (
   <Grid columns={5}>
     <Grid.Row>
       <Grid.Column width={3}>
@@ -33,13 +25,13 @@ export default ({ formChange }) => (
           <Control.text
             component={DayPickerInput}
             model=".gameDate"
-            format={"MMM Do"}
+            format="MMM Do"
             mapProps={{
               value: props =>
-                moment(new Date(props.modelValue)).format("MMM Do")
+                moment(new Date(props.modelValue)).format('MMM Do'),
             }}
             onDayChange={day =>
-              formChange(actions.change(formModel(".gameDate"), day.toDate()))}
+              formChange(actions.change(formModel('.gameDate'), day.toDate()))}
           />
         </DatePickerCont>
       </Grid.Column>
@@ -55,7 +47,7 @@ export default ({ formChange }) => (
           selectOnBlur={false}
           mapProps={{
             value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props)
+            onChange: props => handleDropdownChange(props),
           }}
         />
       </Grid.Column>
@@ -69,7 +61,7 @@ export default ({ formChange }) => (
           options={outcomeOptions}
           mapProps={{
             value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props)
+            onChange: props => handleDropdownChange(props),
           }}
         />
       </Grid.Column>
@@ -83,7 +75,7 @@ export default ({ formChange }) => (
           options={roleOptions}
           mapProps={{
             value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props)
+            onChange: props => handleDropdownChange(props),
           }}
         />
       </Grid.Column>
@@ -125,3 +117,8 @@ export default ({ formChange }) => (
     </Grid.Row>
   </Grid>
 );
+
+EntryDetailBaseStats.propTypes = {
+  formChange: PropTypes.func.isRequired,
+};
+export default EntryDetailBaseStats;

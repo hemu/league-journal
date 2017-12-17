@@ -1,4 +1,5 @@
 import champList from "./champList";
+export { default as getRoleImg } from "./role";
 
 export const rankOptions = [
   "Bronze",
