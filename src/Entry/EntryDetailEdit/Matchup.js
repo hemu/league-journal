@@ -21,7 +21,7 @@ const ChampionDropdown = ({ model }) => (
 );
 
 ChampionDropdown.propTypes = {
-  model: PropTypes.shape({}).isRequired,
+  model: PropTypes.string.isRequired,
 };
 
 const Matchup = ({ model1, model2, formChange }) => (
@@ -37,8 +37,8 @@ const Matchup = ({ model1, model2, formChange }) => (
 );
 
 Matchup.propTypes = {
-  model1: PropTypes.shape({}).isRequired,
-  model2: PropTypes.shape({}).isRequired,
+  model1: PropTypes.string.isRequired,
+  model2: PropTypes.string.isRequired,
   formChange: PropTypes.func.isRequired,
 };
 

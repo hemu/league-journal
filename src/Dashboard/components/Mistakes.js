@@ -13,3 +13,5 @@ const Mistakes = ({ mistakes }) => (
 Mistakes.propTypes = {
   mistakes: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
+
+export default Mistakes;

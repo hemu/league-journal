@@ -1,14 +1,23 @@
 import React from 'react';
-// import EntryDetailEdit from "../EntryDetailEdit/EntryDetailEdit";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { actions } from 'react-redux-form';
-import { saveEntry, removeEntry } from '../../modules/entry';
+import EntryDetailEdit from '../EntryDetailEdit/EntryDetailEdit';
+import { LOCAL_ID_PREFIX } from '../../const';
+import {
+  saveEntry,
+  removeEntry,
+  updateMistake,
+  updateLesson,
+  removeMistake,
+  removeLesson,
+} from '../../modules/entry';
 import EntryDetail from '../EntryDetail/EntryDetail';
 import { formModel } from '../helpers';
+import { isLocalId } from '../../helpers';
 
 const EntryDetailContainer = ({
-  id,
+  // id,
   // mistakes,
   // positives,
   // lessons,
@@ -29,7 +38,7 @@ const EntryDetailContainer = ({
   // if (detailFormLoadStatus !== RequestStatus.Success) {
   //   return <div>Choose an Entry</div>;
   // }
-  <EntryDetail
+  <EntryDetailEdit
     {...rest}
     // mistakes={mistakes}
     // positives={positives}
@@ -59,11 +68,28 @@ export default connect(
     ...entry,
   }),
   dispatch => ({
-    removeEntry: entryId => dispatch(removeEntry(entryId)),
+    removeEntry: (entryId, mistakes, lessons) =>
+      dispatch(removeEntry(entryId, mistakes, lessons)),
     saveEntry: entry => dispatch(saveEntry(entry)),
     formChange: formAction => dispatch(formAction),
-    formAdd: model => dispatch(actions.push(formModel(model), '')),
+    formAddString: model => dispatch(actions.push(formModel(model), '')),
+    formAdd: model =>
+      dispatch(actions.push(formModel(model), { id: LOCAL_ID_PREFIX, text: '' })),
     formRemove: (model, index) =>
       dispatch(actions.remove(formModel(model), index)),
+    updateMistake,
+    updateLesson,
+    removeMistake: (id, index) => {
+      dispatch(actions.remove(formModel('.mistakes'), index));
+      if (!isLocalId(id)) {
+        dispatch(removeMistake(id));
+      }
+    },
+    removeLesson: (id, index) => {
+      dispatch(actions.remove(formModel('.lessons'), index));
+      if (!isLocalId(id)) {
+        dispatch(removeLesson(id));
+      }
+    },
   }),
 )(EntryDetailContainer);

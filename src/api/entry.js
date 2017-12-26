@@ -1,6 +1,6 @@
-import client from "../api/client";
-import gql from "graphql-tag";
-import { isLocalEntry } from "../helpers";
+import gql from 'graphql-tag';
+import client from '../api/client';
+import { isLocalEntry, isLocalId } from '../helpers';
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
@@ -39,9 +39,15 @@ const fullEntryFragment = gql`
     csAt10Min
     csAt15Min
     csAt20Min
-    mistakes
+    mistakes {
+      id
+      text
+    }
     positives
-    lessons
+    lessons {
+      id
+      text
+    }
     deathReasons
     roams
     ganks
@@ -77,9 +83,7 @@ const createEntryMutation = gql`
     $csAt10Min: Int
     $csAt15Min: Int
     $csAt20Min: Int
-    $mistakes: [String!]
     $positives: [String!]
-    $lessons: [String!]
     $deathReasons: [String!]
     $roams: [String!]
     $csReasons: [String!]
@@ -102,9 +106,7 @@ const createEntryMutation = gql`
       csAt10Min: $csAt10Min
       csAt15Min: $csAt15Min
       csAt20Min: $csAt20Min
-      mistakes: $mistakes
       positives: $positives
-      lessons: $lessons
       deathReasons: $deathReasons
       roams: $roams
       csReasons: $csReasons
@@ -134,9 +136,9 @@ const saveEntryMutation = gql`
     $csAt10Min: Int
     $csAt15Min: Int
     $csAt20Min: Int
-    $mistakes: [String!]
+    # $mistakes: [String!]
+    # $lessons: [String!]
     $positives: [String!]
-    $lessons: [String!]
     $deathReasons: [String!]
     $roams: [String!]
     $csReasons: [String!]
@@ -160,9 +162,9 @@ const saveEntryMutation = gql`
       csAt10Min: $csAt10Min
       csAt15Min: $csAt15Min
       csAt20Min: $csAt20Min
-      mistakes: $mistakes
+      # mistakes: $mistakes
+      # lessons: $lessons
       positives: $positives
-      lessons: $lessons
       deathReasons: $deathReasons
       roams: $roams
       csReasons: $csReasons
@@ -181,35 +183,182 @@ const deleteEntryMutation = gql`
   }
 `;
 
+const updateMistakeMutation = gql`
+  mutation UpdateMistake($id: ID!, $text: String!) {
+    updateMistake(id: $id, text: $text) {
+      id
+      text
+    }
+  }
+`;
+
+const deleteMistakeMutation = gql`
+  mutation DeleteMistake($id: ID!) {
+    deleteMistake(id: $id) {
+      id
+    }
+  }
+`;
+
+const updateLessonMutation = gql`
+  mutation UpdateLesson($id: ID!, $text: String!) {
+    updateLesson(id: $id, text: $text) {
+      id
+      text
+    }
+  }
+`;
+
+const deleteLessonMutation = gql`
+  mutation DeleteLesson($id: ID!) {
+    deleteLesson(id: $id) {
+      id
+    }
+  }
+`;
+
+const createMistakeMutation = gql`
+  mutation CreateMistake($entryId: ID!, $text: String!, $marked: Boolean!) {
+    createMistake(entryId: $entryId, text: $text, marked: $marked) {
+      id
+    }
+  }
+`;
+
+const createLessonMutation = gql`
+  mutation CreateLesson($entryId: ID!, $text: String!, $marked: Boolean!) {
+    createLesson(entryId: $entryId, text: $text, marked: $marked) {
+      id
+    }
+  }
+`;
+
 export function fetchAllEntries() {
   return client.query({
     query: allEntriesQuery,
-    fetchPolicy: "network-only"
+    fetchPolicy: 'network-only',
   });
 }
 
 export function fetchDetailEntry(entryId) {
   return client.query({
     query: entryDetailQuery,
-    variables: { entryId: entryId },
-    fetchPolicy: "network-only"
+    variables: { entryId },
+    fetchPolicy: 'network-only',
   });
+}
+
+function updateMistakesAndLessons(mistakes, lessons, entryId) {
+  mistakes
+    .filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '')
+    .forEach(mistake =>
+      client.mutate({
+        mutation: createMistakeMutation,
+        variables: {
+          entryId,
+          text: mistake.text,
+          marked: false,
+        },
+      }));
+  lessons
+    .filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '')
+    .forEach(lesson =>
+      client.mutate({
+        mutation: createLessonMutation,
+        variables: {
+          entryId,
+          text: lesson.text,
+          marked: false,
+        },
+      }));
 }
 
 export function saveEntry(entry) {
+  const { lessons, mistakes, ...filteredEntry } = entry;
+  console.log('Saving Entry -------');
+  console.log(lessons);
+  console.log(mistakes);
+
+  if (isLocalEntry(entry.id)) {
+    return client
+      .mutate({
+        mutation: createEntryMutation,
+        variables: {
+          ...filteredEntry,
+        },
+      })
+      .then((result) => {
+        if (result.data) {
+          const { data: { createEntry: { id: entryId } } } = result;
+          console.log(`updating mistakes and lessons with entryId: ${entryId}`);
+          return updateMistakesAndLessons(mistakes, lessons, entryId);
+        }
+      });
+  }
+  updateMistakesAndLessons(mistakes, lessons, entry.id);
   return client.mutate({
-    mutation: isLocalEntry(entry.id) ? createEntryMutation : saveEntryMutation,
+    mutation: saveEntryMutation,
     variables: {
-      ...entry
-    }
+      ...filteredEntry,
+    },
   });
 }
 
-export function removeEntry(entryId) {
+export function updateMistake(id, text) {
+  console.log(`Updating mistake ${id} ${text}`);
+  // return Promise.resolve('updating mistake stub.......');
+  return client.mutate({
+    mutation: updateMistakeMutation,
+    variables: {
+      id,
+      text,
+    },
+  });
+}
+
+export function removeMistake(id) {
+  console.log(`Removing mistake ${id}`);
+  return client.mutate({
+    mutation: deleteMistakeMutation,
+    variables: {
+      id,
+    },
+  });
+}
+
+export function updateLesson(id, text) {
+  console.log(`Updating lesson ${id} ${text}`);
+  // return Promise.resolve('updating mistake stub.......');
+  return client.mutate({
+    mutation: updateLessonMutation,
+    variables: {
+      id,
+      text,
+    },
+  });
+}
+
+export function removeLesson(id) {
+  console.log(`Removing lesson ${id}`);
+  return client.mutate({
+    mutation: deleteLessonMutation,
+    variables: {
+      id,
+    },
+  });
+}
+
+export function removeEntry(entryId, mistakes, lessons) {
+  mistakes
+    .filter(mistake => !isLocalId(mistake.id))
+    .forEach(mistake => removeMistake(mistake.id));
+  lessons
+    .filter(lesson => !isLocalId(lesson.id))
+    .forEach(lesson => removeLesson(lesson.id));
   return client.mutate({
     mutation: deleteEntryMutation,
     variables: {
-      id: entryId
-    }
+      id: entryId,
+    },
   });
 }

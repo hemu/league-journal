@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
-import { formModel, handleDropdownChange } from '../helpers';
+import { formModel, handleDropdownChange, toNumParser } from '../helpers';
 import { rankOptions, outcomeOptions, roleOptions } from '../../staticData';
 
 const DatePickerCont = styled.div`
@@ -86,6 +86,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
           <label>Kills</label>
           <Control.text
             component={Input}
+            type="number"
+            parser={toNumParser}
             size="mini"
             model=".kills"
             updateOn="blur"
@@ -97,6 +99,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
           <label>Deaths</label>
           <Control.text
             component={Input}
+            type="number"
+            parser={toNumParser}
             size="mini"
             model=".deaths"
             updateOn="blur"
@@ -108,6 +112,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
           <label>Assists</label>
           <Control.text
             component={Input}
+            type="number"
+            parser={toNumParser}
             size="mini"
             model=".assists"
             updateOn="blur"
