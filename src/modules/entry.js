@@ -49,6 +49,8 @@ const DEBUG_ACTION = 'entries/DEBUG_ACTION';
 
 const ADD_ENTRY = 'entries/ADD_ENTRY';
 
+const SET_EDIT_MODE = 'entries/SET_EDIT_MODE';
+
 // ----- ACTION CREATORS -------------------------------
 // ----------------------------------------------------------
 export const fetchAllEntries = createAction(FETCH_ALL_REQUEST);
@@ -91,6 +93,8 @@ const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 const debugAction = createAction(DEBUG_ACTION, 'msg');
 
 export const addEntry = createAction(ADD_ENTRY, 'entry');
+
+export const setEditMode = createAction(SET_EDIT_MODE, 'editMode');
 
 // ----- EPICS ----------------------------------------------
 // ----------------------------------------------------------
@@ -189,6 +193,7 @@ const initialState = {
   fetchAllStatus: RequestStatus.None,
   fetchEntryStatus: RequestStatus.None,
   entryIndex: 0,
+  editMode: false,
 };
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -246,107 +251,14 @@ export default function reducer(state = initialState, action = {}) {
       return state;
     }
 
+    case SET_EDIT_MODE: {
+      return {
+        ...state,
+        editMode: action.editMode,
+      };
+    }
+
     default:
       return state;
   }
 }
-
-// const entriesLogic = kea({
-//   actions: ({ constants }) => ({
-//     fetchAllRequest: () => {},
-//     fetchAllSuccess: result => result,
-//     fetchAllError: error => error,
-//     fetchDetailRequest: entryId => entryId,
-//     fetchDetailSuccess: result => result,
-//     fetchDetailError: error => error,
-//     setEntryIndex: index => index
-//   }),
-//
-//   thunks: ({ actions, get, fetch, dispatch, getState }) => ({
-//     fetchEntries: async () => {
-//       actions.fetchAllRequest();
-//       const { data: { allEntries } } = await fetchAllEntries();
-//       actions.fetchAllSuccess(allEntries);
-//     },
-//     fetchEntryDetail: async entryId => {
-//       const results = await fetchDetailEntry(entryId);
-//       const { data: { Entry: fetchedEntry } } = results;
-//       actions.fetchDetailSuccess({
-//         ...fetchedEntry,
-//         gameDate: new Date(fetchedEntry.gameDate)
-//       });
-//     },
-//     setEntryDetail: async entryIndex => {
-//       const entriesState = fetch("entries").entries;
-//       const entries = entriesState.entries;
-//       if (entries && entryIndex < entries.length) {
-//         actions.setEntryIndex(entryIndex);
-//         const entry = entries[entryIndex];
-//         const entryId = entry.id;
-//         actions.fetchDetailRequest(entryId);
-//         if (isLocalEntry(entryId)) {
-//           actions.fetchDetailSuccess({
-//             id: entryId,
-//             gameDate: new Date()
-//           });
-//         } else {
-//           actions.fetchEntryDetail(entryId);
-//         }
-//       }
-//     }
-//   }),
-//   reducers: ({ actions, constants }) => ({
-//     entries: [
-//       {
-//         entries: [],
-//         fetchAllStatus: RequestStatus.None,
-//         fetchDetailStatus: RequestStatus.None,
-//         detailEntryId: "",
-//         selectedEntryIndex: 0
-//       },
-//       PropTypes.object,
-//       {
-//         [actions.fetchAllRequest]: (state, payload) => {
-//           return {
-//             ...state,
-//             fetchAllStatus: RequestStatus.Request
-//           };
-//         },
-//         [actions.fetchAllSuccess]: (state, payload) => {
-//           return {
-//             ...state,
-//             entries: payload,
-//             fetchAllStatus: RequestStatus.Success
-//           };
-//         },
-//         [actions.fetchDetailRequest]: (state, payload) => {
-//           return {
-//             ...state,
-//             fetchDetailStatus: RequestStatus.Request,
-//             detailEntryId: payload
-//           };
-//         },
-//         [actions.fetchDetailSuccess]: (state, payload) => {
-//           return {
-//             ...state,
-//             entries: state.entries.map(entry => {
-//               if (entry.id === state.detailEntryId) {
-//                 return payload;
-//               }
-//               return entry;
-//             }),
-//             fetchDetailStatus: RequestStatus.Success
-//           };
-//         },
-//         [actions.setEntryIndex]: (state, payload) => {
-//           return {
-//             ...state,
-//             selectedEntryIndex: payload
-//           };
-//         }
-//       }
-//     ]
-//   })
-// });
-
-// export default entriesLogic;

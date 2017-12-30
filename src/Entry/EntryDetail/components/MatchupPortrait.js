@@ -35,9 +35,9 @@ function champBorder(outcome, isOpponent) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 0.3fr 0.81fr;
   text-align: center;
-  min-width: 320px;
+  ${''};
 `;
 
 // const LaneImage = styled(Image)`
@@ -50,7 +50,7 @@ const ChampImage = styled.div`
   &&& {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     img {
       border: ${props => champInnerBorder(props.outcome, false)};
       box-shadow: ${props => champBorder(props.outcome, false)};
@@ -65,7 +65,7 @@ const OpponentImage = styled(ChampImage)`
   &&& {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     img {
       border: ${props => champInnerBorder(props.outcome, true)};
       box-shadow: ${props => champBorder(props.outcome, true)};
@@ -75,7 +75,7 @@ const OpponentImage = styled(ChampImage)`
 
 const SeparatorContainer = styled.div`
   display: grid;
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 `;
 
 const ChampSeparator = styled.hr`
@@ -88,10 +88,16 @@ const ChampSeparator = styled.hr`
     background: url(${props => props.icon}) no-repeat top center;
     content: '';
     display: block;
-    height: 50px; /* height of the ornament */
+    height: 24px; /* height of the ornament */
     position: relative;
-    top: -25px; /* half the height of the ornament */
+    top: -12px; /* half the height of the ornament */
   }
+`;
+
+const RoleImg = styled(Image)`
+  height: 35px;
+  grid-row-start: 2;
+  margin: 0 auto;
 `;
 
 const MatchupPortrait = ({
@@ -105,7 +111,8 @@ const MatchupPortrait = ({
         <Image src={champImg} height={110} circular />
       </ChampImage>
       <SeparatorContainer>
-        <ChampSeparator rowPos={1} icon={getRoleImg(role)} outcome={outcome} />
+        <RoleImg src={getRoleImg(role)} />
+        {/* <ChampSeparator rowPos={1} icon={getRoleImg(role)} outcome={outcome} /> */}
       </SeparatorContainer>
       <OpponentImage outcome={outcome}>
         <Image src={opponentImg} height={75} circular />

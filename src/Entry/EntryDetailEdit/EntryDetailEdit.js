@@ -27,11 +27,6 @@ const multiElemSections = [
     placeholder: 'I missed CS because...',
   },
   {
-    model: 'roams',
-    title: 'Roams',
-    placeholder: 'First roam was good/bad because...',
-  },
-  {
     model: 'positives',
     title: 'Positives',
     placeholder: 'I did this well...',
@@ -58,6 +53,7 @@ const EntryDetailEdit = (props) => {
     updateLesson,
     removeMistake,
     removeLesson,
+    setEditMode,
   } = props;
 
   function changeMistake(model, id, value) {
@@ -77,6 +73,9 @@ const EntryDetailEdit = (props) => {
   return (
     <ReactForm model={baseFormModel} onSubmit={saveEntry}>
       <Button type="submit">Save</Button>
+      <Button type="button" onClick={() => setEditMode(false)}>
+        Done
+      </Button>
       <Button
         type="button"
         onClick={() => removeEntry(entryId, props.mistakes, props.lessons)}

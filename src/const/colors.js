@@ -1,11 +1,12 @@
-export const black = "#222";
-export const gray = "#CCCCCC";
-export const red = "#FF6190";
-export const white = "#FFFFFF";
-export const green = "#6fcf97";
+export const black = '#222';
+export const gray = '#CCCCCC';
+export const red = '#FF6190';
+export const white = '#FFFFFF';
+export const green = '#6fcf97';
+export const grayBlue = '#38474F';
 
 export const entryColors = {
-  loss: red,
+  loss: gray,
   win: green,
-  neutral: gray
+  neutral: gray,
 };

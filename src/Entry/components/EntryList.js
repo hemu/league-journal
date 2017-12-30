@@ -1,11 +1,16 @@
 import React from 'react';
 import { List, Button, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { isLocalEntry } from '../../helpers';
 import EntryListItem from './EntryListItem';
 
+const MainCont = styled.div`
+  padding: 20px;
+`;
+
 const EntryList = ({ entries, onSelectEntry, addEntry }) => (
-  <div>
+  <MainCont>
     <Header>Entries</Header>
     <Button type="submit" onClick={addEntry} size="tiny">
       New Entry
@@ -29,7 +34,7 @@ const EntryList = ({ entries, onSelectEntry, addEntry }) => (
         />
       ))}
     </List>
-  </div>
+  </MainCont>
 );
 
 EntryList.propTypes = {

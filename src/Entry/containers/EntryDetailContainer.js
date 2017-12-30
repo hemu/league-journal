@@ -11,26 +11,28 @@ import {
   updateLesson,
   removeMistake,
   removeLesson,
+  setEditMode,
 } from '../../modules/entry';
 import EntryDetail from '../EntryDetail/EntryDetail';
 import { formModel } from '../helpers';
 import { isLocalId } from '../../helpers';
 
-const EntryDetailContainer = ({
-  // id,
-  // mistakes,
-  // positives,
-  // lessons,
-  // deathReasons,
-  // csReasons,
-  // roams,
-  removeEntry: _removeEntry,
-  saveEntry: _saveEntry,
-  formChange,
-  formAdd,
-  formRemove,
-  ...rest
-}) => (
+// const EntryDetailContainer = ({
+// id,
+// mistakes,
+// positives,
+// lessons,
+// deathReasons,
+// csReasons,
+// roams,
+// removeEntry: _removeEntry,
+// saveEntry: _saveEntry,
+// formChange,
+// formAdd,
+// formRemove,
+// ...rest
+// }) => (
+const EntryDetailContainer = props =>
   // if (detailFormLoadStatus === RequestStatus.Request) {
   //   return <div>Fetching entry details...</div>;
   // }
@@ -38,21 +40,28 @@ const EntryDetailContainer = ({
   // if (detailFormLoadStatus !== RequestStatus.Success) {
   //   return <div>Choose an Entry</div>;
   // }
-  <EntryDetailEdit
-    {...rest}
-    // mistakes={mistakes}
-    // positives={positives}
-    // lessons={lessons}
-    // deathReasons={deathReasons}
-    // csReasons={csReasons}
-    // roams={roams}
-    removeEntry={_removeEntry}
-    saveEntry={_saveEntry}
-    formChange={formChange}
-    formAdd={formAdd}
-    formRemove={formRemove}
-  />
-);
+  (props.editMode ? (
+    <EntryDetailEdit
+      // {...rest}
+      // removeEntry={_removeEntry}
+      // saveEntry={_saveEntry}
+      // formChange={formChange}
+      // formAdd={formAdd}
+      // formRemove={formRemove}
+      {...props}
+    />
+  ) : (
+    <EntryDetail
+      // id={id}
+      // mistakes={mistakes}
+      // lessons={lessons}
+      // positives={positives}
+      // deathReasons={deathReasons}
+      // csReasons={csReasons}
+      // roams={roams}
+      {...props}
+    />
+  ));
 
 EntryDetailContainer.propTypes = {
   id: PropTypes.string.isRequired,
@@ -61,11 +70,13 @@ EntryDetailContainer.propTypes = {
   formChange: PropTypes.func.isRequired,
   formAdd: PropTypes.func.isRequired,
   formRemove: PropTypes.func.isRequired,
+  editMode: PropTypes.bool.isRequired,
 };
 
 export default connect(
-  ({ forms: { entry } }) => ({
+  ({ forms: { entry }, entry: { editMode } }) => ({
     ...entry,
+    editMode,
   }),
   dispatch => ({
     removeEntry: (entryId, mistakes, lessons) =>
@@ -91,5 +102,6 @@ export default connect(
         dispatch(removeLesson(id));
       }
     },
+    setEditMode: isEditMode => dispatch(setEditMode(isEditMode)),
   }),
 )(EntryDetailContainer);

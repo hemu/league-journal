@@ -12,15 +12,17 @@ function outcomeColor(outcome) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 100px auto 100px;
-  height: 110px;
+  grid-template-columns: 95px 310px 90px;
+  width: 485px;
+  height: 150px;
+  margin: 0 auto;
   font-family: 'Roboto', sans-serif;
 `;
 
 const OutcomeCont = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
 `;
 
 const OutcomeText = styled.div`
@@ -47,17 +49,13 @@ const KDAText = styled(HeaderText)`
   font-size: 25px;
   font-weight: bold;
   font-style: italic;
+  align-self: end;
+  padding-bottom: 5px;
 `;
 
 const DeathText = styled.span`
   ${''};
 `;
-
-// const RightContainer = styled.div`
-//   height: 100%;
-//   padding: 35px 0;
-//   text-align: center;
-// `;
 
 const Header = ({
   kills,

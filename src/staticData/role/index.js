@@ -1,20 +1,20 @@
-import topIcon from "./top_small.png";
-import jgIcon from "./jungle_small.png";
-import midIcon from "./mid_small.png";
-import botIcon from "./bot_small.png";
-import supIcon from "./support_small.png";
+import topIcon from './new/top.png';
+import jgIcon from './new/jungle.png';
+import midIcon from './new/mid.png';
+import botIcon from './new/bottom.png';
+import supIcon from './new/support.png';
 
 export default function getRoleImg(lane) {
   switch (lane) {
-    case "Top":
+    case 'Top':
       return topIcon;
-    case "Jungle":
+    case 'Jungle':
       return jgIcon;
-    case "Mid":
+    case 'Mid':
       return midIcon;
-    case "Support":
+    case 'Support':
       return supIcon;
-    case "Bottom":
+    case 'Bottom':
       return botIcon;
     default:
       return midIcon;
