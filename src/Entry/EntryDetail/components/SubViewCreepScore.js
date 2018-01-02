@@ -1,6 +1,12 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import styled from 'styled-components';
 import ViewList from './SubViewList';
+
+const GridCont = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
 
 const CreepScoreView = ({
   csReasons,
@@ -50,7 +56,7 @@ const CreepScoreView = ({
   };
   const options = {
     title: {
-      display: true,
+      display: false,
       text: 'Early Game CS',
     },
     legend: {
@@ -89,10 +95,12 @@ const CreepScoreView = ({
   };
 
   return (
-    <div>
+    <GridCont>
       <ViewList items={csReasons} />
-      <Line data={data} options={options} />
-    </div>
+      <div>
+        <Line data={data} options={options} />
+      </div>
+    </GridCont>
   );
 };
 

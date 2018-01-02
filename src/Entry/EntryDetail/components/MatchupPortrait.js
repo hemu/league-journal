@@ -78,21 +78,21 @@ const SeparatorContainer = styled.div`
   grid-template-rows: repeat(3, 1fr);
 `;
 
-const ChampSeparator = styled.hr`
-  border: 3px solid ${props => separatorColor(props.outcome)};
-  width: 100%;
-  margin-left: -2px;
-  margin-right: -2px;
-  grid-row-start: 3;
-  ${''} &:after {
-    background: url(${props => props.icon}) no-repeat top center;
-    content: '';
-    display: block;
-    height: 24px; /* height of the ornament */
-    position: relative;
-    top: -12px; /* half the height of the ornament */
-  }
-`;
+// const ChampSeparator = styled.hr`
+//   border: 3px solid ${props => separatorColor(props.outcome)};
+//   width: 100%;
+//   margin-left: -2px;
+//   margin-right: -2px;
+//   grid-row-start: 3;
+//   ${''} &:after {
+//     background: url(${props => props.icon}) no-repeat top center;
+//     content: '';
+//     display: block;
+//     height: 24px; /* height of the ornament */
+//     position: relative;
+//     top: -12px; /* half the height of the ornament */
+//   }
+// `;
 
 const RoleImg = styled(Image)`
   height: 35px;

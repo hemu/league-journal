@@ -1,20 +1,29 @@
 import React from 'react';
-import { Grid, Image } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 import EntryDetailContainer from '../containers/EntryDetailContainer';
 import EntryListContainer from '../containers/EntryListContainer';
 import RecentGames from './RecentGamesList';
 
+const MainCont = styled.div`
+  display: grid;
+  grid-template-columns: 280px auto;
+`;
+
 export default () => (
-  <Grid columns={2} divided padded="horizontally">
-    {/* <Grid.Column width={3}>
-            <RecentGames />
-          </Grid.Column> */}
-    <Grid.Column width={4}>
-      <EntryListContainer />
-    </Grid.Column>
-    <Grid.Column width={12}>
-      <EntryDetailContainer />
-    </Grid.Column>
-  </Grid>
+  <MainCont>
+    <EntryListContainer />
+    <EntryDetailContainer />
+  </MainCont>
+  // <Grid columns={2} divided padded="horizontally" stackable={false}>
+  //   {/* <Grid.Column width={3}>
+  //           <RecentGames />
+  //         </Grid.Column> */}
+  //   <SideBar width={4}>
+  //     <EntryListContainer />
+  //   </SideBar>
+  //   <Grid.Column width={12}>
+  //     <EntryDetailContainer />
+  //   </Grid.Column>
+  // </Grid>
 );

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import CreepScoreView from './components/SubViewCreepScore';
 import ListView from './components/SubViewList';
 import Header from './components/Header';
+import MarkableList from './components/MarkableList';
 
 const MainCont = styled.div`
   padding: 20px;
@@ -11,6 +12,26 @@ const MainCont = styled.div`
 
 const MainCard = styled(Card)`
   height: 100%;
+  &&& {
+    border-radius: 0;
+  }
+`;
+
+const CardHeader = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  padding: 20px 20px 5px;
+`;
+
+const CardContentList = styled.div`
+  &&& {
+    padding: 10px 20px;
+    border-top: none;
+  }
+`;
+
+const SecondaryCont = styled.div`
+  margin-top: 20px;
 `;
 
 const EditBtn = styled(Button)`
@@ -47,57 +68,65 @@ class EntryDetail extends React.Component {
         <Header {...props} />
         <Grid stackable columns={2}>
           <Grid.Column>
-            <MainCard rasied fluid>
-              <Card.Header>Mistakes</Card.Header>
-              <ul>{props.mistakes.map(mistake => <li>{mistake.text}</li>)}</ul>
+            <MainCard raised fluid>
+              <CardHeader>Mistakes</CardHeader>
+              <CardContentList>
+                <MarkableList items={props.mistakes} />
+              </CardContentList>
             </MainCard>
           </Grid.Column>
           <Grid.Column>
-            <MainCard rasied fluid>
-              <Card.Header>Lessons</Card.Header>
-              <ul>{props.lessons.map(lesson => <li>{lesson.text}</li>)}</ul>
+            <MainCard raised fluid>
+              <CardHeader>Lessons</CardHeader>
+              <CardContentList>
+                <MarkableList items={props.lessons} />
+              </CardContentList>
             </MainCard>
           </Grid.Column>
         </Grid>
-        <Accordion fluid styled exclusive={false}>
-          <Accordion.Title
-            active={this.state.activeIndex.includes(0)}
-            onClick={this.handleAccordionClick}
-            index={0}
-          >
-            <Icon name="dropdown" />Creep Score
-          </Accordion.Title>
-          <Accordion.Content active={this.state.activeIndex.includes(0)}>
-            <CreepScoreView
-              csReasons={props.csReasons}
-              csPerMin={props.csPerMin}
-              csAt5Min={props.csAt5Min}
-              csAt10Min={props.csAt10Min}
-              csAt15Min={props.csAt15Min}
-              csAt20Min={props.csAt20Min}
-            />
-          </Accordion.Content>
-          <Accordion.Title
-            active={this.state.activeIndex.includes(1)}
-            onClick={this.handleAccordionClick}
-            index={1}
-          >
-            <Icon name="dropdown" />Death Reasons
-          </Accordion.Title>
-          <Accordion.Content active={this.state.activeIndex.includes(1)}>
-            <ListView items={props.deathReasons} />
-          </Accordion.Content>
-          <Accordion.Title
-            active={this.state.activeIndex.includes(2)}
-            onClick={this.handleAccordionClick}
-            index={2}
-          >
-            <Icon name="dropdown" />Positives
-          </Accordion.Title>
-          <Accordion.Content active={this.state.activeIndex.includes(2)}>
-            <ListView items={props.positives} />
-          </Accordion.Content>
-        </Accordion>
+        <SecondaryCont>
+          <Card fluid raised>
+            <Accordion fluid styled exclusive={false}>
+              <Accordion.Title
+                active={this.state.activeIndex.includes(0)}
+                onClick={this.handleAccordionClick}
+                index={0}
+              >
+                <Icon name="dropdown" />Creep Score
+              </Accordion.Title>
+              <Accordion.Content active={this.state.activeIndex.includes(0)}>
+                <CreepScoreView
+                  csReasons={props.csReasons}
+                  csPerMin={props.csPerMin}
+                  csAt5Min={props.csAt5Min}
+                  csAt10Min={props.csAt10Min}
+                  csAt15Min={props.csAt15Min}
+                  csAt20Min={props.csAt20Min}
+                />
+              </Accordion.Content>
+              <Accordion.Title
+                active={this.state.activeIndex.includes(1)}
+                onClick={this.handleAccordionClick}
+                index={1}
+              >
+                <Icon name="dropdown" />Death Reasons
+              </Accordion.Title>
+              <Accordion.Content active={this.state.activeIndex.includes(1)}>
+                <ListView items={props.deathReasons} />
+              </Accordion.Content>
+              <Accordion.Title
+                active={this.state.activeIndex.includes(2)}
+                onClick={this.handleAccordionClick}
+                index={2}
+              >
+                <Icon name="dropdown" />Positives
+              </Accordion.Title>
+              <Accordion.Content active={this.state.activeIndex.includes(2)}>
+                <ListView items={props.positives} />
+              </Accordion.Content>
+            </Accordion>
+          </Card>
+        </SecondaryCont>
       </MainCont>
     );
   }

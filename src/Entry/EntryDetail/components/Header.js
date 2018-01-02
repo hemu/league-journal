@@ -15,7 +15,7 @@ const Container = styled.div`
   grid-template-columns: 95px 310px 90px;
   width: 485px;
   height: 150px;
-  margin: 0 auto;
+  margin: 0 auto 15px auto;
   font-family: 'Roboto', sans-serif;
 `;
 
