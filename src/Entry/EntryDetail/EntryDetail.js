@@ -71,7 +71,7 @@ class EntryDetail extends React.Component {
             <MainCard raised fluid>
               <CardHeader>Mistakes</CardHeader>
               <CardContentList>
-                <MarkableList items={props.mistakes} />
+                <MarkableList items={props.mistakes} onMark={props.onMark} />
               </CardContentList>
             </MainCard>
           </Grid.Column>
@@ -79,7 +79,7 @@ class EntryDetail extends React.Component {
             <MainCard raised fluid>
               <CardHeader>Lessons</CardHeader>
               <CardContentList>
-                <MarkableList items={props.lessons} />
+                <MarkableList items={props.lessons} onMark={props.onMark} />
               </CardContentList>
             </MainCard>
           </Grid.Column>

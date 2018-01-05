@@ -21,22 +21,28 @@ const StarCont = styled.div`
 
 const MarkedIcon = styled(Icon)`
   color: ${entryColors.orange};
+  cursor: pointer;
 `;
 
 const UnmarkedIcon = styled(Icon)`
   color: #ddd;
+  cursor: pointer;
 `;
 
-const Star = ({ marked }) =>
-  (marked ? <MarkedIcon name="star" /> : <UnmarkedIcon name="empty star" />);
+const Star = ({ marked, onClick }) =>
+  (marked ? (
+    <MarkedIcon name="star" onClick={onClick} />
+  ) : (
+    <UnmarkedIcon name="empty star" onClick={onClick} />
+  ));
 
-const MarkableList = ({ items }) => (
+const MarkableList = ({ items, onMark }) => (
   <StyledList>
     {items.map(item => (
       <ListItem>
         <div>{item.text}</div>
         <StarCont>
-          <Star />
+          <Star onClick={() => onMark(item)} />
         </StarCont>
       </ListItem>
     ))}
