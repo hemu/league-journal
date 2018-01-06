@@ -42,7 +42,10 @@ const MarkableList = ({ items, onMark }) => (
       <ListItem>
         <div>{item.text}</div>
         <StarCont>
-          <Star onClick={() => onMark(item)} />
+          <Star
+            marked={item.marked}
+            onClick={() => onMark(item.id, !item.marked)}
+          />
         </StarCont>
       </ListItem>
     ))}

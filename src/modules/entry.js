@@ -23,7 +23,7 @@ const FETCH_DETAIL_REQUEST = 'entries/FETCH_DETAIL_REQUEST';
 const FETCH_DETAIL_SUCCESS = 'entries/FETCH_DETAIL_SUCCESS';
 const FETCH_DETAIL_ERROR = 'entries/FETCH_DETAIL_ERROR';
 
-const SET_ENTRY_INDEX = 'entries/SET_ENTRY_INDEX';
+const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL';
 const SET_INIT_ENTRY_FIELDS = 'entries/SET_INIT_ENTRY_FIELDS';
 
 const SAVE_ENTRY = 'entries/SAVE_ENTRY';
@@ -61,11 +61,7 @@ export const fetchDetailRequest = createAction(
   'entryId',
 );
 export const fetchDetailSuccess = createAction(FETCH_DETAIL_SUCCESS, 'entry');
-export const setEntryDetail = createAction(
-  SET_ENTRY_INDEX,
-  'entryIndex',
-  'entryId',
-);
+export const setEntryDetailId = createAction(SET_ENTRY_DETAIL_ID, 'entryId');
 export const saveEntry = createAction(SAVE_ENTRY, 'entry');
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
 
@@ -105,16 +101,16 @@ export const fetchAllEpic = action$ =>
       return fetchAllSuccess(allEntries);
     }));
 
-export const initialEntryEpic = action$ =>
-  action$
-    .ofType(FETCH_ALL_SUCCESS)
-    .mergeMap(action =>
-      Promise.resolve(setEntryDetail(0, action.entries[0].id)));
+// export const initialEntryEpic = action$ =>
+//   action$
+//     .ofType(FETCH_ALL_SUCCESS)
+//     .mergeMap(action =>
+//       Promise.resolve(setEntryDetail(0, action.entries[0].id)));
 
-export const setEntryDetailEpic = action$ =>
-  action$
-    .ofType(SET_ENTRY_INDEX)
-    .map(action => fetchDetailRequest(action.entryIndex, action.entryId));
+// export const setEntryDetailEpic = action$ =>
+//   action$
+//     .ofType(SET_ENTRY_INDEX)
+//     .map(action => fetchDetailRequest(action.entryIndex, action.entryId));
 
 export const fetchEntryEpic = (action$, store) =>
   action$.ofType(FETCH_DETAIL_REQUEST).mergeMap((action) => {
@@ -150,10 +146,10 @@ export const removeEntryEpic = action$ =>
       removeEntryWithApiSuccess());
   });
 
-export const removeEntrySuccessEpic = (action$, store) =>
-  action$
-    .ofType(REMOVE_ENTRY_SUCCESS)
-    .map(action => setEntryDetail(0, store.getState().entry.entries[0].id));
+// export const removeEntrySuccessEpic = (action$, store) =>
+//   action$
+//     .ofType(REMOVE_ENTRY_SUCCESS)
+//     .map(action => setEntryDetail(0, store.getState().entry.entries[0].id));
 
 export const entryListUpdateEpic = action$ =>
   action$
@@ -193,6 +189,7 @@ const initialState = {
   fetchAllStatus: RequestStatus.None,
   fetchEntryStatus: RequestStatus.None,
   entryIndex: 0,
+  entryDetailId: '',
   editMode: false,
 };
 export default function reducer(state = initialState, action = {}) {
@@ -208,10 +205,10 @@ export default function reducer(state = initialState, action = {}) {
         entries: action.entries,
         fetchAllStatus: RequestStatus.Success,
       };
-    case SET_ENTRY_INDEX:
+    case SET_ENTRY_DETAIL_ID:
       return {
         ...state,
-        entryIndex: action.entryIndex,
+        entryDetailId: action.entryId,
       };
     case FETCH_DETAIL_REQUEST:
       return {

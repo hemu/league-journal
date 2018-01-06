@@ -113,14 +113,14 @@ const EntryListItem = ({
       entry={entry}
       active
       entryIndex={entryIndex}
-      onSelect={() => onSelect(entryIndex, entry.id)}
+      onSelect={() => onSelect(entry.id)}
     />
   ) : (
     <ListItem
       entry={entry}
       active
       entryIndex={entryIndex}
-      onSelect={() => onSelect(entryIndex, entry.id)}
+      onSelect={() => onSelect(entry.id)}
     />
   ));
 

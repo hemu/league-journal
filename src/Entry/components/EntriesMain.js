@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import EntryDetailContainer from '../containers/EntryDetailContainer';
+import EntryDetailSwitch from '../containers/EntryDetailSwitch';
 import EntryListContainer from '../containers/EntryListContainer';
-import RecentGames from './RecentGamesList';
+// import RecentGames from './RecentGamesList';
 
 const MainCont = styled.div`
   display: grid;
@@ -13,17 +13,6 @@ const MainCont = styled.div`
 export default () => (
   <MainCont>
     <EntryListContainer />
-    <EntryDetailContainer />
+    <EntryDetailSwitch />
   </MainCont>
-  // <Grid columns={2} divided padded="horizontally" stackable={false}>
-  //   {/* <Grid.Column width={3}>
-  //           <RecentGames />
-  //         </Grid.Column> */}
-  //   <SideBar width={4}>
-  //     <EntryListContainer />
-  //   </SideBar>
-  //   <Grid.Column width={12}>
-  //     <EntryDetailContainer />
-  //   </Grid.Column>
-  // </Grid>
 );

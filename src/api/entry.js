@@ -42,11 +42,13 @@ const fullEntryFragment = gql`
     mistakes {
       id
       text
+      marked
     }
     positives
     lessons {
       id
       text
+      marked
     }
     deathReasons
     roams
@@ -56,7 +58,7 @@ const fullEntryFragment = gql`
   }
 `;
 
-const entryDetailQuery = gql`
+export const entryDetailQuery = gql`
   query EntryQuery($entryId: ID!) {
     Entry(id: $entryId) {
       ...FullEntry
@@ -171,6 +173,24 @@ const saveEntryMutation = gql`
       video: $video
     ) {
       id
+    }
+  }
+`;
+
+export const markMistakeMutation = gql`
+  mutation UpdateMistake($id: ID!, $marked: Boolean!) {
+    updateMistake(id: $id, marked: $marked) {
+      id
+      marked
+    }
+  }
+`;
+
+export const markLessonMutation = gql`
+  mutation UpdateLesson($id: ID!, $marked: Boolean!) {
+    updateLesson(id: $id, marked: $marked) {
+      id
+      marked
     }
   }
 `;

@@ -55,7 +55,11 @@ class EntryDetail extends React.Component {
     this.setState({ activeIndex });
   };
   render() {
+    if (this.props.data.loading) {
+      return <div>Loading entry...</div>;
+    }
     const props = this.props;
+    const entry = this.props.data.Entry;
     return (
       <MainCont>
         <EditBtn
@@ -65,13 +69,16 @@ class EntryDetail extends React.Component {
           size="large"
           onClick={() => props.setEditMode(true)}
         />
-        <Header {...props} />
+        <Header {...entry} />
         <Grid stackable columns={2}>
           <Grid.Column>
             <MainCard raised fluid>
               <CardHeader>Mistakes</CardHeader>
               <CardContentList>
-                <MarkableList items={props.mistakes} onMark={props.onMark} />
+                <MarkableList
+                  items={entry.mistakes}
+                  onMark={props.markMistake}
+                />
               </CardContentList>
             </MainCard>
           </Grid.Column>
@@ -79,7 +86,7 @@ class EntryDetail extends React.Component {
             <MainCard raised fluid>
               <CardHeader>Lessons</CardHeader>
               <CardContentList>
-                <MarkableList items={props.lessons} onMark={props.onMark} />
+                <MarkableList items={entry.lessons} onMark={props.markLesson} />
               </CardContentList>
             </MainCard>
           </Grid.Column>
@@ -96,12 +103,12 @@ class EntryDetail extends React.Component {
               </Accordion.Title>
               <Accordion.Content active={this.state.activeIndex.includes(0)}>
                 <CreepScoreView
-                  csReasons={props.csReasons}
-                  csPerMin={props.csPerMin}
-                  csAt5Min={props.csAt5Min}
-                  csAt10Min={props.csAt10Min}
-                  csAt15Min={props.csAt15Min}
-                  csAt20Min={props.csAt20Min}
+                  csReasons={entry.csReasons}
+                  csPerMin={entry.csPerMin}
+                  csAt5Min={entry.csAt5Min}
+                  csAt10Min={entry.csAt10Min}
+                  csAt15Min={entry.csAt15Min}
+                  csAt20Min={entry.csAt20Min}
                 />
               </Accordion.Content>
               <Accordion.Title
@@ -112,7 +119,7 @@ class EntryDetail extends React.Component {
                 <Icon name="dropdown" />Death Reasons
               </Accordion.Title>
               <Accordion.Content active={this.state.activeIndex.includes(1)}>
-                <ListView items={props.deathReasons} />
+                <ListView items={entry.deathReasons} />
               </Accordion.Content>
               <Accordion.Title
                 active={this.state.activeIndex.includes(2)}
@@ -122,7 +129,7 @@ class EntryDetail extends React.Component {
                 <Icon name="dropdown" />Positives
               </Accordion.Title>
               <Accordion.Content active={this.state.activeIndex.includes(2)}>
-                <ListView items={props.positives} />
+                <ListView items={entry.positives} />
               </Accordion.Content>
             </Accordion>
           </Card>
