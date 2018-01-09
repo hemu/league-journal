@@ -39,7 +39,7 @@ const Star = ({ marked, onClick }) =>
 const MarkableList = ({ items, onMark }) => (
   <StyledList>
     {items.map(item => (
-      <ListItem>
+      <ListItem key={item.id}>
         <div>{item.text}</div>
         <StarCont>
           <Star

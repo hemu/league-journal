@@ -119,7 +119,7 @@ const createEntryMutation = gql`
   }
 `;
 
-const saveEntryMutation = gql`
+export const saveEntryMutation = gql`
   mutation SaveEntry(
     $id: ID!
     $gameDate: DateTime!
@@ -172,9 +172,10 @@ const saveEntryMutation = gql`
       csReasons: $csReasons
       video: $video
     ) {
-      id
+      ...FullEntry
     }
   }
+  ${fullEntryFragment}
 `;
 
 export const markMistakeMutation = gql`
@@ -212,7 +213,7 @@ const updateMistakeMutation = gql`
   }
 `;
 
-const deleteMistakeMutation = gql`
+export const deleteMistakeMutation = gql`
   mutation DeleteMistake($id: ID!) {
     deleteMistake(id: $id) {
       id
@@ -229,7 +230,7 @@ const updateLessonMutation = gql`
   }
 `;
 
-const deleteLessonMutation = gql`
+export const deleteLessonMutation = gql`
   mutation DeleteLesson($id: ID!) {
     deleteLesson(id: $id) {
       id
@@ -237,7 +238,7 @@ const deleteLessonMutation = gql`
   }
 `;
 
-const createMistakeMutation = gql`
+export const createMistakeMutation = gql`
   mutation CreateMistake($entryId: ID!, $text: String!, $marked: Boolean!) {
     createMistake(entryId: $entryId, text: $text, marked: $marked) {
       id
@@ -245,7 +246,7 @@ const createMistakeMutation = gql`
   }
 `;
 
-const createLessonMutation = gql`
+export const createLessonMutation = gql`
   mutation CreateLesson($entryId: ID!, $text: String!, $marked: Boolean!) {
     createLesson(entryId: $entryId, text: $text, marked: $marked) {
       id
@@ -268,60 +269,117 @@ export function fetchDetailEntry(entryId) {
   });
 }
 
-function updateMistakesAndLessons(mistakes, lessons, entryId) {
-  mistakes
-    .filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '')
-    .forEach(mistake =>
-      client.mutate({
-        mutation: createMistakeMutation,
-        variables: {
-          entryId,
-          text: mistake.text,
-          marked: false,
-        },
-      }));
-  lessons
-    .filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '')
-    .forEach(lesson =>
-      client.mutate({
-        mutation: createLessonMutation,
-        variables: {
-          entryId,
-          text: lesson.text,
-          marked: false,
-        },
-      }));
+function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
+  const singleMutation = (typeName, { text }, entryId) => {
+    const alias = `alias_${Math.random()
+      .toString(36)
+      .slice(2)}`;
+
+    return `
+    ${alias}: create${typeName}(entryId: "${entryId}", text: "${text}", marked: false) {
+      id
+    }
+  `;
+  };
+
+  const mistakesMutations = mistakes.map(mistake =>
+    singleMutation('Mistake', mistake, entryId));
+  const lessonsMutations = lessons.map(lesson =>
+    singleMutation('Lesson', lesson, entryId));
+
+  const joinedMistakes = mistakesMutations.join('\n');
+  const joinedLessons = lessonsMutations.join('\n');
+
+  console.log(`
+    mutation createMistakesAndLessons {
+      ${joinedMistakes}
+      ${joinedLessons}
+    }
+  `);
+
+  return gql`
+    mutation createMistakesAndLessons {
+      ${joinedMistakes}
+      ${joinedLessons}
+    }
+  `;
 }
+
+function updateMistakesAndLessons(mistakes, lessons, entryId) {
+  const newMistakes = mistakes.filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '');
+  const newLessons = lessons.filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '');
+  if (newMistakes.length === 0 && newLessons.length === 0) {
+    return Promise.resolve();
+  }
+  const mutation = createMistakesAndLessonsMutation(
+    newMistakes,
+    newLessons,
+    entryId,
+  );
+  return client.mutate({
+    mutation,
+  });
+}
+
+// function updateMistakesAndLessons(mistakes, lessons, entryId) {
+//   mistakes
+//     .filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '')
+//     .forEach(mistake =>
+//       client.mutate({
+//         mutation: createMistakeMutation,
+//         variables: {
+//           entryId,
+//           text: mistake.text,
+//           marked: false,
+//         },
+//       }));
+//   lessons
+//     .filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '')
+//     .forEach(lesson =>
+//       client.mutate({
+//         mutation: createLessonMutation,
+//         variables: {
+//           entryId,
+//           text: lesson.text,
+//           marked: false,
+//         },
+//       }));
+// }
 
 export function saveEntry(entry) {
   const { lessons, mistakes, ...filteredEntry } = entry;
-  console.log('Saving Entry -------');
-  console.log(lessons);
-  console.log(mistakes);
 
-  if (isLocalEntry(entry.id)) {
-    return client
-      .mutate({
-        mutation: createEntryMutation,
-        variables: {
-          ...filteredEntry,
-        },
-      })
-      .then((result) => {
-        if (result.data) {
-          const { data: { createEntry: { id: entryId } } } = result;
-          console.log(`updating mistakes and lessons with entryId: ${entryId}`);
-          return updateMistakesAndLessons(mistakes, lessons, entryId);
-        }
-      });
-  }
-  updateMistakesAndLessons(mistakes, lessons, entry.id);
-  return client.mutate({
-    mutation: saveEntryMutation,
-    variables: {
-      ...filteredEntry,
-    },
-  });
+  // if (isLocalEntry(entry.id)) {
+  //   return client
+  //     .mutate({
+  //       mutation: createEntryMutation,
+  //       variables: {
+  //         ...filteredEntry,
+  //       },
+  //       optimisticResponse: {
+  //         __typename: 'Mutation',
+  //         updateEntry: {
+  //           __typename: 'Entry',
+  //           ...entry,
+  //         },
+  //       },
+  //     })
+  //     .then((result) => {
+  //       if (result.data) {
+  //         const { data: { createEntry: { id: entryId } } } = result;
+  //         console.log(`updating mistakes and lessons with entryId: ${entryId}`);
+  //         return updateMistakesAndLessons(mistakes, lessons, entryId);
+  //       }
+  //     });
+  // }
+
+  return updateMistakesAndLessons(mistakes, lessons, entry.id).then(result =>
+    client.mutate({
+      mutation: saveEntryMutation,
+      variables: {
+        ...filteredEntry,
+      },
+    }));
 }
 
 export function updateMistake(id, text) {

@@ -66,9 +66,6 @@ const DateCont = styled.div`
 
 const matchup = (champion, opponentChampion) => {
   const text = `${champion || 'Unknown'} vs ${opponentChampion || 'Unknown'}`;
-  console.log(text.length);
-  console.log(text.length > MAX_MATCHUP_LENGTH);
-  console.log(`${text.substring(0, MAX_MATCHUP_LENGTH - 3)}...`);
   return text.length > MAX_MATCHUP_LENGTH
     ? `${text.substring(0, MAX_MATCHUP_LENGTH - 3)}...`
     : text;

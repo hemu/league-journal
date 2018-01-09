@@ -16,7 +16,7 @@ const ListItem = styled.li`
 const ListView = ({ items }) => (
   <StyledList>
     {items.map(item => (
-      <ListItem>
+      <ListItem key={item}>
         <div>{item}</div>
       </ListItem>
     ))}

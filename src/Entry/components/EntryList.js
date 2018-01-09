@@ -28,6 +28,7 @@ const EntryList = ({ entries, onSelectEntry, addEntry }) => (
           key={entry.id + i}
           entry={entry}
           entryIndex={i}
+          active={false}
           // active={entryDetailStore.id === entry.id}
           isLocalEntry={isLocalEntry(entry.id)}
           //   onSelect={(event, _) => {

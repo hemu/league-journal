@@ -67,7 +67,7 @@ class EntryDetail extends React.Component {
           color="black"
           circular
           size="large"
-          onClick={() => props.setEditMode(true)}
+          onClick={() => props.setEditMode(true, entry.id)}
         />
         <Header {...entry} />
         <Grid stackable columns={2}>

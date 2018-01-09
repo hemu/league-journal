@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { actions, actionTypes } from 'react-redux-form';
+import client from '../api/client';
 import {
+  entryDetailQuery,
   fetchAllEntries as fetchAllEntriesApi,
   fetchDetailEntry as fetchDetailEntryApi,
   saveEntry as saveEntryApi,
@@ -90,7 +92,7 @@ const debugAction = createAction(DEBUG_ACTION, 'msg');
 
 export const addEntry = createAction(ADD_ENTRY, 'entry');
 
-export const setEditMode = createAction(SET_EDIT_MODE, 'editMode');
+export const setEditMode = createAction(SET_EDIT_MODE, 'editMode', 'entryId');
 
 // ----- EPICS ----------------------------------------------
 // ----------------------------------------------------------
@@ -125,16 +127,36 @@ export const fetchEntryEpic = (action$, store) =>
     });
   });
 
+// export const populateFormEpic = action$ =>
+//   action$
+//     .ofType(FETCH_DETAIL_SUCCESS)
+//     .map(action => actions.load('forms.entry', action.entry));
+
 export const populateFormEpic = action$ =>
   action$
-    .ofType(FETCH_DETAIL_SUCCESS)
-    .map(action => actions.load('forms.entry', action.entry));
+    .filter(action => action.type === SET_EDIT_MODE && action.editMode)
+    .map((action) => {
+      const data = client.readQuery({
+        query: entryDetailQuery,
+        variables: {
+          entryId: action.entryId,
+        },
+      });
+      return actions.load('forms.entry', data.Entry);
+    });
 
 export const saveEntryEpic = action$ =>
-  action$
-    .ofType(SAVE_ENTRY)
-    .mergeMap(action =>
-      saveEntryApi(action.entry).then(() => saveEntrySuccess()));
+  action$.ofType(SAVE_ENTRY).mergeMap(action =>
+    saveEntryApi(action.entry).then((data) => {
+      // client.writeQuery({
+      //   query: entryDetailQuery,
+      //   variables: { entryId: action.entry.id },
+      //   data,
+      // });
+      console.log('done saving entry');
+      console.log(data);
+      return saveEntrySuccess();
+    }));
 
 export const removeEntryEpic = action$ =>
   action$.ofType(REMOVE_ENTRY).mergeMap((action) => {
@@ -151,10 +173,10 @@ export const removeEntryEpic = action$ =>
 //     .ofType(REMOVE_ENTRY_SUCCESS)
 //     .map(action => setEntryDetail(0, store.getState().entry.entries[0].id));
 
-export const entryListUpdateEpic = action$ =>
-  action$
-    .ofType(REMOVE_ENTRY_WITH_API_SUCCESS, SAVE_ENTRY_SUCCESS)
-    .mapTo(fetchAllEntries());
+// export const entryListUpdateEpic = action$ =>
+//   action$
+//     .ofType(REMOVE_ENTRY_WITH_API_SUCCESS, SAVE_ENTRY_SUCCESS)
+//     .mapTo(fetchAllEntries());
 
 export const updateMistakeEpic = action$ =>
   action$
@@ -185,10 +207,10 @@ export const removeLessonEpic = action$ =>
 // ----------------------------------------------------------
 
 const initialState = {
-  entries: [],
-  fetchAllStatus: RequestStatus.None,
-  fetchEntryStatus: RequestStatus.None,
-  entryIndex: 0,
+  // entries: [],
+  // fetchAllStatus: RequestStatus.None,
+  // fetchEntryStatus: RequestStatus.None,
+  // entryIndex: 0,
   entryDetailId: '',
   editMode: false,
 };

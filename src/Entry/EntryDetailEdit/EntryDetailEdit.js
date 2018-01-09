@@ -52,7 +52,9 @@ const EntryDetailEdit = (props) => {
     updateMistake,
     updateLesson,
     removeMistake,
+    removeMistakeLocal,
     removeLesson,
+    removeLessonLocal,
     setEditMode,
   } = props;
 
@@ -182,7 +184,10 @@ const EntryDetailEdit = (props) => {
             <Button
               type="button"
               size="mini"
-              onClick={() => removeMistake(elem.id, elemIndex)}
+              onClick={() => {
+                removeMistake(elem.id, elemIndex, props.id);
+                removeMistakeLocal(elem.id, elemIndex);
+              }}
             >
               X
             </Button>
@@ -208,7 +213,10 @@ const EntryDetailEdit = (props) => {
             <Button
               type="button"
               size="mini"
-              onClick={() => removeLesson(elem.id, elemIndex)}
+              onClick={() => {
+                removeLesson(elem.id, elemIndex, props.id);
+                removeLessonLocal(elem.id, elemIndex);
+              }}
             >
               X
             </Button>
