@@ -96,13 +96,13 @@ const EntryDetailEdit = (props) => {
         />
       </EntrySection>
 
-      <EntrySection title="Jungle Matchup">
+      {/* <EntrySection title="Jungle Matchup">
         <ChampionMatchup
           model1=".jungler"
           model2=".opponentJungler"
           formChange={formChange}
         />
-      </EntrySection>
+      </EntrySection> */}
 
       <EntrySection title="Creep Score">
         <Grid>

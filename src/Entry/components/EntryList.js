@@ -15,10 +15,10 @@ const NewEntryBtnCont = styled.div`
   text-align: center;
 `;
 
-const EntryList = ({ entries, onSelectEntry, addEntry }) => (
+const EntryList = ({ entries, onSelectEntry, createEntry }) => (
   <MainCont>
     <NewEntryBtnCont>
-      <Button type="submit" onClick={addEntry} size="tiny">
+      <Button type="submit" onClick={() => createEntry()} size="tiny">
         New Entry
       </Button>
     </NewEntryBtnCont>
@@ -51,7 +51,7 @@ const EntryList = ({ entries, onSelectEntry, addEntry }) => (
 EntryList.propTypes = {
   entries: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSelectEntry: PropTypes.func.isRequired,
-  addEntry: PropTypes.func.isRequired,
+  createEntry: PropTypes.func.isRequired,
 };
 
 export default EntryList;

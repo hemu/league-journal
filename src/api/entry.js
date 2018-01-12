@@ -67,7 +67,7 @@ export const entryDetailQuery = gql`
   ${fullEntryFragment}
 `;
 
-const createEntryMutation = gql`
+export const createEntryMutation = gql`
   mutation CreateEntry(
     $gameDate: DateTime!
     $rank: String
@@ -114,9 +114,10 @@ const createEntryMutation = gql`
       csReasons: $csReasons
       video: $video
     ) {
-      id
+      ...FullEntry
     }
   }
+  ${fullEntryFragment}
 `;
 
 export const saveEntryMutation = gql`
@@ -290,13 +291,6 @@ function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
   const joinedMistakes = mistakesMutations.join('\n');
   const joinedLessons = lessonsMutations.join('\n');
 
-  console.log(`
-    mutation createMistakesAndLessons {
-      ${joinedMistakes}
-      ${joinedLessons}
-    }
-  `);
-
   return gql`
     mutation createMistakesAndLessons {
       ${joinedMistakes}
@@ -321,70 +315,36 @@ function updateMistakesAndLessons(mistakes, lessons, entryId) {
   });
 }
 
-// function updateMistakesAndLessons(mistakes, lessons, entryId) {
-//   mistakes
-//     .filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '')
-//     .forEach(mistake =>
-//       client.mutate({
-//         mutation: createMistakeMutation,
-//         variables: {
-//           entryId,
-//           text: mistake.text,
-//           marked: false,
-//         },
-//       }));
-//   lessons
-//     .filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '')
-//     .forEach(lesson =>
-//       client.mutate({
-//         mutation: createLessonMutation,
-//         variables: {
-//           entryId,
-//           text: lesson.text,
-//           marked: false,
-//         },
-//       }));
-// }
+const validateNum = val => (Number.isNaN(parseInt(val, 10)) ? 0 : val);
 
 export function saveEntry(entry) {
-  const { lessons, mistakes, ...filteredEntry } = entry;
+  const { lessons, mistakes, ...rest } = entry;
 
-  // if (isLocalEntry(entry.id)) {
-  //   return client
-  //     .mutate({
-  //       mutation: createEntryMutation,
-  //       variables: {
-  //         ...filteredEntry,
-  //       },
-  //       optimisticResponse: {
-  //         __typename: 'Mutation',
-  //         updateEntry: {
-  //           __typename: 'Entry',
-  //           ...entry,
-  //         },
-  //       },
-  //     })
-  //     .then((result) => {
-  //       if (result.data) {
-  //         const { data: { createEntry: { id: entryId } } } = result;
-  //         console.log(`updating mistakes and lessons with entryId: ${entryId}`);
-  //         return updateMistakesAndLessons(mistakes, lessons, entryId);
-  //       }
-  //     });
-  // }
+  // validate all number fields
+  const finalEntry = {
+    ...rest,
+    gameDate: rest.gameDate || new Date(),
+    outcome: rest.outcome || 'L',
+    kills: validateNum(rest.kills),
+    deaths: validateNum(rest.deaths),
+    assists: validateNum(rest.assists),
+    csPerMin: validateNum(rest.csPerMin),
+    csAt5Min: validateNum(rest.csAt5Min),
+    csAt10Min: validateNum(rest.csAt10Min),
+    csAt15Min: validateNum(rest.csAt15Min),
+    csAt20Min: validateNum(rest.csAt15Min),
+  };
 
   return updateMistakesAndLessons(mistakes, lessons, entry.id).then(result =>
     client.mutate({
       mutation: saveEntryMutation,
       variables: {
-        ...filteredEntry,
+        ...finalEntry,
       },
     }));
 }
 
 export function updateMistake(id, text) {
-  console.log(`Updating mistake ${id} ${text}`);
-  // return Promise.resolve('updating mistake stub.......');
   return client.mutate({
     mutation: updateMistakeMutation,
     variables: {
@@ -395,7 +355,6 @@ export function updateMistake(id, text) {
 }
 
 export function removeMistake(id) {
-  console.log(`Removing mistake ${id}`);
   return client.mutate({
     mutation: deleteMistakeMutation,
     variables: {
@@ -405,8 +364,6 @@ export function removeMistake(id) {
 }
 
 export function updateLesson(id, text) {
-  console.log(`Updating lesson ${id} ${text}`);
-  // return Promise.resolve('updating mistake stub.......');
   return client.mutate({
     mutation: updateLessonMutation,
     variables: {
@@ -417,7 +374,6 @@ export function updateLesson(id, text) {
 }
 
 export function removeLesson(id) {
-  console.log(`Removing lesson ${id}`);
   return client.mutate({
     mutation: deleteLessonMutation,
     variables: {
@@ -427,16 +383,71 @@ export function removeLesson(id) {
 }
 
 export function removeEntry(entryId, mistakes, lessons) {
-  mistakes
-    .filter(mistake => !isLocalId(mistake.id))
-    .forEach(mistake => removeMistake(mistake.id));
-  lessons
-    .filter(lesson => !isLocalId(lesson.id))
-    .forEach(lesson => removeLesson(lesson.id));
+  const remoteMistakes = mistakes.filter(mistake => !isLocalId(mistake.id));
+  const remotedLessons = lessons.filter(lesson => !isLocalId(lesson.id));
+
+  const singleDeleteMutation = (typeName, id, returnAlias = false) => {
+    const alias = `alias_${Math.random()
+      .toString(36)
+      .slice(2)}`;
+
+    const mutation = `
+      ${alias}: delete${typeName}(id: "${id}") {
+        id
+      }
+    `;
+
+    if (returnAlias) {
+      return [mutation, alias];
+    }
+    return mutation;
+  };
+
+  const mistakesMutations = mistakes.map(mistake =>
+    singleDeleteMutation('Mistake', mistake.id));
+  const lessonsMutations = lessons.map(lesson =>
+    singleDeleteMutation('Lesson', lesson.id));
+  const [entryMutation, entryMutationAlias] = singleDeleteMutation(
+    'Entry',
+    entryId,
+    true,
+  );
+
+  const joinedMistakes = mistakesMutations.join('\n');
+  const joinedLessons = lessonsMutations.join('\n');
+
+  const finalMutation = gql`
+      mutation deleteMistakesLessonsEntry {
+        ${joinedMistakes}
+        ${joinedLessons}
+        ${entryMutation}
+      }
+    `;
+
   return client.mutate({
-    mutation: deleteEntryMutation,
-    variables: {
-      id: entryId,
+    mutation: finalMutation,
+    optimisticResponse: {
+      __typename: 'Mutation',
+      [entryMutationAlias]: {
+        __typename: 'Entry',
+        id: entryId,
+      },
+    },
+    update: (proxy, { data: updateData }) => {
+      // Read the data from our cache for this query.
+      const updateResults = updateData[entryMutationAlias];
+      const data = proxy.readQuery({
+        query: allEntriesQuery,
+      });
+      console.log('--------------');
+      console.log(data);
+      // Add our comment from the mutation to the end.
+      data.allEntries = data.allEntries.filter(entry => entry.id !== updateResults.id);
+      // Write our data back to the cache.
+      proxy.writeQuery({
+        query: allEntriesQuery,
+        data,
+      });
     },
   });
 }

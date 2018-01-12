@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { actions, actionTypes } from 'react-redux-form';
+import Rx from 'rxjs/Rx';
 import client from '../api/client';
 import {
   entryDetailQuery,
@@ -49,7 +50,7 @@ const REMOVE_LESSON_SUCCESS = 'entries/REMOVE_LESSON_SUCCESS';
 
 const DEBUG_ACTION = 'entries/DEBUG_ACTION';
 
-const ADD_ENTRY = 'entries/ADD_ENTRY';
+// const ADD_ENTRY = 'entries/ADD_ENTRY';
 
 const SET_EDIT_MODE = 'entries/SET_EDIT_MODE';
 
@@ -90,7 +91,7 @@ const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 
 const debugAction = createAction(DEBUG_ACTION, 'msg');
 
-export const addEntry = createAction(ADD_ENTRY, 'entry');
+// export const addEntry = createAction(ADD_ENTRY, 'entry');
 
 export const setEditMode = createAction(SET_EDIT_MODE, 'editMode', 'entryId');
 
@@ -147,26 +148,27 @@ export const populateFormEpic = action$ =>
 
 export const saveEntryEpic = action$ =>
   action$.ofType(SAVE_ENTRY).mergeMap(action =>
-    saveEntryApi(action.entry).then((data) => {
+    saveEntryApi(action.entry).then(_ =>
       // client.writeQuery({
       //   query: entryDetailQuery,
       //   variables: { entryId: action.entry.id },
       //   data,
       // });
-      console.log('done saving entry');
-      console.log(data);
-      return saveEntrySuccess();
-    }));
+      saveEntrySuccess()));
 
 export const removeEntryEpic = action$ =>
-  action$.ofType(REMOVE_ENTRY).mergeMap((action) => {
-    const { entryId, mistakes, lessons } = action;
-    if (isLocalEntry(entryId)) {
-      return Promise.resolve(removeEntrySuccess());
-    }
-    return removeEntryApi(entryId, mistakes, lessons).then(() =>
-      removeEntryWithApiSuccess());
-  });
+  action$
+    .ofType(REMOVE_ENTRY)
+    .mergeMap((action) => {
+      const { entryId, mistakes, lessons } = action;
+      return removeEntryApi(entryId, mistakes, lessons).then(() =>
+        removeEntryWithApiSuccess());
+    })
+    .mergeMap(() =>
+      Rx.Observable.concat(
+        Rx.Observable.of(setEditMode(false)),
+        Rx.Observable.of(setEntryDetailId('')),
+      ));
 
 // export const removeEntrySuccessEpic = (action$, store) =>
 //   action$
@@ -207,7 +209,6 @@ export const removeLessonEpic = action$ =>
 // ----------------------------------------------------------
 
 const initialState = {
-  // entries: [],
   // fetchAllStatus: RequestStatus.None,
   // fetchEntryStatus: RequestStatus.None,
   // entryIndex: 0,
@@ -248,17 +249,17 @@ export default function reducer(state = initialState, action = {}) {
         }),
         fetchEntryStatus: RequestStatus.Success,
       };
-    case ADD_ENTRY: {
-      const newEntry = {
-        ...entryFormInitialState,
-        id: `${LOCAL_ID_PREFIX}_${state.entries.length}`,
-        gameDate: new Date(),
-      };
-      return {
-        ...state,
-        entries: [...state.entries, newEntry],
-      };
-    }
+    // case ADD_ENTRY: {
+    //   const newEntry = {
+    //     ...entryFormInitialState,
+    //     id: `${LOCAL_ID_PREFIX}_${Math.floor(Math.random() * 5000)}`,
+    //     gameDate: new Date(),
+    //   };
+    //   return {
+    //     ...state,
+    //     newEntries: [...state.newEntries, newEntry],
+    //   };
+    // }
 
     case REMOVE_ENTRY: {
       if (isLocalEntry(action.entryId)) {
