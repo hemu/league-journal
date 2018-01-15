@@ -13,7 +13,7 @@ const ListItem = styled.li`
   font-size: 13px;
 `;
 
-const ListView = ({ items }) => (
+const SecondaryList = ({ items }) => (
   <StyledList>
     {items.map(item => (
       <ListItem key={item}>
@@ -23,8 +23,8 @@ const ListView = ({ items }) => (
   </StyledList>
 );
 
-ListView.propTypes = {
+SecondaryList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-export default ListView;
+export default SecondaryList;

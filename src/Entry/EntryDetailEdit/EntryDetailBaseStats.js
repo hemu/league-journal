@@ -8,34 +8,45 @@ import PropTypes from 'prop-types';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
-import { formModel, handleDropdownChange, toNumParser } from '../helpers';
+import { FormInput, FieldLabel } from './FormElements';
+import {
+  formModel,
+  handleDropdownChange,
+  toNumParser,
+  toFloatParser,
+} from '../helpers';
 import { rankOptions, outcomeOptions, roleOptions } from '../../staticData';
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {
     z-index: 1;
   }
+  font-size: 1em;
 `;
 
 const EntryDetailBaseStats = ({ formChange }) => (
-  <Grid columns={5}>
+  <Grid columns={5} stackable>
     <Grid.Row>
       <Grid.Column width={3}>
         <DatePickerCont>
-          <Control.text
-            component={DayPickerInput}
-            model=".gameDate"
-            format="MMM Do"
-            mapProps={{
-              value: props =>
-                moment(new Date(props.modelValue)).format('MMM Do'),
-            }}
-            onDayChange={day =>
-              formChange(actions.change(formModel('.gameDate'), day.toDate()))}
-          />
+          <FieldLabel>Date</FieldLabel>
+          <div className="ui input fluid">
+            <FormInput
+              component={DayPickerInput}
+              model=".gameDate"
+              format="MMM Do"
+              mapProps={{
+                value: props =>
+                  moment(new Date(props.modelValue)).format('MMM Do'),
+              }}
+              onDayChange={day =>
+                formChange(actions.change(formModel('.gameDate'), day.toDate()))}
+            />
+          </div>
         </DatePickerCont>
       </Grid.Column>
-      <Grid.Column width={4}>
+      <Grid.Column width={3}>
+        <FieldLabel>Rank</FieldLabel>
         <Control.select
           component={Dropdown}
           model=".rank"
@@ -51,7 +62,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
           }}
         />
       </Grid.Column>
-      <Grid.Column width={2}>
+      <Grid.Column width={3}>
+        <FieldLabel>W/L</FieldLabel>
         <Control.select
           component={Dropdown}
           model=".outcome"
@@ -65,7 +77,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
           }}
         />
       </Grid.Column>
-      <Grid.Column>
+      <Grid.Column width={3}>
+        <FieldLabel>Role</FieldLabel>
         <Control.select
           component={Dropdown}
           model=".role"
@@ -83,8 +96,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
     <Grid.Row>
       <Grid.Column width={2}>
         <Form.Field>
-          <label>Kills</label>
-          <Control.text
+          <FieldLabel>Kills</FieldLabel>
+          <FormInput
             component={Input}
             type="number"
             parser={toNumParser}
@@ -96,8 +109,8 @@ const EntryDetailBaseStats = ({ formChange }) => (
       </Grid.Column>
       <Grid.Column width={2}>
         <Form.Field>
-          <label>Deaths</label>
-          <Control.text
+          <FieldLabel>Deaths</FieldLabel>
+          <FormInput
             component={Input}
             type="number"
             parser={toNumParser}
@@ -109,13 +122,81 @@ const EntryDetailBaseStats = ({ formChange }) => (
       </Grid.Column>
       <Grid.Column width={2}>
         <Form.Field>
-          <label>Assists</label>
-          <Control.text
+          <FieldLabel>Assists</FieldLabel>
+          <FormInput
             component={Input}
             type="number"
             parser={toNumParser}
             size="mini"
             model=".assists"
+            updateOn="blur"
+          />
+        </Form.Field>
+      </Grid.Column>
+    </Grid.Row>
+    <Grid.Row>
+      <Grid.Column width={2}>
+        <Form.Field>
+          <FieldLabel>CS / Min</FieldLabel>
+          <FormInput
+            component={Input}
+            type="number"
+            parser={toFloatParser}
+            size="mini"
+            model=".csPerMin"
+            updateOn="blur"
+          />
+        </Form.Field>
+      </Grid.Column>
+      <Grid.Column width={2}>
+        <Form.Field>
+          <FieldLabel>CS @ 5</FieldLabel>
+          <FormInput
+            component={Input}
+            type="number"
+            parser={toNumParser}
+            size="mini"
+            model=".csAt5Min"
+            updateOn="blur"
+          />
+        </Form.Field>
+      </Grid.Column>
+      <Grid.Column width={2}>
+        <Form.Field>
+          <FieldLabel>CS @ 10</FieldLabel>
+          <FormInput
+            component={Input}
+            type="number"
+            parser={toNumParser}
+            size="mini"
+            model=".csAt10Min"
+            updateOn="blur"
+          />
+        </Form.Field>
+      </Grid.Column>
+      <Grid.Column width={2}>
+        <Form.Field>
+          <FieldLabel>CS @ 15</FieldLabel>
+
+          <FormInput
+            component={Input}
+            type="number"
+            parser={toNumParser}
+            size="mini"
+            model=".csAt15Min"
+            updateOn="blur"
+          />
+        </Form.Field>
+      </Grid.Column>
+      <Grid.Column width={2}>
+        <Form.Field>
+          <FieldLabel>CS @ 20</FieldLabel>
+          <FormInput
+            component={Input}
+            type="number"
+            parser={toNumParser}
+            size="mini"
+            model=".csAt20Min"
             updateOn="blur"
           />
         </Form.Field>

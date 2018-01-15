@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Card, Button, Accordion, Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 import CreepScoreView from './components/SubViewCreepScore';
-import ListView from './components/SubViewList';
+import SecondaryList from './components/SecondaryList';
 import Header from './components/Header';
 import MarkableList from './components/MarkableList';
 
@@ -119,7 +119,7 @@ class EntryDetail extends React.Component {
                 <Icon name="dropdown" />Death Reasons
               </Accordion.Title>
               <Accordion.Content active={this.state.activeIndex.includes(1)}>
-                <ListView items={entry.deathReasons} />
+                <SecondaryList items={entry.deathReasons} />
               </Accordion.Content>
               <Accordion.Title
                 active={this.state.activeIndex.includes(2)}
@@ -129,7 +129,7 @@ class EntryDetail extends React.Component {
                 <Icon name="dropdown" />Positives
               </Accordion.Title>
               <Accordion.Content active={this.state.activeIndex.includes(2)}>
-                <ListView items={entry.positives} />
+                <SecondaryList items={entry.positives} />
               </Accordion.Content>
             </Accordion>
           </Card>

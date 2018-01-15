@@ -8,7 +8,6 @@ import {
   entryDetailQuery,
   // markMistakeMutation,
   // markLessonMutation,
-  createMistakeMutation,
   deleteMistakeMutation,
   deleteLessonMutation,
 } from '../../api/entry';
@@ -28,41 +27,6 @@ import { formModel } from '../helpers';
 import { isLocalId } from '../../helpers';
 
 export default compose(
-  // graphql(createMistakeMutation, {
-  //   props: ({ mutate }) => ({
-  //     createMistake: (id, text, entryId) =>
-  //       mutate({
-  //         variables: { entryId: id, text, marked: false },
-  //         optimisticResponse: {
-  //           __typename: 'Mutation',
-  //           createMistake: {
-  //             __typename: 'Mistake',
-  //             id,
-  //             text,
-  //             marked: false,
-  //           },
-  //         },
-  //         update: (
-  //           proxy,
-  //           { data: { createMistake: { id: newId, text: newText, marked: newMarked } } },
-  //         ) => {
-  //           // Read the data from our cache for this query.
-  //           const data = proxy.readQuery({
-  //             query: entryDetailQuery,
-  //             variables: { entryId },
-  //           });
-  //           // Add our comment from the mutation to the end.
-  //           data.Entry.mistakes.append({ id: newId, text: newText, marked: newMarked });
-  //           // Write our data back to the cache.
-  //           proxy.writeQuery({
-  //             query: entryDetailQuery,
-  //             variables: { entryId },
-  //             data,
-  //           });
-  //         },
-  //       }),
-  //   }),
-  // }),
   graphql(deleteMistakeMutation, {
     props: ({ mutate }) => ({
       removeMistake: (id, index, entryId) =>
@@ -134,9 +98,12 @@ export default compose(
         dispatch(removeEntry(entryId, mistakes, lessons)),
       saveEntry: entry => dispatch(saveEntry(entry)),
       formChange: formAction => dispatch(formAction),
-      formAddString: model => dispatch(actions.push(formModel(model), '')),
       formAdd: model =>
-        dispatch(actions.push(formModel(model), { id: LOCAL_ID_PREFIX, text: '' })),
+        dispatch(actions.push(formModel(model), {
+          id: LOCAL_ID_PREFIX,
+          text: '',
+          isLatest: true,
+        })),
       formRemove: (model, index) =>
         dispatch(actions.remove(formModel(model), index)),
       updateMistake,

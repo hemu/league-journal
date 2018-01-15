@@ -51,7 +51,6 @@ const fullEntryFragment = gql`
       marked
     }
     deathReasons
-    roams
     ganks
     csReasons
     video
@@ -87,7 +86,6 @@ export const createEntryMutation = gql`
     $csAt20Min: Int
     $positives: [String!]
     $deathReasons: [String!]
-    $roams: [String!]
     $csReasons: [String!]
     $video: String
   ) {
@@ -110,7 +108,6 @@ export const createEntryMutation = gql`
       csAt20Min: $csAt20Min
       positives: $positives
       deathReasons: $deathReasons
-      roams: $roams
       csReasons: $csReasons
       video: $video
     ) {
@@ -143,7 +140,6 @@ export const saveEntryMutation = gql`
     # $lessons: [String!]
     $positives: [String!]
     $deathReasons: [String!]
-    $roams: [String!]
     $csReasons: [String!]
     $video: String
   ) {
@@ -169,7 +165,6 @@ export const saveEntryMutation = gql`
       # lessons: $lessons
       positives: $positives
       deathReasons: $deathReasons
-      roams: $roams
       csReasons: $csReasons
       video: $video
     ) {
@@ -300,8 +295,8 @@ function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
 }
 
 function updateMistakesAndLessons(mistakes, lessons, entryId) {
-  const newMistakes = mistakes.filter(mistake => isLocalId(mistake.id) && mistake.text.trim() !== '');
-  const newLessons = lessons.filter(lesson => isLocalId(lesson.id) && lesson.text.trim() !== '');
+  const newMistakes = mistakes.filter(mistake => isLocalId(mistake.id) && mistake.text.trim().length !== 0);
+  const newLessons = lessons.filter(lesson => isLocalId(lesson.id) && lesson.text.trim().length !== 0);
   if (newMistakes.length === 0 && newLessons.length === 0) {
     return Promise.resolve();
   }
@@ -333,6 +328,15 @@ export function saveEntry(entry) {
     csAt10Min: validateNum(rest.csAt10Min),
     csAt15Min: validateNum(rest.csAt15Min),
     csAt20Min: validateNum(rest.csAt15Min),
+    positives: rest.positives
+      .map(item => item.text)
+      .filter(p => p.trim().length !== 0),
+    deathReasons: rest.deathReasons
+      .map(item => item.text)
+      .filter(p => p.trim().length !== 0),
+    csReasons: rest.csReasons
+      .map(item => item.text)
+      .filter(p => p.trim().length !== 0),
   };
 
   return updateMistakesAndLessons(mistakes, lessons, entry.id).then(result =>

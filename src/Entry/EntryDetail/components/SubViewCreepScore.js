@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
-import ViewList from './SubViewList';
+import SecondaryList from './SecondaryList';
 
 const GridCont = styled.div`
   display: grid;
@@ -96,7 +96,7 @@ const CreepScoreView = ({
 
   return (
     <GridCont>
-      <ViewList items={csReasons} />
+      <SecondaryList items={csReasons} />
       <div>
         <Line data={data} options={options} />
       </div>

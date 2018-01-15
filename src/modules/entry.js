@@ -143,7 +143,17 @@ export const populateFormEpic = action$ =>
           entryId: action.entryId,
         },
       });
-      return actions.load('forms.entry', data.Entry);
+      const entry = data.Entry;
+      entry.deathReasons = entry.deathReasons.map(text => ({
+        text,
+      }));
+      entry.csReasons = entry.csReasons.map(text => ({
+        text,
+      }));
+      entry.positives = entry.positives.map(text => ({
+        text,
+      }));
+      return actions.load('forms.entry', entry);
     });
 
 export const saveEntryEpic = action$ =>
