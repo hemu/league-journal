@@ -20,16 +20,11 @@ const ListItemCont = styled.div`
   align-items: center;
   width: 100%;
   height: 36px;
-  color: #ccc;
   :hover {
     background-color: #42535c;
   }
-  .active {
-    color: #fff;
-  }
-  .active-secondary {
-    color: #eee;
-  }
+  background-color: ${(props) => (props.active ? '#455761' : 'none')};
+  color: ${(props) => (props.active ? '#fff' : '#ccc')};
 `;
 
 const WinIndicator = styled(Icon)`
@@ -71,14 +66,13 @@ const matchup = (champion, opponentChampion) => {
     : text;
 };
 
-const ListItem = ({
-  isLocalEntry, entry, active, entryIndex, onSelect,
-}) => (
+const ListItem = ({ isLocalEntry, entry, active, entryIndex, onSelect }) => (
   <ListItemCont
     data-id={entry.id}
-    active={active}
     data-entry-index={entryIndex}
     onClick={onSelect}
+    active={active}
+    className={active ? 'active' : ''}
   >
     <div>
       {entry.outcome === 'W' ? (
@@ -101,25 +95,45 @@ const ListItem = ({
   </ListItemCont>
 );
 
+ListItem.propTypes = {
+  entry: PropTypes.shape({
+    id: PropTypes.string,
+    champion: PropTypes.string,
+    opponentChampion: PropTypes.string,
+  }).isRequired,
+  isLocalEntry: PropTypes.bool.isRequired,
+  active: PropTypes.bool.isRequired,
+  entryIndex: PropTypes.number.isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
+
 const EntryListItem = ({
-  entry, isLocalEntry, active, entryIndex, onSelect,
-}) =>
-  (isLocalEntry ? (
+  entry,
+  isLocalEntry,
+  active,
+  entryIndex,
+  onSelect,
+}) => {
+  if (isLocalEntry) {
+    return (
+      <ListItem
+        isLocalEntry={isLocalEntry}
+        entry={entry}
+        active={active}
+        entryIndex={entryIndex}
+        onSelect={() => onSelect(entry.id)}
+      />
+    );
+  }
+  return (
     <ListItem
-      isLocalEntry={isLocalEntry}
       entry={entry}
-      active
+      active={active}
       entryIndex={entryIndex}
       onSelect={() => onSelect(entry.id)}
     />
-  ) : (
-    <ListItem
-      entry={entry}
-      active
-      entryIndex={entryIndex}
-      onSelect={() => onSelect(entry.id)}
-    />
-  ));
+  );
+};
 
 EntryListItem.propTypes = {
   entry: PropTypes.shape({
@@ -130,6 +144,7 @@ EntryListItem.propTypes = {
   isLocalEntry: PropTypes.bool.isRequired,
   active: PropTypes.bool.isRequired,
   entryIndex: PropTypes.number.isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default EntryListItem;

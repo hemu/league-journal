@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Control, actions } from 'react-redux-form';
 import { Form, Input, Dropdown, Grid } from 'semantic-ui-react';
 import styled from 'styled-components';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
@@ -36,11 +36,13 @@ const EntryDetailBaseStats = ({ formChange }) => (
               model=".gameDate"
               format="MMM Do"
               mapProps={{
-                value: props =>
+                value: (props) =>
+                  // eslint-disable-next-line react/prop-types
                   moment(new Date(props.modelValue)).format('MMM Do'),
               }}
-              onDayChange={day =>
-                formChange(actions.change(formModel('.gameDate'), day.toDate()))}
+              onDayChange={(day) =>
+                formChange(actions.change(formModel('.gameDate'), day.toDate()))
+              }
             />
           </div>
         </DatePickerCont>
@@ -57,8 +59,9 @@ const EntryDetailBaseStats = ({ formChange }) => (
           options={rankOptions}
           selectOnBlur={false}
           mapProps={{
-            value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props),
+            // eslint-disable-next-line react/prop-types
+            value: (props) => props.modelValue,
+            onChange: (props) => handleDropdownChange(props),
           }}
         />
       </Grid.Column>
@@ -72,8 +75,9 @@ const EntryDetailBaseStats = ({ formChange }) => (
           selection
           options={outcomeOptions}
           mapProps={{
-            value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props),
+            // eslint-disable-next-line react/prop-types
+            value: (props) => props.modelValue,
+            onChange: (props) => handleDropdownChange(props),
           }}
         />
       </Grid.Column>
@@ -87,8 +91,9 @@ const EntryDetailBaseStats = ({ formChange }) => (
           selection
           options={roleOptions}
           mapProps={{
-            value: props => props.modelValue,
-            onChange: props => handleDropdownChange(props),
+            // eslint-disable-next-line react/prop-types
+            value: (props) => props.modelValue,
+            onChange: (props) => handleDropdownChange(props),
           }}
         />
       </Grid.Column>

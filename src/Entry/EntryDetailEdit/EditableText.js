@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Control } from 'react-redux-form';
 import styled from 'styled-components';
 import { Input } from 'semantic-ui-react';
@@ -14,12 +15,20 @@ const EmptyDisplayCont = styled.div`
   cursor: pointer;
 `;
 
-const TextDisplay = ({ value, onClick, emptyPlaceholder }) =>
-  (value ? (
-    <DisplayCont onClick={onClick}>{value}</DisplayCont>
-  ) : (
+const TextDisplay = ({ value, onClick, emptyPlaceholder }) => {
+  if (value) {
+    return <DisplayCont onClick={onClick}>{value}</DisplayCont>;
+  }
+  return (
     <EmptyDisplayCont onClick={onClick}>{emptyPlaceholder}</EmptyDisplayCont>
-  ));
+  );
+};
+
+TextDisplay.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  emptyPlaceholder: PropTypes.string.isRequired,
+};
 
 class EditableText extends React.Component {
   constructor(props) {
@@ -84,5 +93,11 @@ class EditableText extends React.Component {
     );
   }
 }
+
+EditableText.propTypes = {
+  isLatest: PropTypes.bool.isRequired,
+  emptyPlaceholder: PropTypes.string.isRequired,
+  editMode: PropTypes.bool.isRequired,
+};
 
 export default EditableText;

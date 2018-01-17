@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import client from '../api/client';
-import { isLocalEntry, isLocalId } from '../helpers';
+import { isLocalId } from '../helpers';
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
@@ -192,14 +192,6 @@ export const markLessonMutation = gql`
   }
 `;
 
-const deleteEntryMutation = gql`
-  mutation DeleteEntry($id: ID!) {
-    deleteEntry(id: $id) {
-      id
-    }
-  }
-`;
-
 const updateMistakeMutation = gql`
   mutation UpdateMistake($id: ID!, $text: String!) {
     updateMistake(id: $id, text: $text) {
@@ -250,13 +242,6 @@ export const createLessonMutation = gql`
   }
 `;
 
-export function fetchAllEntries() {
-  return client.query({
-    query: allEntriesQuery,
-    fetchPolicy: 'network-only',
-  });
-}
-
 export function fetchDetailEntry(entryId) {
   return client.query({
     query: entryDetailQuery,
@@ -266,21 +251,21 @@ export function fetchDetailEntry(entryId) {
 }
 
 function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
-  const singleMutation = (typeName, { text }, entryId) => {
+  const singleMutation = (typeName, { text }, id) => {
     const alias = `alias_${Math.random()
       .toString(36)
       .slice(2)}`;
 
     return `
-    ${alias}: create${typeName}(entryId: "${entryId}", text: "${text}", marked: false) {
+    ${alias}: create${typeName}(entryId: "${id}", text: "${text}", marked: false) {
       id
     }
   `;
   };
 
-  const mistakesMutations = mistakes.map(mistake =>
+  const mistakesMutations = mistakes.map((mistake) =>
     singleMutation('Mistake', mistake, entryId));
-  const lessonsMutations = lessons.map(lesson =>
+  const lessonsMutations = lessons.map((lesson) =>
     singleMutation('Lesson', lesson, entryId));
 
   const joinedMistakes = mistakesMutations.join('\n');
@@ -295,8 +280,12 @@ function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
 }
 
 function updateMistakesAndLessons(mistakes, lessons, entryId) {
-  const newMistakes = mistakes.filter(mistake => isLocalId(mistake.id) && mistake.text.trim().length !== 0);
-  const newLessons = lessons.filter(lesson => isLocalId(lesson.id) && lesson.text.trim().length !== 0);
+  const newMistakes = mistakes.filter(
+    (mistake) => isLocalId(mistake.id) && mistake.text.trim().length !== 0,
+  );
+  const newLessons = lessons.filter(
+    (lesson) => isLocalId(lesson.id) && lesson.text.trim().length !== 0,
+  );
   if (newMistakes.length === 0 && newLessons.length === 0) {
     return Promise.resolve();
   }
@@ -310,7 +299,7 @@ function updateMistakesAndLessons(mistakes, lessons, entryId) {
   });
 }
 
-const validateNum = val => (Number.isNaN(parseInt(val, 10)) ? 0 : val);
+const validateNum = (val) => (Number.isNaN(parseInt(val, 10)) ? 0 : val);
 
 export function saveEntry(entry) {
   const { lessons, mistakes, ...rest } = entry;
@@ -329,17 +318,17 @@ export function saveEntry(entry) {
     csAt15Min: validateNum(rest.csAt15Min),
     csAt20Min: validateNum(rest.csAt15Min),
     positives: rest.positives
-      .map(item => item.text)
-      .filter(p => p.trim().length !== 0),
+      .map((item) => item.text)
+      .filter((p) => p.trim().length !== 0),
     deathReasons: rest.deathReasons
-      .map(item => item.text)
-      .filter(p => p.trim().length !== 0),
+      .map((item) => item.text)
+      .filter((p) => p.trim().length !== 0),
     csReasons: rest.csReasons
-      .map(item => item.text)
-      .filter(p => p.trim().length !== 0),
+      .map((item) => item.text)
+      .filter((p) => p.trim().length !== 0),
   };
 
-  return updateMistakesAndLessons(mistakes, lessons, entry.id).then(result =>
+  return updateMistakesAndLessons(mistakes, lessons, entry.id).then(() =>
     client.mutate({
       mutation: saveEntryMutation,
       variables: {
@@ -387,9 +376,6 @@ export function removeLesson(id) {
 }
 
 export function removeEntry(entryId, mistakes, lessons) {
-  const remoteMistakes = mistakes.filter(mistake => !isLocalId(mistake.id));
-  const remotedLessons = lessons.filter(lesson => !isLocalId(lesson.id));
-
   const singleDeleteMutation = (typeName, id, returnAlias = false) => {
     const alias = `alias_${Math.random()
       .toString(36)
@@ -407,9 +393,9 @@ export function removeEntry(entryId, mistakes, lessons) {
     return mutation;
   };
 
-  const mistakesMutations = mistakes.map(mistake =>
+  const mistakesMutations = mistakes.map((mistake) =>
     singleDeleteMutation('Mistake', mistake.id));
-  const lessonsMutations = lessons.map(lesson =>
+  const lessonsMutations = lessons.map((lesson) =>
     singleDeleteMutation('Lesson', lesson.id));
   const [entryMutation, entryMutationAlias] = singleDeleteMutation(
     'Entry',
@@ -446,7 +432,9 @@ export function removeEntry(entryId, mistakes, lessons) {
       console.log('--------------');
       console.log(data);
       // Add our comment from the mutation to the end.
-      data.allEntries = data.allEntries.filter(entry => entry.id !== updateResults.id);
+      data.allEntries = data.allEntries.filter(
+        (entry) => entry.id !== updateResults.id,
+      );
       // Write our data back to the cache.
       proxy.writeQuery({
         query: allEntriesQuery,

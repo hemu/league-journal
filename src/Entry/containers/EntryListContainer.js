@@ -3,16 +3,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import EntryList from '../components/EntryList';
-import { RequestStatus } from '../../const';
-import { setEntryDetailId, addEntry } from '../../modules/entry';
+import { setEntryDetailId } from '../../modules/entry';
 import { entryFormInitialState } from '../../modules/entryForm';
 
 import { allEntriesQuery, createEntryMutation } from '../../api/entry';
 
 const EntryListContainer = ({
-  data: { loading, allEntries, error },
+  data: { loading, allEntries },
   setEntryDetailId: _setEntryDetailId,
   createEntry,
+  selectedId,
 }) => {
   if (loading) {
     return <div>Finding entries...</div>;
@@ -27,6 +27,7 @@ const EntryListContainer = ({
       entries={allEntries}
       onSelectEntry={_setEntryDetailId}
       createEntry={createEntry}
+      selectedId={selectedId}
     />
   );
 };
@@ -35,20 +36,8 @@ EntryListContainer.propTypes = {
   data: PropTypes.shape({}).isRequired,
   setEntryDetailId: PropTypes.func.isRequired,
   createEntry: PropTypes.func.isRequired,
+  selectedId: PropTypes.string.isRequired,
 };
-
-// export default connect(
-//   ({ entry }) => ({
-//     entries: entry.entries,
-//     fetchAllStatus: entry.fetchAllStatus,
-//   }),
-//   dispatch => ({
-//     fetchAll: () => dispatch(fetchAllEntries()),
-//     setEntryDetail: (entryIndex, entryId) =>
-//       dispatch(setEntryDetail(entryIndex, entryId)),
-//     addEntry: () => dispatch(addEntry()),
-//   }),
-// )(EntryListContainer);
 
 export default compose(
   graphql(allEntriesQuery),
@@ -88,8 +77,10 @@ export default compose(
         }),
     }),
   }),
-  connect(null, dispatch => ({
-    setEntryDetailId: entryId => dispatch(setEntryDetailId(entryId)),
-    // addEntry: () => dispatch(addEntry()),
-  })),
+  connect(
+    ({ entry: { entryDetailId } }) => ({ selectedId: entryDetailId }),
+    (dispatch) => ({
+      setEntryDetailId: (entryId) => dispatch(setEntryDetailId(entryId)),
+    }),
+  ),
 )(EntryListContainer);

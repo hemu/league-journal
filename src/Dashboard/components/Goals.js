@@ -15,7 +15,7 @@ const Goals = ({ goals }) => (
     <CardContent>
       <Card.Header>Goals</Card.Header>
     </CardContent>
-    {goals.map(goal => <CardContent>{goal}</CardContent>)}
+    {goals.map((goal) => <CardContent>{goal}</CardContent>)}
   </Card>
 );
 

@@ -4,15 +4,9 @@ import { combineForms } from 'react-redux-form';
 import { entryFormInitialState } from './entryForm';
 
 import entry, {
-  fetchAllEpic,
-  fetchEntryEpic,
-  // setEntryDetailEpic,
-  // initialEntryEpic,
   populateFormEpic,
   saveEntryEpic,
   removeEntryEpic,
-  // removeEntrySuccessEpic,
-  // entryListUpdateEpic,
   updateMistakeEpic,
   updateLessonEpic,
   removeMistakeEpic,
@@ -20,15 +14,9 @@ import entry, {
 } from './entry';
 
 export const rootEpic = combineEpics(
-  fetchAllEpic,
-  fetchEntryEpic,
-  // setEntryDetailEpic,
-  // initialEntryEpic,
   populateFormEpic,
   saveEntryEpic,
   removeEntryEpic,
-  // removeEntrySuccessEpic,
-  // entryListUpdateEpic,
   updateMistakeEpic,
   updateLessonEpic,
   removeMistakeEpic,
@@ -43,7 +31,4 @@ export const rootReducer = combineReducers({
     },
     'forms',
   ),
-  // ...createForms({
-  //   entryDetail: entryFormInitialState
-  // })
 });

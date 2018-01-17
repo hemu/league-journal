@@ -6,10 +6,6 @@ import { entryColors, white } from '../../../const/colors';
 import { getChampByName } from '../../../staticData/champion';
 import { getRoleImg } from '../../../staticData';
 
-function separatorColor(outcome) {
-  return outcome === 'W' ? entryColors.win : entryColors.loss;
-}
-
 function champInnerBorder(outcome, isOpponent) {
   if ((outcome === 'W' && !isOpponent) || (outcome !== 'W' && isOpponent)) {
     return `3px solid ${white}`;
@@ -52,8 +48,8 @@ const ChampImage = styled.div`
     align-items: center;
     justify-content: center;
     img {
-      border: ${props => champInnerBorder(props.outcome, false)};
-      box-shadow: ${props => champBorder(props.outcome, false)};
+      border: ${(props) => champInnerBorder(props.outcome, false)};
+      box-shadow: ${(props) => champBorder(props.outcome, false)};
       box-sizing: border-box;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -67,8 +63,8 @@ const OpponentImage = styled(ChampImage)`
     align-items: center;
     justify-content: center;
     img {
-      border: ${props => champInnerBorder(props.outcome, true)};
-      box-shadow: ${props => champBorder(props.outcome, true)};
+      border: ${(props) => champInnerBorder(props.outcome, true)};
+      box-shadow: ${(props) => champBorder(props.outcome, true)};
     }
   }
 `;
@@ -78,31 +74,13 @@ const SeparatorContainer = styled.div`
   grid-template-rows: repeat(3, 1fr);
 `;
 
-// const ChampSeparator = styled.hr`
-//   border: 3px solid ${props => separatorColor(props.outcome)};
-//   width: 100%;
-//   margin-left: -2px;
-//   margin-right: -2px;
-//   grid-row-start: 3;
-//   ${''} &:after {
-//     background: url(${props => props.icon}) no-repeat top center;
-//     content: '';
-//     display: block;
-//     height: 24px; /* height of the ornament */
-//     position: relative;
-//     top: -12px; /* half the height of the ornament */
-//   }
-// `;
-
 const RoleImg = styled(Image)`
   height: 35px;
   grid-row-start: 2;
   margin: 0 auto;
 `;
 
-const MatchupPortrait = ({
-  champion, opponentChampion, role, outcome,
-}) => {
+const MatchupPortrait = ({ champion, opponentChampion, role, outcome }) => {
   const { img: champImg } = getChampByName(champion);
   const { img: opponentImg } = getChampByName(opponentChampion);
   return (
@@ -112,7 +90,6 @@ const MatchupPortrait = ({
       </ChampImage>
       <SeparatorContainer>
         <RoleImg src={getRoleImg(role)} />
-        {/* <ChampSeparator rowPos={1} icon={getRoleImg(role)} outcome={outcome} /> */}
       </SeparatorContainer>
       <OpponentImage outcome={outcome}>
         <Image src={opponentImg} height={75} circular />

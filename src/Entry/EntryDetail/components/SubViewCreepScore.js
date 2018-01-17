@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import SecondaryList from './SecondaryList';
@@ -10,14 +11,16 @@ const GridCont = styled.div`
 
 const CreepScoreView = ({
   csReasons,
-  csPerMin,
+  // csPerMin,
   csAt5Min,
   csAt10Min,
   csAt15Min,
   csAt20Min,
 }) => {
   const possibleLabels = [0, 5, 10, 15, 20];
-  const dataPoints = [0, csAt5Min, csAt10Min, csAt15Min, csAt20Min].filter(v => v != null);
+  const dataPoints = [0, csAt5Min, csAt10Min, csAt15Min, csAt20Min].filter(
+    (v) => v != null,
+  );
   const labels = dataPoints.map((v, i) => possibleLabels[i]);
 
   const data = {
@@ -63,8 +66,9 @@ const CreepScoreView = ({
       display: true,
       labels: {
         filter(legendItem) {
+          // return true or false based on legendItem's
+          // datasetIndex (legendItem.datasetIndex)
           return legendItem.datasetIndex !== 0;
-          // return true or false based on legendItem's datasetIndex (legendItem.datasetIndex)
         },
       },
     },
@@ -102,6 +106,15 @@ const CreepScoreView = ({
       </div>
     </GridCont>
   );
+};
+
+CreepScoreView.propTypes = {
+  csReasons: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // csPerMin: PropTypes.number.isRequired,
+  csAt5Min: PropTypes.number.isRequired,
+  csAt10Min: PropTypes.number.isRequired,
+  csAt15Min: PropTypes.number.isRequired,
+  csAt20Min: PropTypes.number.isRequired,
 };
 
 export default CreepScoreView;

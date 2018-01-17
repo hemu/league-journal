@@ -8,7 +8,6 @@ export function formModel(modelPath) {
 
 export const handleDropdownChange = ({ model, dispatch }, options = {}) => (
   event,
-  data,
 ) => dispatch(actions.change(model, event.target.innerText, options));
 
 export function toNumParser(value) {

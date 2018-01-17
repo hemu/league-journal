@@ -15,7 +15,7 @@ const ListItem = styled.li`
 
 const SecondaryList = ({ items }) => (
   <StyledList>
-    {items.map(item => (
+    {items.map((item) => (
       <ListItem key={item}>
         <div>{item}</div>
       </ListItem>

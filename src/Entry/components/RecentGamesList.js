@@ -1,5 +1,4 @@
 import React from 'react';
-import { inject, observer } from 'mobx-react';
 import { List, Header } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
@@ -28,8 +27,8 @@ const RecentGamesList = ({ recentGames, entries }) => {
       <Header>Recent Games</Header>
       <List
         selection
-        onClick={(event, data) => {
-          const gameIndex = event.target.dataset.gameIndex;
+        onClick={(event) => {
+          const { target: { dataset: { gameIndex } } } = event;
           entries.createEntryFromRecentGame(recentGames.games[gameIndex]);
         }}
       >
@@ -46,4 +45,4 @@ RecentGamesList.propTypes = {
   entries: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default inject('recentGames', 'entries')(observer(RecentGamesList));
+export default RecentGamesList;

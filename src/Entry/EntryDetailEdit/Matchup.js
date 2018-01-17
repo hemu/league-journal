@@ -17,8 +17,9 @@ const ChampionDropdown = ({ model, title }) => (
       selection
       options={champOptions}
       mapProps={{
-        value: props => props.modelValue,
-        onChange: props => handleDropdownChange(props),
+        // eslint-disable-next-line react/prop-types
+        value: (props) => props.modelValue,
+        onChange: (props) => handleDropdownChange(props),
       }}
     />
   </div>
@@ -26,6 +27,7 @@ const ChampionDropdown = ({ model, title }) => (
 
 ChampionDropdown.propTypes = {
   model: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const Matchup = ({ model1, model2, formChange }) => (

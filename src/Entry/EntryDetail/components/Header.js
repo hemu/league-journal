@@ -28,7 +28,7 @@ const OutcomeCont = styled.div`
 const OutcomeText = styled.div`
   font-weight: bold;
   font-size: 95px;
-  color: ${props => outcomeColor(props.outcome)};
+  color: ${(props) => outcomeColor(props.outcome)};
   text-align: center;
   height: 90px;
   line-height: 90px;
@@ -42,7 +42,7 @@ const KDACont = styled.div`
 const HeaderText = styled.div`
   font-size: 14px;
   text-align: center;
-  grid-row-start: ${props => props.rowPos};
+  grid-row-start: ${(props) => props.rowPos};
 `;
 
 const KDAText = styled(HeaderText)`

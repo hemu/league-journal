@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { entryColors } from '../../../const/colors';
 
 const StyledList = styled.ul`
@@ -29,16 +30,21 @@ const UnmarkedIcon = styled(Icon)`
   cursor: pointer;
 `;
 
-const Star = ({ marked, onClick }) =>
-  (marked ? (
-    <MarkedIcon name="star" onClick={onClick} />
-  ) : (
-    <UnmarkedIcon name="empty star" onClick={onClick} />
-  ));
+const Star = ({ marked, onClick }) => {
+  if (marked) {
+    return <MarkedIcon name="star" onClick={onClick} />;
+  }
+  return <UnmarkedIcon name="empty star" onClick={onClick} />;
+};
+
+Star.propTypes = {
+  marked: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 const MarkableList = ({ items, onMark }) => (
   <StyledList>
-    {items.map(item => (
+    {items.map((item) => (
       <ListItem key={item.id}>
         <div>{item.text}</div>
         <StarCont>
@@ -51,5 +57,16 @@ const MarkableList = ({ items, onMark }) => (
     ))}
   </StyledList>
 );
+
+MarkableList.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      text: PropTypes.string,
+      marked: PropTypes.bool,
+    }),
+  ).isRequired,
+  onMark: PropTypes.func.isRequired,
+};
 
 export default MarkableList;

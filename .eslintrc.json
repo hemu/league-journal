@@ -11,7 +11,16 @@
     "import/no-unresolved": [2, { "ignore": ["^[~]"] }],
     "import/extensions": [2, "never"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "max-len": ["error", { "code": 80 }]
+    "max-len": ["error", { "code": 80 }],
+    "object-curly-newline": [
+      "error",
+      {
+        "ObjectExpression": { "minProperties": 4, "consistent": true },
+        "ObjectPattern": { "multiline": true }
+      }
+    ],
+    "arrow-parens": ["error", "always"],
+    "function-paren-newline": ["error", "consistent"]
   },
   "parserOptions": {
     "ecmaFeatures": {

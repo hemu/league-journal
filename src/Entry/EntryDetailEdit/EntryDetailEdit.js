@@ -1,17 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Form as ReactForm, actions } from 'react-redux-form';
-import { Button, Form, Input, Icon } from 'semantic-ui-react';
+import { Button, Form, Icon } from 'semantic-ui-react';
 // import DayPickerInput from 'react-day-picker/DayPickerInput';
 // import YoutubePlayer from 'react-youtube';
 import 'react-day-picker/lib/style.css';
 import PropTypes from 'prop-types';
 import EntryDetailBaseStats from './EntryDetailBaseStats';
 import ChampionMatchup from './Matchup';
-import { FormInput, FieldLabel } from './FormElements';
 import EditableText from './EditableText';
 
-import { baseFormModel, toNumParser, toFloatParser } from '../helpers';
+import { baseFormModel } from '../helpers';
 
 const multiElemSections = [
   {
@@ -85,9 +84,16 @@ const EntrySection = ({ title, children }) => (
   </FormSectionCont>
 );
 
+EntrySection.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
+};
+
 const EntryDetailEdit = (props) => {
   const {
     id: entryId,
+    mistakes,
+    lessons,
     removeEntry,
     saveEntry,
     formChange,
@@ -125,7 +131,7 @@ const EntryDetailEdit = (props) => {
         </Button>
         <Button
           type="button"
-          onClick={() => removeEntry(entryId, props.mistakes, props.lessons)}
+          onClick={() => removeEntry(entryId, mistakes, lessons)}
         >
           Delete
         </Button>
@@ -214,13 +220,14 @@ const EntryDetailEdit = (props) => {
 
         <EntrySection title="Mistakes" key="Mistakes">
           <ListGrid>
-            {props.mistakes.map((elem, elemIndex) => (
+            {mistakes.map((elem, elemIndex) => (
               <ListGridRow key={elemIndex}>
                 <Form.Field>
                   <EditableText
                     model={`.mistakes[${elemIndex}].text`}
                     changeAction={(model, value) =>
-                      changeMistake(model, elem.id, value)}
+                      changeMistake(model, elem.id, value)
+                    }
                     emptyPlaceholder="My mistake was..."
                     isLatest={elem.isLatest}
                   />
@@ -244,13 +251,14 @@ const EntryDetailEdit = (props) => {
 
         <EntrySection title="Lessons" key="Lessons">
           <ListGrid>
-            {props.lessons.map((elem, elemIndex) => (
-              <ListGridRow key={elemIndex}>
+            {lessons.map((elem, elemIndex) => (
+              <ListGridRow key={elem.id}>
                 <Form.Field>
                   <EditableText
                     model={`.lessons[${elemIndex}].text`}
                     changeAction={(model, value) =>
-                      changeLesson(model, elem.id, value)}
+                      changeLesson(model, elem.id, value)
+                    }
                     emptyPlaceholder="I learned this lesson..."
                     isLatest={elem.isLatest}
                   />
@@ -272,7 +280,7 @@ const EntryDetailEdit = (props) => {
           </AddBtn>
         </EntrySection>
 
-        {multiElemSections.map(section => (
+        {multiElemSections.map((section) => (
           <EntrySection title={section.title} key={section.title}>
             <ListGrid>
               {props[section.model].map((elem, elemIndex) => (
@@ -309,6 +317,8 @@ const EntryDetailEdit = (props) => {
 
 EntryDetailEdit.propTypes = {
   id: PropTypes.string.isRequired,
+  mistakes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.object).isRequired,
   removeEntry: PropTypes.func.isRequired,
   saveEntry: PropTypes.func.isRequired,
   formChange: PropTypes.func.isRequired,
@@ -317,7 +327,10 @@ EntryDetailEdit.propTypes = {
   updateLesson: PropTypes.func.isRequired,
   updateMistake: PropTypes.func.isRequired,
   removeMistake: PropTypes.func.isRequired,
+  removeMistakeLocal: PropTypes.func.isRequired,
   removeLesson: PropTypes.func.isRequired,
+  removeLessonLocal: PropTypes.func.isRequired,
+  setEditMode: PropTypes.func.isRequired,
 };
 
 export default EntryDetailEdit;

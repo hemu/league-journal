@@ -15,7 +15,7 @@ const NewEntryBtnCont = styled.div`
   text-align: center;
 `;
 
-const EntryList = ({ entries, onSelectEntry, createEntry }) => (
+const EntryList = ({ entries, onSelectEntry, createEntry, selectedId }) => (
   <MainCont>
     <NewEntryBtnCont>
       <Button type="submit" onClick={() => createEntry()} size="tiny">
@@ -25,22 +25,11 @@ const EntryList = ({ entries, onSelectEntry, createEntry }) => (
     <List selection>
       {entries.map((entry, i) => (
         <EntryListItem
-          key={entry.id + i}
+          key={entry.id + entry.gameDate.toString()}
           entry={entry}
           entryIndex={i}
-          active={false}
-          // active={entryDetailStore.id === entry.id}
+          active={selectedId === entry.id}
           isLocalEntry={isLocalEntry(entry.id)}
-          //   onSelect={(event, _) => {
-          //     console.log('--------------------');
-          //     console.log(event.target);
-          //     console.log(event.target.dataset);
-          //     onSelectEntry(
-          //       parseInt(event.target.dataset.entryIndex, 10),
-          //       event.target.dataset.id,
-          //     );
-          //   }
-          // }
           onSelect={onSelectEntry}
         />
       ))}
@@ -52,6 +41,7 @@ EntryList.propTypes = {
   entries: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSelectEntry: PropTypes.func.isRequired,
   createEntry: PropTypes.func.isRequired,
+  selectedId: PropTypes.string.isRequired,
 };
 
 export default EntryList;

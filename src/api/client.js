@@ -10,7 +10,7 @@ const SIMPLE_ENDPOINT =
 
 const client = new ApolloClient({
   link: new BatchHttpLink({ uri: SIMPLE_ENDPOINT }),
-  cache: new InMemoryCache({ dataIdFromObject: o => o.id }),
+  cache: new InMemoryCache({ dataIdFromObject: (o) => o.id }),
 });
 
 export default client;

@@ -12,14 +12,21 @@ import EntryDetail from '../EntryDetail/EntryDetail';
 
 export default compose(
   graphql(entryDetailQuery, {
-    skip: ownProps => !ownProps.entryDetailId,
-    options: ({ entryDetailId }) => ({ variables: { entryId: entryDetailId } }),
+    skip: (ownProps) => !ownProps.entryDetailId,
+    options: ({ entryDetailId }) => ({
+      variables: {
+        entryId: entryDetailId,
+      },
+    }),
   }),
   graphql(markMistakeMutation, {
     props: ({ mutate }) => ({
       markMistake: (id, marked) =>
         mutate({
-          variables: { id, marked },
+          variables: {
+            id,
+            marked,
+          },
           optimisticResponse: {
             __typename: 'Mutation',
             updateMistake: {
@@ -35,7 +42,10 @@ export default compose(
     props: ({ mutate }) => ({
       markLesson: (id, marked) =>
         mutate({
-          variables: { id, marked },
+          variables: {
+            id,
+            marked,
+          },
           optimisticResponse: {
             __typename: 'Mutation',
             updateLesson: {
@@ -47,7 +57,7 @@ export default compose(
         }),
     }),
   }),
-  connect(null, dispatch => ({
+  connect(null, (dispatch) => ({
     setEditMode: (isEditMode, entryId) =>
       dispatch(setEditMode(isEditMode, entryId)),
   })),

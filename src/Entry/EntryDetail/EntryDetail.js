@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Card, Button, Accordion, Icon } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CreepScoreView from './components/SubViewCreepScore';
 import SecondaryList from './components/SecondaryList';
@@ -41,9 +42,12 @@ const EditBtn = styled(Button)`
 `;
 
 class EntryDetail extends React.Component {
-  state = { activeIndex: [0] };
+  constructor(props) {
+    super(props);
+    this.state = { activeIndex: [0] };
+  }
 
-  handleAccordionClick = (e, titleProps) => {
+  handleAccordionClick(e, titleProps) {
     const { index } = titleProps;
     const { activeIndex } = this.state;
     const arrIndex = activeIndex.indexOf(index);
@@ -53,12 +57,13 @@ class EntryDetail extends React.Component {
       activeIndex.push(index);
     }
     this.setState({ activeIndex });
-  };
+  }
+
   render() {
     if (this.props.data.loading) {
       return <div>Loading entry...</div>;
     }
-    const props = this.props;
+    const { props } = this;
     const entry = this.props.data.Entry;
     return (
       <MainCont>
@@ -138,5 +143,10 @@ class EntryDetail extends React.Component {
     );
   }
 }
+
+EntryDetail.propTypes = {
+  data: PropTypes.shape({ Entry: PropTypes.object, loading: PropTypes.bool })
+    .isRequired,
+};
 
 export default EntryDetail;
