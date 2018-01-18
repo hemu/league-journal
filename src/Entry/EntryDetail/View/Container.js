@@ -4,11 +4,11 @@ import {
   entryDetailQuery,
   markMistakeMutation,
   markLessonMutation,
-} from '../../api/entry';
+} from '../../../api/entry';
 
-import { setEditMode } from '../../modules/entry';
+import { setEditMode } from '../../../modules/entry';
 
-import EntryDetail from '../EntryDetail/EntryDetail';
+import EntryDetail from './EntryDetail';
 
 export default compose(
   graphql(entryDetailQuery, {

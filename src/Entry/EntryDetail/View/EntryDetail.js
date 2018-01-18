@@ -2,10 +2,10 @@ import React from 'react';
 import { Grid, Card, Button, Accordion, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import CreepScoreView from './components/SubViewCreepScore';
-import SecondaryList from './components/SecondaryList';
-import Header from './components/Header';
-import MarkableList from './components/MarkableList';
+import CreepScoreView from './SubViewCreepScore';
+import SecondaryList from './SecondaryList';
+import Header from './Header';
+import MarkableList from './MarkableList';
 
 const MainCont = styled.div`
   padding: 20px;

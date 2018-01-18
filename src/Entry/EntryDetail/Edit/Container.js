@@ -5,18 +5,18 @@ import {
   entryDetailQuery,
   deleteMistakeMutation,
   deleteLessonMutation,
-} from '../../api/entry';
+} from '../../../api/entry';
 
-import EntryDetailEdit from '../EntryDetailEdit/EntryDetailEdit';
-import { LOCAL_ID_PREFIX } from '../../const';
+import EntryDetailEdit from './EntryDetailEdit';
+import { LOCAL_ID_PREFIX } from '../../../const';
 import {
   saveEntry,
   removeEntry,
   updateMistake,
   updateLesson,
   setEditMode,
-} from '../../modules/entry';
-import { formModel } from '../helpers';
+} from '../../../modules/entry';
+import { formModel } from '../../helpers';
 
 export default compose(
   graphql(deleteMistakeMutation, {

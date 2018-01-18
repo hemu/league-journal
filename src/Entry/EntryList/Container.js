@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
-import EntryList from '../components/EntryList';
+import EntryList from './EntryList';
 import { setEntryDetailId } from '../../modules/entry';
 import { entryFormInitialState } from '../../modules/entryForm';
 

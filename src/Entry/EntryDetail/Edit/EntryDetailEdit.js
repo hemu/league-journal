@@ -10,7 +10,7 @@ import EntryDetailBaseStats from './EntryDetailBaseStats';
 import ChampionMatchup from './Matchup';
 import EditableText from './EditableText';
 
-import { baseFormModel } from '../helpers';
+import { baseFormModel } from '../../helpers';
 
 const multiElemSections = [
   {
@@ -86,7 +86,7 @@ const EntrySection = ({ title, children }) => (
 
 EntrySection.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 const EntryDetailEdit = (props) => {
@@ -147,77 +147,6 @@ const EntryDetailEdit = (props) => {
           />
         </EntrySection>
 
-        {/* <EntrySection title="Creep Score">
-          <Grid stackable>
-            <Grid.Column width={2}>
-              <Form.Field>
-                <FieldLabel>CS / Min</FieldLabel>
-                <FormInput
-                  component={Input}
-                  type="number"
-                  parser={toFloatParser}
-                  size="mini"
-                  model=".csPerMin"
-                  updateOn="blur"
-                />
-              </Form.Field>
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <Form.Field>
-                <FieldLabel>CS @ 5</FieldLabel>
-                <FormInput
-                  component={Input}
-                  type="number"
-                  parser={toNumParser}
-                  size="mini"
-                  model=".csAt5Min"
-                  updateOn="blur"
-                />
-              </Form.Field>
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <Form.Field>
-                <FieldLabel>CS @ 10</FieldLabel>
-                <FormInput
-                  component={Input}
-                  type="number"
-                  parser={toNumParser}
-                  size="mini"
-                  model=".csAt10Min"
-                  updateOn="blur"
-                />
-              </Form.Field>
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <Form.Field>
-                <FieldLabel>CS @ 15</FieldLabel>
-
-                <FormInput
-                  component={Input}
-                  type="number"
-                  parser={toNumParser}
-                  size="mini"
-                  model=".csAt15Min"
-                  updateOn="blur"
-                />
-              </Form.Field>
-            </Grid.Column>
-            <Grid.Column width={2}>
-              <Form.Field>
-                <FieldLabel>CS @ 20</FieldLabel>
-                <FormInput
-                  component={Input}
-                  type="number"
-                  parser={toNumParser}
-                  size="mini"
-                  model=".csAt20Min"
-                  updateOn="blur"
-                />
-              </Form.Field>
-            </Grid.Column>
-          </Grid>
-        </EntrySection> */}
-
         <EntrySection title="Mistakes" key="Mistakes">
           <ListGrid>
             {mistakes.map((elem, elemIndex) => (
@@ -229,7 +158,7 @@ const EntryDetailEdit = (props) => {
                       changeMistake(model, elem.id, value)
                     }
                     emptyPlaceholder="My mistake was..."
-                    isLatest={elem.isLatest}
+                    isLatest={elem.isLatest || false}
                   />
                 </Form.Field>
                 <DelBtn
@@ -260,7 +189,7 @@ const EntryDetailEdit = (props) => {
                       changeLesson(model, elem.id, value)
                     }
                     emptyPlaceholder="I learned this lesson..."
-                    isLatest={elem.isLatest}
+                    isLatest={elem.isLatest || false}
                   />
                 </Form.Field>
                 <DelBtn
@@ -289,7 +218,7 @@ const EntryDetailEdit = (props) => {
                     <EditableText
                       model={`.${section.model}[${elemIndex}].text`}
                       emptyPlaceholder={section.placeholder}
-                      isLatest={elem.isLatest}
+                      isLatest={elem.isLatest || false}
                     />
                   </Form.Field>
                   <DelBtn

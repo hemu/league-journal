@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
 import client from './api/client';
 import './App.css';
-import { EntriesMain } from './Entry';
+import Entry from './Entry';
 import Dashboard from './Dashboard';
 
 const App = () => (
@@ -12,7 +12,7 @@ const App = () => (
     <ApolloProvider client={client}>
       <Switch>
         <Route exact path="/" component={Dashboard} />
-        <Route path="/entry" component={EntriesMain} />
+        <Route path="/entry" component={Entry} />
       </Switch>
     </ApolloProvider>
   </BrowserRouter>

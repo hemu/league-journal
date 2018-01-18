@@ -14,8 +14,8 @@ import {
   handleDropdownChange,
   toNumParser,
   toFloatParser,
-} from '../helpers';
-import { rankOptions, outcomeOptions, roleOptions } from '../../staticData';
+} from '../../helpers';
+import { rankOptions, outcomeOptions, roleOptions } from '../../../staticData';
 
 const DatePickerCont = styled.div`
   .DayPickerInput-OverlayWrapper {

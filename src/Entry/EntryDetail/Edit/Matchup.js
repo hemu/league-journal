@@ -3,8 +3,8 @@ import { Dropdown, Grid } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { Control } from 'react-redux-form';
 import { FieldLabel } from './FormElements';
-import { champOptions } from '../../staticData';
-import { handleDropdownChange } from '../helpers';
+import { champOptions } from '../../../staticData';
+import { handleDropdownChange } from '../../helpers';
 
 const ChampionDropdown = ({ model, title }) => (
   <div>

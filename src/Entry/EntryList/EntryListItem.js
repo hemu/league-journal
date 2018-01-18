@@ -113,27 +113,15 @@ const EntryListItem = ({
   active,
   entryIndex,
   onSelect,
-}) => {
-  if (isLocalEntry) {
-    return (
-      <ListItem
-        isLocalEntry={isLocalEntry}
-        entry={entry}
-        active={active}
-        entryIndex={entryIndex}
-        onSelect={() => onSelect(entry.id)}
-      />
-    );
-  }
-  return (
-    <ListItem
-      entry={entry}
-      active={active}
-      entryIndex={entryIndex}
-      onSelect={() => onSelect(entry.id)}
-    />
-  );
-};
+}) => (
+  <ListItem
+    isLocalEntry={isLocalEntry}
+    entry={entry}
+    active={active}
+    entryIndex={entryIndex}
+    onSelect={() => onSelect(entry.id)}
+  />
+);
 
 EntryListItem.propTypes = {
   entry: PropTypes.shape({

@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import EntryDetailContainer from './EntryDetailContainer';
-import EntryDetailEditContainer from './EntryDetailEditContainer';
+import EntryDetailContainer from './View/Container';
+import EntryDetailEditContainer from './Edit/Container';
 
 const container = (editMode, entryDetailId) => {
   if (editMode) {

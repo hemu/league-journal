@@ -33,7 +33,7 @@ TextDisplay.propTypes = {
 class EditableText extends React.Component {
   constructor(props) {
     super(props);
-    let editMode = props.editMode != null ? props.editMode : false;
+    let editMode = props.editMode;
     editMode = props.isLatest ? true : editMode;
     console.log(editMode);
     this.state = {
@@ -97,7 +97,11 @@ class EditableText extends React.Component {
 EditableText.propTypes = {
   isLatest: PropTypes.bool.isRequired,
   emptyPlaceholder: PropTypes.string.isRequired,
-  editMode: PropTypes.bool.isRequired,
+  editMode: PropTypes.bool,
+};
+
+EditableText.defaultProps = {
+  editMode: false,
 };
 
 export default EditableText;
