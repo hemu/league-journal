@@ -1,10 +1,8 @@
 import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import {
-  entryDetailQuery,
-  markMistakeMutation,
-  markLessonMutation,
-} from '../../../api/entry';
+import { entryDetailQuery } from '../../../api/entry';
+import { markMistakeMutation } from '../../../api/mistake';
+import { markLessonMutation } from '../../../api/lesson';
 
 import { setEditMode } from '../../../modules/entry';
 

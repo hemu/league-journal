@@ -1,11 +1,9 @@
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import { actions } from 'react-redux-form';
-import {
-  entryDetailQuery,
-  deleteMistakeMutation,
-  deleteLessonMutation,
-} from '../../../api/entry';
+import { entryDetailQuery } from '../../../api/entry';
+import { deleteMistakeMutation } from '../../../api/mistake';
+import { deleteLessonMutation } from '../../../api/lesson';
 
 import EntryDetailEdit from './EntryDetailEdit';
 import { LOCAL_ID_PREFIX } from '../../../const';

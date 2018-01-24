@@ -35,7 +35,6 @@ class EditableText extends React.Component {
     super(props);
     let editMode = props.editMode;
     editMode = props.isLatest ? true : editMode;
-    console.log(editMode);
     this.state = {
       editMode,
     };
@@ -61,7 +60,6 @@ class EditableText extends React.Component {
   }
 
   handleInputBlur() {
-    console.log('handleInputBlur');
     this.setState({ editMode: false });
   }
 

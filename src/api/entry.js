@@ -1,6 +1,8 @@
 import gql from 'graphql-tag';
 import client from '../api/client';
 import { isLocalId } from '../helpers';
+import { updateMistakeMutation, deleteMistakeMutation } from './mistake';
+import { updateLessonMutation, deleteLessonMutation } from './lesson';
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
@@ -172,58 +174,6 @@ export const saveEntryMutation = gql`
     }
   }
   ${fullEntryFragment}
-`;
-
-export const markMistakeMutation = gql`
-  mutation UpdateMistake($id: ID!, $marked: Boolean!) {
-    updateMistake(id: $id, marked: $marked) {
-      id
-      marked
-    }
-  }
-`;
-
-export const markLessonMutation = gql`
-  mutation UpdateLesson($id: ID!, $marked: Boolean!) {
-    updateLesson(id: $id, marked: $marked) {
-      id
-      marked
-    }
-  }
-`;
-
-const updateMistakeMutation = gql`
-  mutation UpdateMistake($id: ID!, $text: String!) {
-    updateMistake(id: $id, text: $text) {
-      id
-      text
-    }
-  }
-`;
-
-export const deleteMistakeMutation = gql`
-  mutation DeleteMistake($id: ID!) {
-    deleteMistake(id: $id) {
-      id
-    }
-  }
-`;
-
-const updateLessonMutation = gql`
-  mutation UpdateLesson($id: ID!, $text: String!) {
-    updateLesson(id: $id, text: $text) {
-      id
-      text
-    }
-  }
-`;
-
-export const deleteLessonMutation = gql`
-  mutation DeleteLesson($id: ID!) {
-    deleteLesson(id: $id) {
-      id
-    }
-  }
 `;
 
 export const createMistakeMutation = gql`
@@ -429,8 +379,6 @@ export function removeEntry(entryId, mistakes, lessons) {
       const data = proxy.readQuery({
         query: allEntriesQuery,
       });
-      console.log('--------------');
-      console.log(data);
       // Add our comment from the mutation to the end.
       data.allEntries = data.allEntries.filter(
         (entry) => entry.id !== updateResults.id,

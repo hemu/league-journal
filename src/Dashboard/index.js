@@ -1,51 +1,38 @@
 import React from 'react';
 import { Grid, Card, Container } from 'semantic-ui-react';
-import Goals from './components/Goals';
-import Mistakes from './components/Mistakes';
+import styled from 'styled-components';
+import GoalContainer from './Goal';
+import Mistakes from './Mistakes';
+import Lessons from './Lessons';
+import RecentGames from './RecentGames';
+import LatestNotes from './LatestNotes';
+import { grayBlue } from '../const/colors';
+
+const Cont = styled.div`
+  background-color: #eaeaea;
+  padding: 20px;
+`;
 
 export default () => (
-  <Container>
+  <Cont>
+    <GoalContainer />
     <Grid stackable>
-      <Grid.Row columns={3}>
+      <Grid.Row columns="equal">
         <Grid.Column>
-          <Goals />
+          <Mistakes mainColor="#EB5783" />
         </Grid.Column>
         <Grid.Column>
-          <Mistakes />
-        </Grid.Column>
-        <Grid.Column>
-          <Card raised fluid>
-            <Card.Content>
-              <Card.Header>Top Lessons</Card.Header>
-            </Card.Content>
-          </Card>
+          <Lessons mainColor="#C46AE5" />
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row columns={2}>
+      <Grid.Row columns="equal">
         <Grid.Column>
-          <Card raised fluid>
-            <Card.Content>
-              <Card.Header>Recent Mistakes</Card.Header>
-            </Card.Content>
-          </Card>
+          <RecentGames mainColor={grayBlue} />
         </Grid.Column>
         <Grid.Column>
-          <Card raised fluid>
-            <Card.Content>
-              <Card.Header>Recent Lessons</Card.Header>
-            </Card.Content>
-          </Card>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column>
-          <Card raised fluid>
-            <Card.Content>
-              <Card.Header>Recent Games</Card.Header>
-            </Card.Content>
-          </Card>
+          <LatestNotes mainColor={grayBlue} />
         </Grid.Column>
       </Grid.Row>
     </Grid>
-  </Container>
+  </Cont>
 );
