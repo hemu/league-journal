@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const markedLessonsQuery = gql`
   query MarkedLessonsQuery {
-    allLessons(filter: { marked: true }) {
+    allLessons(filter: { marked: true }, first: 10, orderBy: createdAt_DESC) {
       id
       text
       marked

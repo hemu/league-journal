@@ -18,7 +18,7 @@ const Cont = styled.div`
 
 export const TextCont = styled.div`
   padding-left: 40px;
-  text-align: left;
+  text-align: center;
   align-self: center;
   width: 100%;
   color: #555;

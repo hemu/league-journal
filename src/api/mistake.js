@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const markedMistakesQuery = gql`
   query MarkedMistakesQuery {
-    allMistakes(filter: { marked: true }) {
+    allMistakes(filter: { marked: true }, first: 10, orderBy: createdAt_DESC) {
       id
       text
       marked

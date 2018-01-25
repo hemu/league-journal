@@ -6,7 +6,7 @@ import { updateLessonMutation, deleteLessonMutation } from './lesson';
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
-    allEntries {
+    allEntries(orderBy: gameDate_DESC, first: 20) {
       id
       champion
       opponentChampion
