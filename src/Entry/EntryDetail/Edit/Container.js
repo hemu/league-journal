@@ -83,11 +83,10 @@ export default compose(
   }),
 
   connect(
-    ({ forms: { entry }, entry: { editMode } }) => ({
+    ({ forms: { entry } }) => ({
       ...entry,
-      editMode,
     }),
-    (dispatch) => ({
+    (dispatch, ownProps) => ({
       removeEntry: (entryId, mistakes, lessons) =>
         dispatch(removeEntry(entryId, mistakes, lessons)),
       saveEntry: (entry) => dispatch(saveEntry(entry)),
@@ -110,7 +109,11 @@ export default compose(
       removeLessonLocal: (id, index) => {
         dispatch(actions.remove(formModel('.lessons'), index));
       },
-      setEditMode: (isEditMode) => dispatch(setEditMode(isEditMode)),
+      setEditMode: (isEditMode) => {
+        dispatch(
+          setEditMode(isEditMode, null, ownProps.history.location.pathname),
+        );
+      },
     }),
   ),
 )(EntryDetailEdit);

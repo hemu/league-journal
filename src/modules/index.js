@@ -1,22 +1,26 @@
 import { combineEpics } from 'redux-observable';
 import { combineReducers } from 'redux';
 import { combineForms } from 'react-redux-form';
+import { routerReducer } from 'react-router-redux';
 import { entryFormInitialState } from './entryForm';
 
 import match, { fetchRecentGamesEpic } from './match';
 
 import entry, {
-  populateFormEpic,
+  entryEditOnEpic,
+  entryEditOffEpic,
   saveEntryEpic,
   removeEntryEpic,
   updateMistakeEpic,
   updateLessonEpic,
   removeMistakeEpic,
   removeLessonEpic,
+  setEntryDetailEpic,
 } from './entry';
 
 export const rootEpic = combineEpics(
-  populateFormEpic,
+  entryEditOnEpic,
+  entryEditOffEpic,
   saveEntryEpic,
   removeEntryEpic,
   updateMistakeEpic,
@@ -24,6 +28,7 @@ export const rootEpic = combineEpics(
   removeMistakeEpic,
   removeLessonEpic,
   fetchRecentGamesEpic,
+  setEntryDetailEpic,
 );
 
 export const rootReducer = combineReducers({
@@ -35,4 +40,5 @@ export const rootReducer = combineReducers({
     },
     'forms',
   ),
+  router: routerReducer,
 });

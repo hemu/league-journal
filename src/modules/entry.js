@@ -1,5 +1,6 @@
 import { actions } from 'react-redux-form';
 import Rx from 'rxjs/Rx';
+import { push } from 'react-router-redux';
 import client from '../api/client';
 import {
   entryDetailQuery,
@@ -67,14 +68,35 @@ const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 
 // const debugAction = createAction(DEBUG_ACTION, 'msg');
 
-export const setEditMode = createAction(SET_EDIT_MODE, 'editMode', 'entryId');
+export const setEditMode = createAction(
+  SET_EDIT_MODE,
+  'editMode',
+  'entryId',
+  'fromLocation',
+);
 
 // ----- EPICS ----------------------------------------------
 // ----------------------------------------------------------
-export const populateFormEpic = (action$) =>
+// const newPath = ownProps.history.location.pathname
+//   .split('/')
+//   .slice(0, -1)
+//   .join('/');
+// ownProps.history.push(`${newPath}`);
+export const entryEditOffEpic = (action$) =>
+  action$
+    .filter((action) => action.type === SET_EDIT_MODE && !action.editMode)
+    .map((action) => {
+      const newPath = action.fromLocation
+        .split('/')
+        .slice(0, -1)
+        .join('/');
+      return push(newPath);
+    });
+
+export const entryEditOnEpic = (action$) =>
   action$
     .filter((action) => action.type === SET_EDIT_MODE && action.editMode)
-    .map((action) => {
+    .mergeMap((action) => {
       const data = client.readQuery({
         query: entryDetailQuery,
         variables: {
@@ -91,7 +113,10 @@ export const populateFormEpic = (action$) =>
       entry.positives = entry.positives.map((text) => ({
         text,
       }));
-      return actions.load('forms.entry', entry);
+      return Rx.Observable.concat(
+        Rx.Observable.of(actions.load('forms.entry', entry)),
+        Rx.Observable.of(push(`${action.fromLocation}/edit`)),
+      );
     });
 
 export const saveEntryEpic = (action$) =>
@@ -138,6 +163,11 @@ export const removeLessonEpic = (action$) =>
     .ofType(REMOVE_LESSON)
     .mergeMap((action) =>
       removeLessonApi(action.id).then(() => removeLessonSuccess()));
+
+export const setEntryDetailEpic = (action$) =>
+  action$
+    .ofType(SET_ENTRY_DETAIL_ID)
+    .mergeMap((action) => Rx.Observable.of(push(`/entry/${action.entryId}`)));
 
 // ------- REDUCER -----------------------------------------------
 // ----------------------------------------------------------

@@ -1,5 +1,6 @@
 import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
+
 import { entryDetailQuery } from '../../../api/entry';
 import { markMistakeMutation } from '../../../api/mistake';
 import { markLessonMutation } from '../../../api/lesson';
@@ -10,10 +11,10 @@ import EntryDetail from './EntryDetail';
 
 export default compose(
   graphql(entryDetailQuery, {
-    skip: (ownProps) => !ownProps.entryDetailId,
-    options: ({ entryDetailId }) => ({
+    skip: (ownProps) => !ownProps.match.params.entryId,
+    options: ({ match }) => ({
       variables: {
-        entryId: entryDetailId,
+        entryId: match.params.entryId,
       },
     }),
   }),
@@ -55,8 +56,9 @@ export default compose(
         }),
     }),
   }),
-  connect(null, (dispatch) => ({
+  connect(null, (dispatch, ownProps) => ({
     setEditMode: (isEditMode, entryId) =>
-      dispatch(setEditMode(isEditMode, entryId)),
+      dispatch(setEditMode(isEditMode, entryId, ownProps.location.pathname)),
+    // ownProps.history.push(`${ownProps.history.location.pathname}/edit`);
   })),
 )(EntryDetail);

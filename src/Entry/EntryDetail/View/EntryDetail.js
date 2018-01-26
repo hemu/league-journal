@@ -60,6 +60,9 @@ class EntryDetail extends React.Component {
   }
 
   render() {
+    if (!this.props.data) {
+      return <div> ??? </div>;
+    }
     if (this.props.data.loading) {
       return <div>Loading entry...</div>;
     }
