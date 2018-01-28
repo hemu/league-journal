@@ -10,7 +10,9 @@ import {
   updateLesson as updateLessonApi,
   removeMistake as removeMistakeApi,
   removeLesson as removeLessonApi,
+  createNewEntry as createNewEntryApi,
 } from '../api/entry';
+import { matchDetailsMock } from '../api/riot';
 import { createAction } from './helpers';
 import { isLocalEntry, isLocalId } from '../helpers';
 
@@ -18,6 +20,9 @@ const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL';
 
 const SAVE_ENTRY = 'entries/SAVE_ENTRY';
 const SAVE_ENTRY_SUCCESS = 'entries/SAVE_ENTRY_SUCCESS';
+
+const CREATE_ENTRY = 'entries/CREATE_ENTRY';
+const CREATE_ENTRY_SUCCESS = 'entries/CREATE_ENTRY_SUCCESS';
 
 const REMOVE_ENTRY = 'entries/REMOVE_ENTRY';
 const REMOVE_ENTRY_SUCCESS = 'entries/REMOVE_ENTRY_SUCCESS';
@@ -44,6 +49,12 @@ const SET_EDIT_MODE = 'entries/SET_EDIT_MODE';
 export const setEntryDetailId = createAction(SET_ENTRY_DETAIL_ID, 'entryId');
 export const saveEntry = createAction(SAVE_ENTRY, 'entry');
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
+
+export const createNewEntry = createAction(CREATE_ENTRY, 'entry');
+export const createNewEntrySuccess = createAction(
+  CREATE_ENTRY_SUCCESS,
+  'entry',
+);
 
 export const removeEntry = createAction(
   REMOVE_ENTRY,
@@ -118,6 +129,19 @@ export const entryEditOnEpic = (action$) =>
         Rx.Observable.of(push(`${action.fromLocation}/edit`)),
       );
     });
+
+export const createEntryEpic = (action$) =>
+  action$.ofType(CREATE_ENTRY).mergeMap((action) =>
+    matchDetailsMock()
+      .then((details) => {
+        console.log('got match details mock......');
+        console.log(details);
+        return createNewEntryApi({
+          ...action.entry,
+          ...details,
+        });
+      })
+      .then((success) => createNewEntrySuccess(success)));
 
 export const saveEntryEpic = (action$) =>
   action$

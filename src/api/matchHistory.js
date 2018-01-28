@@ -1,4 +1,4 @@
-export const matchDetail = {
+export const matchHistoryMock = {
   frames: [
     {
       timestamp: 207,

@@ -3,6 +3,7 @@ import client from '../api/client';
 import { isLocalId } from '../helpers';
 import { updateMistakeMutation, deleteMistakeMutation } from './mistake';
 import { updateLessonMutation, deleteLessonMutation } from './lesson';
+import { entryFormInitialState } from '../modules/entryForm';
 
 export const allEntriesQuery = gql`
   query AllEntriesQuery {
@@ -321,6 +322,41 @@ export function removeLesson(id) {
     mutation: deleteLessonMutation,
     variables: {
       id,
+    },
+  });
+}
+
+export function createNewEntry(defaultVals = {}) {
+  return client.mutate({
+    mutation: createEntryMutation,
+    variables: {
+      ...entryFormInitialState,
+      gameDate: new Date(),
+      ...defaultVals,
+    },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      createEntry: {
+        __typename: 'Entry',
+        id: 'TEMP_LOCAL_ID',
+        ...entryFormInitialState,
+        gameDate: new Date(),
+        ...defaultVals,
+      },
+    },
+    update: (proxy, { data: { createEntry } }) => {
+      // Read the data from our cache for this query.
+      const data = proxy.readQuery({
+        query: allEntriesQuery,
+        // variables: { entryId },
+      });
+      // Add our comment from the mutation to the end.
+      data.allEntries.push(createEntry);
+      // Write our data back to the cache.
+      proxy.writeQuery({
+        query: allEntriesQuery,
+        data,
+      });
     },
   });
 }

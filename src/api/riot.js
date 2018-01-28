@@ -2,6 +2,7 @@ import axios from 'axios';
 import { roleToLane, getQueue } from '../staticData/match';
 import { getChampByKey } from '../staticData/champion';
 import { HARDCODED_ACCOUNT_ID } from '../const';
+import { matchHistoryMock } from './matchHistory';
 
 const API_KEY = 'RGAPI-82728b1d-c740-4b88-8625-2c32a7dbd621';
 const PROXY_ADDRESS = 'http://localhost:8080';
@@ -31,23 +32,56 @@ export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
 
 // win or loss
 // kda
-function parseMatchDetailResponse(resp, accountId) {
+// opponent champion
+function parseMatchDetailResponse(resp, accountId = HARDCODED_ACCOUNT_ID) {
   const { participantIdentities, participants } = resp;
   const identity = participantIdentities
-    .filter((ident) => ident.player.accountId === accountId)
+    .filter((ident) => ident.player.accountId.toString() === accountId)
     .map((ident) => ident.participantId);
+
   if (identity.length < 1) {
     return null;
   }
-  const participantId = identity[0];
-  return participants
-    .filter((participant) => participant.participantId === participantId)
-    .map(({ stats }) => ({
+  const targetParticipantId = identity[0];
+  const playerDetails = participants
+    .filter(({ participantId }) => participantId === targetParticipantId)
+    .map(({ stats, timeline }) => ({
       kills: stats.kills,
       assists: stats.assists,
       deaths: stats.deaths,
-      win: stats.win ? 'W' : 'L',
-    }));
+      outcome: stats.win ? 'W' : 'L',
+      role: roleToLane(timeline.role, timeline.lane),
+    }))
+    .shift();
+
+  // find opponent champion by finding opponent with same role
+  const opponent = participants.find(
+    ({ participantId, timeline: { role, lane } }) =>
+      roleToLane(role, lane) === playerDetails.role &&
+      participantId !== targetParticipantId,
+  );
+  playerDetails.opponentChampion = getChampByKey(opponent.championId);
+
+  // get minion kills from detailed match history
+  matchHistoryMock.frames
+    .map((frame) => ({
+      timestamp: frame.timestamp,
+      min: frame.timestamp / 60000,
+      minionsKilled: frame.participantFrames[targetParticipantId].minionsKilled,
+    }))
+    .filter(
+      (frame) =>
+        (frame.min > 4.5 && frame.min < 5.5) ||
+        (frame.min > 9.5 && frame.min < 10.5) ||
+        (frame.min > 14.5 && frame.min < 15.5) ||
+        (frame.min > 19.5 && frame.min < 20.5),
+    )
+    .forEach(
+      ({ minionsKilled }, i) =>
+        (playerDetails[`csAt${(i + 1) * 5}Min`] = minionsKilled),
+    );
+
+  return playerDetails;
 }
 
 export function recentGamesMock() {

@@ -5,7 +5,6 @@ import { graphql, compose } from 'react-apollo';
 import EntryList from './EntryList';
 import { setEntryDetailId } from '../../modules/entry';
 import { entryFormInitialState } from '../../modules/entryForm';
-
 import { allEntriesQuery, createEntryMutation } from '../../api/entry';
 
 const EntryListContainer = ({

@@ -16,6 +16,7 @@ import entry, {
   removeMistakeEpic,
   removeLessonEpic,
   setEntryDetailEpic,
+  createEntryEpic,
 } from './entry';
 
 export const rootEpic = combineEpics(
@@ -29,6 +30,7 @@ export const rootEpic = combineEpics(
   removeLessonEpic,
   fetchRecentGamesEpic,
   setEntryDetailEpic,
+  createEntryEpic,
 );
 
 export const rootReducer = combineReducers({

@@ -36,7 +36,7 @@ const TextBtn = styled.button`
   cursor: pointer;
 `;
 
-const GamesList = ({ games }) => (
+const GamesList = ({ games, createEntry }) => (
   <StyledList>
     {games.map((game) => (
       <ListItem key={game.id}>
@@ -44,7 +44,18 @@ const GamesList = ({ games }) => (
         <div>{game.champion}</div>
         <div>{game.lane}</div>
         <div>{moment(game.timestamp).fromNow()}</div>
-        <TextBtn>New Entry</TextBtn>
+        <TextBtn
+          onClick={() =>
+            createEntry({
+              champion: game.champion,
+              role: game.lane,
+              gameDate: new Date(game.timestamp),
+              gameId: game.gameId,
+            })
+          }
+        >
+          New Entry
+        </TextBtn>
       </ListItem>
     ))}
   </StyledList>
@@ -58,17 +69,19 @@ GamesList.propTypes = {
       timestamp: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  createEntry: PropTypes.func.isRequired,
 };
 
-const RecentGames = ({ mainColor, games }) => (
+const RecentGames = ({ mainColor, games, createEntry }) => (
   <DashboardItem title="Recent Games" mainColor={mainColor}>
-    <GamesList games={games} />
+    <GamesList games={games} createEntry={createEntry} />
   </DashboardItem>
 );
 
 RecentGames.propTypes = {
   games: PropTypes.arrayOf(PropTypes.string).isRequired,
   mainColor: PropTypes.string.isRequired,
+  createEntry: PropTypes.func.isRequired,
 };
 
 export default RecentGames;
