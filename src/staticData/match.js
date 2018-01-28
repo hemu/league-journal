@@ -1,9 +1,29 @@
 export function roleToLane(role, lane) {
-  if (lane === 'BOTTOM') {
+  if (lane.indexOf('BOT') !== -1) {
     return role === 'DUO_SUPPORT' ? 'Support' : 'Bottom';
+  }
+  if (lane.indexOf('MID') !== -1) {
+    return 'Mid';
   }
   const lowerCasedLane = lane.toLowerCase();
   return lowerCasedLane[0].toUpperCase() + lowerCasedLane.slice(1);
+}
+
+export function isPartnerRole(targetRole, role, lane) {
+  switch (targetRole) {
+    case 'Top':
+      return lane === 'JUNGLE';
+    case 'Jungle':
+      return lane === 'TOP';
+    case 'Mid':
+      return lane === 'JUNGLE';
+    case 'Bottom':
+      return lane === 'BOTTOM' && role === 'DUO_SUPPORT';
+    case 'Support':
+      return lane === 'BOTTOM' && (role === 'DUO' || role === 'DUO_CARRY');
+    default:
+      return false;
+  }
 }
 
 export const seasonMap = {

@@ -1,14 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { graphql, compose } from 'react-apollo';
-
 import RecentGames from './RecentGames';
-import { entryFormInitialState } from '../../modules/entryForm';
 import { createNewEntry } from '../../modules/entry';
-import { allEntriesQuery } from '../../api/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
-import { matchHistoryMock } from '../../api/matchHistory';
 
 class Container extends React.Component {
   componentWillMount() {

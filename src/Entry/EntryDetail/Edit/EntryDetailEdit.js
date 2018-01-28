@@ -143,6 +143,15 @@ const EntryDetailEdit = (props) => {
           <ChampionMatchup
             model1=".champion"
             model2=".opponentChampion"
+            label1="My Champ"
+            label2="Enemy Champ"
+            formChange={formChange}
+          />
+          <ChampionMatchup
+            model1=".partner"
+            model2=".opponentPartner"
+            label1="My Partner"
+            label2="Enemy Partner"
             formChange={formChange}
           />
         </EntrySection>

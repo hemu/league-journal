@@ -17,6 +17,7 @@ export const allEntriesQuery = gql`
       kills
       deaths
       assists
+      gameId
     }
   }
 `;
@@ -35,8 +36,8 @@ const fullEntryFragment = gql`
     assists
     champion
     opponentChampion
-    jungler
-    opponentJungler
+    partner
+    opponentPartner
     csPerMin
     csAt5Min
     csAt10Min
@@ -57,6 +58,7 @@ const fullEntryFragment = gql`
     ganks
     csReasons
     video
+    gameId
   }
 `;
 
@@ -80,8 +82,8 @@ export const createEntryMutation = gql`
     $assists: Int
     $champion: String!
     $opponentChampion: String!
-    $jungler: String
-    $opponentJungler: String
+    $partner: String
+    $opponentPartner: String
     $csPerMin: Float
     $csAt5Min: Int
     $csAt10Min: Int
@@ -91,6 +93,7 @@ export const createEntryMutation = gql`
     $deathReasons: [String!]
     $csReasons: [String!]
     $video: String
+    $gameId: String
   ) {
     createEntry(
       gameDate: $gameDate
@@ -102,8 +105,8 @@ export const createEntryMutation = gql`
       assists: $assists
       champion: $champion
       opponentChampion: $opponentChampion
-      jungler: $jungler
-      opponentJungler: $opponentJungler
+      partner: $partner
+      opponentPartner: $opponentPartner
       csPerMin: $csPerMin
       csAt5Min: $csAt5Min
       csAt10Min: $csAt10Min
@@ -113,6 +116,7 @@ export const createEntryMutation = gql`
       deathReasons: $deathReasons
       csReasons: $csReasons
       video: $video
+      gameId: $gameId
     ) {
       ...FullEntry
     }
@@ -132,19 +136,18 @@ export const saveEntryMutation = gql`
     $assists: Int
     $champion: String!
     $opponentChampion: String!
-    $jungler: String
-    $opponentJungler: String
+    $partner: String
+    $opponentPartner: String
     $csPerMin: Float
     $csAt5Min: Int
     $csAt10Min: Int
     $csAt15Min: Int
     $csAt20Min: Int
-    # $mistakes: [String!]
-    # $lessons: [String!]
     $positives: [String!]
     $deathReasons: [String!]
     $csReasons: [String!]
     $video: String
+    $gameId: String
   ) {
     updateEntry(
       id: $id
@@ -157,19 +160,18 @@ export const saveEntryMutation = gql`
       assists: $assists
       champion: $champion
       opponentChampion: $opponentChampion
-      jungler: $jungler
-      opponentJungler: $opponentJungler
+      partner: $partner
+      opponentPartner: $opponentPartner
       csPerMin: $csPerMin
       csAt5Min: $csAt5Min
       csAt10Min: $csAt10Min
       csAt15Min: $csAt15Min
       csAt20Min: $csAt20Min
-      # mistakes: $mistakes
-      # lessons: $lessons
       positives: $positives
       deathReasons: $deathReasons
       csReasons: $csReasons
       video: $video
+      gameId: $gameId
     ) {
       ...FullEntry
     }
@@ -346,17 +348,20 @@ export function createNewEntry(defaultVals = {}) {
     },
     update: (proxy, { data: { createEntry } }) => {
       // Read the data from our cache for this query.
-      const data = proxy.readQuery({
-        query: allEntriesQuery,
-        // variables: { entryId },
-      });
-      // Add our comment from the mutation to the end.
-      data.allEntries.push(createEntry);
-      // Write our data back to the cache.
-      proxy.writeQuery({
-        query: allEntriesQuery,
-        data,
-      });
+      try {
+        const data = proxy.readQuery({
+          query: allEntriesQuery,
+        });
+        // Add our comment from the mutation to the end.
+        if (data.allEntries) {
+          data.allEntries.push(createEntry);
+          // Write our data back to the cache.
+          proxy.writeQuery({
+            query: allEntriesQuery,
+            data,
+          });
+        }
+      } catch (error) {}
     },
   });
 }

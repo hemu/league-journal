@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { roleToLane, getQueue } from '../staticData/match';
+import { roleToLane, isPartnerRole, getQueue } from '../staticData/match';
 import { getChampByKey } from '../staticData/champion';
 import { HARDCODED_ACCOUNT_ID } from '../const';
 import { matchHistoryMock } from './matchHistory';
@@ -24,10 +24,7 @@ export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
       // "https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/232004309/recent?api_key=RGAPI-4f7d0c00-b30e-4f58-92cb-59ad6a12ba6c",
       `${PROXY_ADDRESS}/https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountId}/recent?api_key=${API_KEY}`,
     )
-    .then((result) => {
-      console.log(result);
-      return parseRecentGamesResponse(result);
-    });
+    .then((result) => parseRecentGamesResponse(result));
 }
 
 // win or loss
@@ -43,16 +40,41 @@ function parseMatchDetailResponse(resp, accountId = HARDCODED_ACCOUNT_ID) {
     return null;
   }
   const targetParticipantId = identity[0];
+
   const playerDetails = participants
     .filter(({ participantId }) => participantId === targetParticipantId)
-    .map(({ stats, timeline }) => ({
+    .map(({ stats, timeline, teamId }) => ({
       kills: stats.kills,
       assists: stats.assists,
       deaths: stats.deaths,
       outcome: stats.win ? 'W' : 'L',
       role: roleToLane(timeline.role, timeline.lane),
+      teamId,
     }))
     .shift();
+
+  const playerTeam = playerDetails.teamId;
+
+  const partners = participants
+    .filter(({ timeline: { role, lane } }) =>
+      isPartnerRole(playerDetails.role, role, lane))
+    .map(({ championId, teamId }) => ({
+      champion: getChampByKey(championId),
+      teamId,
+    }));
+
+  if (partners.length === 2) {
+    const [partnerA, partnerB] = partners;
+    playerDetails.partner =
+      partnerA.teamId === playerDetails.teamId
+        ? partnerA.champion
+        : partnerB.champion;
+
+    playerDetails.opponentPartner =
+      partnerA.teamId !== playerDetails.teamId
+        ? partnerA.champion
+        : partnerB.champion;
+  }
 
   // find opponent champion by finding opponent with same role
   const opponent = participants.find(

@@ -9,8 +9,8 @@ export const entryFormInitialState = {
   assists: 0,
   champion: '',
   opponentChampion: '',
-  jungler: '',
-  opponentJungler: '',
+  partner: '',
+  opponentPartner: '',
   csPerMin: 0.0,
   csAt5Min: 0,
   csAt10Min: 0,
@@ -23,4 +23,5 @@ export const entryFormInitialState = {
   roams: [],
   csReasons: [],
   video: '',
+  gameId: '',
 };

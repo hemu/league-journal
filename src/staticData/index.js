@@ -8,11 +8,17 @@ export const rankOptions = [
   'Gold',
   'Platinum',
   'Diamond',
-].reduce((r, a) => r.concat(...['5', '4', '3', '2', '1'].map(division => ({
-  key: `${a[0]}${division}`,
-  text: `${a} ${division}`,
-  value: `${a} ${division}`,
-}))), []);
+].reduce(
+  (r, a) =>
+    r.concat(
+      ...['5', '4', '3', '2', '1'].map((division) => ({
+        key: `${a[0]}${division}`,
+        text: `${a} ${division}`,
+        value: `${a} ${division}`,
+      })),
+    ),
+  [],
+);
 
 export const outcomeOptions = [
   {
@@ -48,7 +54,7 @@ export const roleOptions = [
   },
 ];
 
-export const champOptions = champList.map(champ => ({
+export const champOptions = champList.map((champ) => ({
   text: champ.name,
   value: champ.name,
   // image: champ.img

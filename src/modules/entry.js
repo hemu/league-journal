@@ -133,15 +133,12 @@ export const entryEditOnEpic = (action$) =>
 export const createEntryEpic = (action$) =>
   action$.ofType(CREATE_ENTRY).mergeMap((action) =>
     matchDetailsMock()
-      .then((details) => {
-        console.log('got match details mock......');
-        console.log(details);
-        return createNewEntryApi({
+      .then((details) =>
+        createNewEntryApi({
           ...action.entry,
           ...details,
-        });
-      })
-      .then((success) => createNewEntrySuccess(success)));
+        }))
+      .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 
 export const saveEntryEpic = (action$) =>
   action$

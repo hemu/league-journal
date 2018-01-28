@@ -50,7 +50,7 @@ const GamesList = ({ games, createEntry }) => (
               champion: game.champion,
               role: game.lane,
               gameDate: new Date(game.timestamp),
-              gameId: game.gameId,
+              gameId: game.gameId.toString(),
             })
           }
         >
