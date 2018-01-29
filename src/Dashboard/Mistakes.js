@@ -4,14 +4,18 @@ import { graphql, compose } from 'react-apollo';
 import { markMistakeMutation, markedMistakesQuery } from '../api/mistake';
 
 import DashboardItem from './shared/DashboardItem';
-import MarkableList from './shared/MarkableList';
+import MarkableListWithMatchup from './shared/MarkableListWithMatchup';
 
 export const Mistakes = ({ data, mainColor, markMistake }) =>
   (data.loading ? (
     <div>Loading mistakes...</div>
   ) : (
     <DashboardItem title="Mistake Highlights" mainColor={mainColor}>
-      <MarkableList items={data.allMistakes} onMark={markMistake} />
+      <MarkableListWithMatchup
+        notes={data.allMistakes}
+        onMark={markMistake}
+        withDate={false}
+      />
     </DashboardItem>
   ));
 

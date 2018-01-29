@@ -4,14 +4,18 @@ import { graphql, compose } from 'react-apollo';
 import { markLessonMutation, markedLessonsQuery } from '../api/lesson';
 
 import DashboardItem from './shared/DashboardItem';
-import MarkableList from './shared/MarkableList';
+import MarkableListWithMatchup from './shared/MarkableListWithMatchup';
 
 export const Lessons = ({ data, mainColor, markLesson }) =>
   (data.loading ? (
     <div>Loading lessons...</div>
   ) : (
     <DashboardItem title="Lesson Highlights" mainColor={mainColor}>
-      <MarkableList items={data.allLessons} onMark={markLesson} />
+      <MarkableListWithMatchup
+        notes={data.allLessons}
+        onMark={markLesson}
+        withDate={false}
+      />
     </DashboardItem>
   ));
 
