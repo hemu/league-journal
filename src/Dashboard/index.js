@@ -22,7 +22,8 @@ export default () => (
           <Mistakes mainColor="#EB5783" />
         </Grid.Column>
         <Grid.Column>
-          <Lessons mainColor="#C46AE5" />
+          {/* <Lessons mainColor="#C46AE5" /> */}
+          <Lessons mainColor="#EB5783" />
         </Grid.Column>
       </Grid.Row>
       <Grid.Row columns="equal">

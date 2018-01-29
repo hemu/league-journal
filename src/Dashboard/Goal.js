@@ -128,8 +128,6 @@ class Goal extends React.Component {
   }
 
   render() {
-    const { placeholder } = this.props;
-
     return (
       <Cont>
         <FlagLabel>Focus Goal</FlagLabel>
@@ -150,7 +148,7 @@ class Goal extends React.Component {
             transparent
           />
         ) : (
-          <TextCont>{this.state.value || placeholder}</TextCont>
+          <TextCont>{this.state.value}</TextCont>
         )}
         {this.state.editMode ? (
           <AcceptBtn
@@ -178,7 +176,6 @@ Goal.propTypes = {
   data: PropTypes.shape({ loading: PropTypes.bool, allGoals: PropTypes.array })
     .isRequired,
   saveGoal: PropTypes.func.isRequired,
-  placeholder: PropTypes.string.isRequired,
 };
 export default compose(
   graphql(goalQuery),

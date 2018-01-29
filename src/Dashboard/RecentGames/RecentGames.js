@@ -39,7 +39,7 @@ const TextBtn = styled.button`
 const GamesList = ({ games, createEntry }) => (
   <StyledList>
     {games.map((game) => (
-      <ListItem key={game.id}>
+      <ListItem key={game.gameId}>
         <Image src={getChampByName(game.champion).img} height={30} />
         <div>{game.champion}</div>
         <div>{game.lane}</div>
@@ -64,9 +64,10 @@ const GamesList = ({ games, createEntry }) => (
 GamesList.propTypes = {
   games: PropTypes.arrayOf(
     PropTypes.shape({
-      game: PropTypes.string.isRequired,
+      gameId: PropTypes.number.isRequired,
       lane: PropTypes.string.isRequired,
       timestamp: PropTypes.number.isRequired,
+      champion: PropTypes.string.isRequired,
     }),
   ).isRequired,
   createEntry: PropTypes.func.isRequired,
@@ -79,7 +80,7 @@ const RecentGames = ({ mainColor, games, createEntry }) => (
 );
 
 RecentGames.propTypes = {
-  games: PropTypes.arrayOf(PropTypes.string).isRequired,
+  games: PropTypes.arrayOf(PropTypes.object).isRequired,
   mainColor: PropTypes.string.isRequired,
   createEntry: PropTypes.func.isRequired,
 };

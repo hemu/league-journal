@@ -10,6 +10,7 @@ export const latestNotesQuery = gql`
         opponentChampion
         gameDate
       }
+      marked
       createdAt
     }
     allLessons(orderBy: createdAt_DESC, first: 10) {
@@ -20,6 +21,7 @@ export const latestNotesQuery = gql`
         opponentChampion
         gameDate
       }
+      marked
       createdAt
     }
   }

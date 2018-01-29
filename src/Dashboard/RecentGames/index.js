@@ -5,7 +5,7 @@ import RecentGames from './RecentGames';
 import { createNewEntry } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
 
-class Container extends React.Component {
+class RecentGamesContainer extends React.Component {
   componentWillMount() {
     this.props.fetchRecentGames();
   }
@@ -24,19 +24,19 @@ class Container extends React.Component {
   }
 }
 
-Container.propTypes = {
-  games: PropTypes.arrayOf(PropTypes.string).isRequired,
+RecentGamesContainer.propTypes = {
+  games: PropTypes.arrayOf(PropTypes.object).isRequired,
   fetchRecentGames: PropTypes.func.isRequired,
   mainColor: PropTypes.string.isRequired,
   createEntry: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({ match }) => ({
-    games: match.recentGames.slice(0, 8),
+  ({ match: { recentGames } }) => ({
+    games: recentGames.slice(0, 8),
   }),
   (dispatch) => ({
     fetchRecentGames: () => dispatch(fetchRecentGamesApi()),
     createEntry: (entry) => dispatch(createNewEntry(entry)),
   }),
-)(Container);
+)(RecentGamesContainer);
