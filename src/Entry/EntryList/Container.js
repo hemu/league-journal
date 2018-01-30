@@ -2,40 +2,52 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
+import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
-import { setEntryDetailId } from '../../modules/entry';
+import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
 import { entryFormInitialState } from '../../modules/entryForm';
 import { allEntriesQuery, createEntryMutation } from '../../api/entry';
 
-const EntryListContainer = ({
-  data: { loading, allEntries },
-  setEntryDetailId: _setEntryDetailId,
-  createEntry,
-  selectedId,
-}) => {
-  if (loading) {
-    return <div>Finding entries...</div>;
-  }
+const EntryListContainer = lifecycle({
+  componentWillReceiveProps(nextProps) {
+    // if going from loading to done loading,
+    // and no current selectedId, set default detail entry to first entry
+    if (
+      this.props.data.loading &&
+      !nextProps.data.loading &&
+      !nextProps.match.params.entryId
+    ) {
+      const { data: { allEntries }, setEntryDetailId } = nextProps;
+      if (allEntries && allEntries.length > 0) {
+        setEntryDetailId(allEntries[0].id);
+      }
+    }
+  },
+})(
+  ({ data: { loading, allEntries }, setEntryDetailId, createEntry, match }) => {
+    if (loading) {
+      return <div>Finding entries...</div>;
+    }
 
-  if (!allEntries) {
-    return <div>No entries</div>;
-  }
+    if (!allEntries) {
+      return <div>No entries</div>;
+    }
 
-  return (
-    <EntryList
-      entries={allEntries}
-      onSelectEntry={_setEntryDetailId}
-      createEntry={createEntry}
-      selectedId={selectedId}
-    />
-  );
-};
+    return (
+      <EntryList
+        entries={allEntries}
+        onSelectEntry={setEntryDetailId}
+        createEntry={createEntry}
+        selectedId={match.params.entryId || ''}
+      />
+    );
+  },
+);
 
 EntryListContainer.propTypes = {
   data: PropTypes.shape({}).isRequired,
   setEntryDetailId: PropTypes.func.isRequired,
   createEntry: PropTypes.func.isRequired,
-  selectedId: PropTypes.string.isRequired,
 };
 
 export default compose(
@@ -76,10 +88,7 @@ export default compose(
         }),
     }),
   }),
-  connect(
-    ({ entry: { entryDetailId } }) => ({ selectedId: entryDetailId }),
-    (dispatch) => ({
-      setEntryDetailId: (entryId) => dispatch(setEntryDetailId(entryId)),
-    }),
-  ),
+  connect(null, (dispatch) => ({
+    setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),
+  })),
 )(EntryListContainer);

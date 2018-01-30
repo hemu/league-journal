@@ -15,7 +15,7 @@ describe('Mistake', () => {
   beforeEach(() => {
     props = {
       mistakes: [],
-      placeholder: 'Star your top mistakes to see them here.',
+      placeholder: 'Pin your top mistakes to see them here.',
     };
     shallowGoal = undefined;
   });

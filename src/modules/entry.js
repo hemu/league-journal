@@ -4,6 +4,7 @@ import { push } from 'react-router-redux';
 import client from '../api/client';
 import {
   entryDetailQuery,
+  allEntriesQuery,
   saveEntry as saveEntryApi,
   removeEntry as removeEntryApi,
   updateMistake as updateMistakeApi,
@@ -63,7 +64,7 @@ export const removeEntry = createAction(
   'lessons',
 );
 export const removeEntrySuccess = createAction(REMOVE_ENTRY_SUCCESS);
-const removeEntryWithApiSuccess = createAction(REMOVE_ENTRY_WITH_API_SUCCESS);
+// const removeEntryWithApiSuccess = createAction(REMOVE_ENTRY_WITH_API_SUCCESS);
 
 export const updateMistake = createAction(UPDATE_MISTAKE, 'id', 'text');
 const updateMistakeSuccess = createAction(UPDATE_MISTAKE_SUCCESS);
@@ -147,18 +148,11 @@ export const saveEntryEpic = (action$) =>
       saveEntryApi(action.entry).then(() => saveEntrySuccess()));
 
 export const removeEntryEpic = (action$) =>
-  action$
-    .ofType(REMOVE_ENTRY)
-    .mergeMap((action) => {
-      const { entryId, mistakes, lessons } = action;
-      return removeEntryApi(entryId, mistakes, lessons).then(() =>
-        removeEntryWithApiSuccess());
-    })
-    .mergeMap(() =>
-      Rx.Observable.concat(
-        Rx.Observable.of(setEditMode(false)),
-        Rx.Observable.of(setEntryDetailId('')),
-      ));
+  action$.ofType(REMOVE_ENTRY).mergeMap((action) => {
+    const { entryId, mistakes, lessons } = action;
+    return removeEntryApi(entryId, mistakes, lessons).then(() =>
+      setEntryDetailId(''));
+  });
 
 export const updateMistakeEpic = (action$) =>
   action$
@@ -186,24 +180,33 @@ export const removeLessonEpic = (action$) =>
       removeLessonApi(action.id).then(() => removeLessonSuccess()));
 
 export const setEntryDetailEpic = (action$) =>
-  action$
-    .ofType(SET_ENTRY_DETAIL_ID)
-    .mergeMap((action) => Rx.Observable.of(push(`/entry/${action.entryId}`)));
+  action$.ofType(SET_ENTRY_DETAIL_ID).mergeMap((action) => {
+    let { entryId } = action;
+    if (!entryId) {
+      const data = client.readQuery({
+        query: allEntriesQuery,
+      });
+      if (data.allEntries.length > 0) {
+        entryId = data.allEntries[0].id;
+      }
+    }
+    return Rx.Observable.of(push(`/entry/${entryId}`));
+  });
 
 // ------- REDUCER -----------------------------------------------
 // ----------------------------------------------------------
 
 const initialState = {
-  entryDetailId: '',
+  // entryDetailId: '',
   editMode: false,
 };
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
-    case SET_ENTRY_DETAIL_ID:
-      return {
-        ...state,
-        entryDetailId: action.entryId,
-      };
+    // case SET_ENTRY_DETAIL_ID:
+    //   return {
+    //     ...state,
+    //     entryDetailId: action.entryId,
+    //   };
     case REMOVE_ENTRY: {
       if (isLocalEntry(action.entryId)) {
         return {

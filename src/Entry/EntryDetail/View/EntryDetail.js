@@ -45,6 +45,7 @@ class EntryDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = { activeIndex: [0] };
+    this.handleAccordionClick = this.handleAccordionClick.bind(this);
   }
 
   handleAccordionClick(e, titleProps) {

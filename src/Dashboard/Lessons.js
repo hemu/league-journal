@@ -10,7 +10,7 @@ export const Lessons = ({ data, mainColor, markLesson }) =>
   (data.loading ? (
     <div>Loading lessons...</div>
   ) : (
-    <DashboardItem title="Lesson Highlights" mainColor={mainColor}>
+    <DashboardItem title="Pinned Highlights" mainColor={mainColor}>
       <MarkableListWithMatchup
         notes={data.allLessons}
         onMark={markLesson}

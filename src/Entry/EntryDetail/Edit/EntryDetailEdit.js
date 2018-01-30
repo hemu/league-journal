@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Form as ReactForm, actions } from 'react-redux-form';
-import { Button, Form, Icon } from 'semantic-ui-react';
+import { Button, Form, Icon, Input } from 'semantic-ui-react';
 // import DayPickerInput from 'react-day-picker/DayPickerInput';
 // import YoutubePlayer from 'react-youtube';
 import 'react-day-picker/lib/style.css';
@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import EntryDetailBaseStats from './EntryDetailBaseStats';
 import ChampionMatchup from './Matchup';
 import EditableText from './EditableText';
+import { FormInput, FieldLabel } from './FormElements';
 
 import { baseFormModel } from '../../helpers';
 
@@ -248,6 +249,19 @@ const EntryDetailEdit = (props) => {
             </AddBtn>
           </EntrySection>
         ))}
+
+        <EntrySection title="Youtube">
+          <Form.Field>
+            <FieldLabel>URL</FieldLabel>
+            <FormInput
+              component={Input}
+              type="text"
+              size="mini"
+              model=".video"
+              updateOn="blur"
+            />
+          </Form.Field>
+        </EntrySection>
       </ReactForm>
     </FormContainer>
   );

@@ -10,7 +10,7 @@ export const Mistakes = ({ data, mainColor, markMistake }) =>
   (data.loading ? (
     <div>Loading mistakes...</div>
   ) : (
-    <DashboardItem title="Mistake Highlights" mainColor={mainColor}>
+    <DashboardItem title="Pinned Mistakes" mainColor={mainColor}>
       <MarkableListWithMatchup
         notes={data.allMistakes}
         onMark={markMistake}

@@ -16,28 +16,34 @@ const ListItem = styled.li`
   padding: 5px 0;
 `;
 
-const StarCont = styled.div`
+const PinCont = styled.div`
   justify-content: center;
 `;
 
 const MarkedIcon = styled(Icon)`
   color: ${entryColors.orange};
   cursor: pointer;
+  &.icon {
+    font-size: 1.2em;
+  }
 `;
 
 const UnmarkedIcon = styled(Icon)`
   color: #ddd;
   cursor: pointer;
+  &.icon {
+    font-size: 1.2em;
+  }
 `;
 
-const Star = ({ marked, onClick }) => {
+const Pin = ({ marked, onClick }) => {
   if (marked) {
-    return <MarkedIcon name="star" onClick={onClick} />;
+    return <MarkedIcon name="pin" onClick={onClick} />;
   }
-  return <UnmarkedIcon name="empty star" onClick={onClick} />;
+  return <UnmarkedIcon name="pin" onClick={onClick} />;
 };
 
-Star.propTypes = {
+Pin.propTypes = {
   marked: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
 };
@@ -47,12 +53,12 @@ const MarkableList = ({ items, onMark }) => (
     {items.map((item) => (
       <ListItem key={item.id}>
         <div>{item.text}</div>
-        <StarCont>
-          <Star
+        <PinCont>
+          <Pin
             marked={item.marked}
             onClick={() => onMark(item.id, !item.marked)}
           />
-        </StarCont>
+        </PinCont>
       </ListItem>
     ))}
   </StyledList>

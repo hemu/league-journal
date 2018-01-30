@@ -18,18 +18,25 @@ const ListItem = styled.li`
   padding: 5px 0;
 `;
 
-const StarCont = styled.div`
-  justify-content: center;
+const PinCont = styled.div`
+  justify-self: center;
+  align-self: center;
 `;
 
 const MarkedIcon = styled(Icon)`
   color: ${entryColors.orange};
   cursor: pointer;
+  &.icon {
+    font-size: 1.2em;
+  }
 `;
 
 const UnmarkedIcon = styled(Icon)`
   color: #ddd;
   cursor: pointer;
+  &.icon {
+    font-size: 1.2em;
+  }
 `;
 
 const EndCont = styled.div`
@@ -53,14 +60,14 @@ const DateCont = styled.div`
   font-style: italic;
 `;
 
-const Star = ({ marked, onClick }) => {
+const Pin = ({ marked, onClick }) => {
   if (marked) {
-    return <MarkedIcon name="star" onClick={onClick} />;
+    return <MarkedIcon name="pin" onClick={onClick} />;
   }
-  return <UnmarkedIcon name="empty star" onClick={onClick} />;
+  return <UnmarkedIcon name="pin" onClick={onClick} />;
 };
 
-Star.propTypes = {
+Pin.propTypes = {
   marked: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
 };
@@ -81,8 +88,8 @@ const MarkableListWithMatchup = ({ notes, withDate, onMark: globalOnMark }) => (
             <KDACont>{`${champion} vs ${opponentChampion}`}</KDACont>
             {withDate ? <DateCont>{moment(gameDate).fromNow()}</DateCont> : ''}
           </EndCont>
-          <StarCont>
-            <Star
+          <PinCont>
+            <Pin
               marked={marked}
               onClick={
                 globalOnMark
@@ -90,7 +97,7 @@ const MarkableListWithMatchup = ({ notes, withDate, onMark: globalOnMark }) => (
                   : () => onMark(id, !marked)
               }
             />
-          </StarCont>
+          </PinCont>
         </ListItem>
       ),
     )}
