@@ -9,6 +9,17 @@ import { entryFormInitialState } from '../../modules/entryForm';
 import { allEntriesQuery, createEntryMutation } from '../../api/entry';
 
 const EntryListContainer = lifecycle({
+  componentDidMount() {
+    console.log('comp did mount');
+    console.log(this.props);
+    if (!this.props.data.loading && !this.props.match.params.entryId) {
+      const { data: { allEntries }, setEntryDetailId } = this.props;
+      if (allEntries && allEntries.length > 0) {
+        setEntryDetailId(allEntries[0].id);
+        console.log('seting entry detail id from did mount()');
+      }
+    }
+  },
   componentWillReceiveProps(nextProps) {
     // if going from loading to done loading,
     // and no current selectedId, set default detail entry to first entry
@@ -20,6 +31,7 @@ const EntryListContainer = lifecycle({
       const { data: { allEntries }, setEntryDetailId } = nextProps;
       if (allEntries && allEntries.length > 0) {
         setEntryDetailId(allEntries[0].id);
+        console.log('seting entry detail id from will receive props');
       }
     }
   },

@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import RecentGames from './RecentGames';
 import { createNewEntry } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
+import { HARDCODED_ACCOUNT_ID } from '../../const';
 
 class RecentGamesContainer extends React.Component {
   componentWillMount() {
-    this.props.fetchRecentGames();
+    this.props.fetchRecentGames(HARDCODED_ACCOUNT_ID);
   }
 
   render() {

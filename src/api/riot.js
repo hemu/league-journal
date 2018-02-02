@@ -4,9 +4,9 @@ import { getChampByKey } from '../staticData/champion';
 import { HARDCODED_ACCOUNT_ID } from '../const';
 import { matchHistoryMock } from './matchHistory';
 
-const API_KEY = 'RGAPI-82728b1d-c740-4b88-8625-2c32a7dbd621';
-const PROXY_ADDRESS = 'http://localhost:8080';
+// const PROXY_ADDRESS = 'http://localhost:8080';
 
+// XXX: NOT USING this, aws lamdba function does this now
 function parseRecentGamesResponse(resp) {
   const { matches } = resp;
   return matches.map((match) => ({
@@ -18,18 +18,7 @@ function parseRecentGamesResponse(resp) {
   }));
 }
 
-export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
-  return axios
-    .get(
-      // "https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/232004309/recent?api_key=RGAPI-4f7d0c00-b30e-4f58-92cb-59ad6a12ba6c",
-      `${PROXY_ADDRESS}/https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountId}/recent?api_key=${API_KEY}`,
-    )
-    .then((result) => parseRecentGamesResponse(result));
-}
-
-// win or loss
-// kda
-// opponent champion
+// XXX: NOT USING this, aws lamdba function does this now
 function parseMatchDetailResponse(resp, accountId = HARDCODED_ACCOUNT_ID) {
   const { participantIdentities, participants } = resp;
   const identity = participantIdentities
@@ -104,6 +93,31 @@ function parseMatchDetailResponse(resp, accountId = HARDCODED_ACCOUNT_ID) {
     );
 
   return playerDetails;
+}
+
+export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
+  return axios
+    .post(
+      'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',
+      // 'http://localhost:8000/recentGames',
+      {
+        accountId,
+      },
+    )
+    .then((result) => result.data);
+}
+
+export function getMatchDetails(matchId, accountId = HARDCODED_ACCOUNT_ID) {
+  return axios
+    .post(
+      'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/matchDetail',
+      // 'http://localhost:8000/matchDetail',
+      {
+        accountId,
+        matchId,
+      },
+    )
+    .then((result) => result.data);
 }
 
 export function recentGamesMock() {

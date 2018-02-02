@@ -13,7 +13,7 @@ import {
   removeLesson as removeLessonApi,
   createNewEntry as createNewEntryApi,
 } from '../api/entry';
-import { matchDetailsMock } from '../api/riot';
+import { getMatchDetails } from '../api/riot';
 import { createAction } from './helpers';
 import { isLocalEntry, isLocalId } from '../helpers';
 
@@ -133,7 +133,7 @@ export const entryEditOnEpic = (action$) =>
 
 export const createEntryEpic = (action$) =>
   action$.ofType(CREATE_ENTRY).mergeMap((action) =>
-    matchDetailsMock()
+    getMatchDetails(action.entry.gameId)
       .then((details) =>
         createNewEntryApi({
           ...action.entry,

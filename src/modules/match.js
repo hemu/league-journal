@@ -1,5 +1,5 @@
 import { createAction } from './helpers';
-import { recentGamesMock } from '../api/riot';
+import { recentGamesMock, getRecentGames } from '../api/riot';
 
 const FETCH_RECENT_GAMES = 'recentGames/FETCH_RECENT_GAMES';
 const RECENT_GAMES_SUCCESS = 'recentGames/RECENT_GAMES_SUCCESS';
@@ -11,7 +11,7 @@ export const fetchRecentGamesEpic = (action$) =>
   action$
     .ofType(FETCH_RECENT_GAMES)
     .mergeMap((action) =>
-      recentGamesMock(action.accountId).then((games) =>
+      getRecentGames(action.accountId).then((games) =>
         recentGamesSuccess(games)));
 
 const initialState = {
