@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { combineForms } from 'react-redux-form';
 import { routerReducer } from 'react-router-redux';
 import { entryFormInitialState } from './entryForm';
+import { signinFormInitialState, signupFormInitialState } from './authForm';
 
 import match, { fetchRecentGamesEpic } from './match';
 
@@ -39,6 +40,8 @@ export const rootReducer = combineReducers({
   forms: combineForms(
     {
       entry: entryFormInitialState,
+      signup: signupFormInitialState,
+      signin: signinFormInitialState,
     },
     'forms',
   ),

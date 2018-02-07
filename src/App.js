@@ -10,6 +10,8 @@ import Navbar from './Navigation';
 import './App.css';
 import Entry from './Entry';
 import Dashboard from './Dashboard';
+import SignIn from './Auth/SignIn';
+import SignUp from './Auth/SignUp';
 
 const MainContainer = styled.div`
   display: grid;
@@ -21,8 +23,10 @@ const App = () => (
     <ApolloProvider client={client}>
       <ConnectedRouter history={routerHistory}>
         <MainContainer>
-          <Navbar />
           <Switch>
+            <Route path="/signup" component={SignUp} />
+            <Route path="/signin" component={SignIn} />
+            <Navbar />
             <Route exact path="/" component={Dashboard} />
             <Route path="/entry" component={Entry} />
           </Switch>

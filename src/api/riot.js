@@ -98,8 +98,8 @@ function parseMatchDetailResponse(resp, accountId = HARDCODED_ACCOUNT_ID) {
 export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
   return axios
     .post(
-      'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',
-      // 'http://localhost:8000/recentGames',
+      // 'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',
+      'http://localhost:8000/recentGames',
       {
         accountId,
       },
@@ -110,8 +110,8 @@ export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
 export function getMatchDetails(matchId, accountId = HARDCODED_ACCOUNT_ID) {
   return axios
     .post(
-      'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/matchDetail',
-      // 'http://localhost:8000/matchDetail',
+      // 'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/matchDetail',
+      'http://localhost:8000/matchDetail',
       {
         accountId,
         matchId,
