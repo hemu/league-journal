@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 import { ConnectedRouter } from 'react-router-redux';
 import styled from 'styled-components';
 import client from './api/client';
-import { routerHistory } from './store/reduxStore';
+import { routerHistory } from './store';
 import Navbar from './Navigation';
 import './App.css';
 import Entry from './Entry';
@@ -23,10 +23,10 @@ const App = () => (
     <ApolloProvider client={client}>
       <ConnectedRouter history={routerHistory}>
         <MainContainer>
+          <Navbar />
           <Switch>
-            <Route path="/signup" component={SignUp} />
-            <Route path="/signin" component={SignIn} />
-            <Navbar />
+            {/* <Route path="/signup" component={SignUp} />
+            <Route path="/signin" component={SignIn} /> */}
             <Route exact path="/" component={Dashboard} />
             <Route path="/entry" component={Entry} />
           </Switch>

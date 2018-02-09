@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import 'semantic-ui-css/semantic.min.css';
 import 'rxjs';
 import './index.css';
-import configureStore from './store/reduxStore';
+import configureStore from './store';
 import registerServiceWorker from './registerServiceWorker';
 // import client from './api/client';
 
