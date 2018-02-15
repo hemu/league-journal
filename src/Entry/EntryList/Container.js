@@ -6,17 +6,15 @@ import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
 import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
 import { entryFormInitialState } from '../../modules/entryForm';
-import { allEntriesQuery, createEntryMutation } from '../../api/entry';
+import { entriesByUserQuery, createEntryMutation } from '../../api/entry';
+import { HARDCODED_USER_ID } from '../../const';
 
 const EntryListContainer = lifecycle({
   componentDidMount() {
-    console.log('comp did mount');
-    console.log(this.props);
     if (!this.props.data.loading && !this.props.match.params.entryId) {
-      const { data: { allEntries }, setEntryDetailId } = this.props;
-      if (allEntries && allEntries.length > 0) {
-        setEntryDetailId(allEntries[0].id);
-        console.log('seting entry detail id from did mount()');
+      const { data: { entriesByUser }, setEntryDetailId } = this.props;
+      if (entriesByUser && entriesByUser.length > 0) {
+        setEntryDetailId(entriesByUser[0].id);
       }
     }
   },
@@ -28,26 +26,30 @@ const EntryListContainer = lifecycle({
       !nextProps.data.loading &&
       !nextProps.match.params.entryId
     ) {
-      const { data: { allEntries }, setEntryDetailId } = nextProps;
-      if (allEntries && allEntries.length > 0) {
-        setEntryDetailId(allEntries[0].id);
-        console.log('seting entry detail id from will receive props');
+      const { data: { entriesByUser }, setEntryDetailId } = nextProps;
+      if (entriesByUser && entriesByUser.length > 0) {
+        setEntryDetailId(entriesByUser[0].id);
       }
     }
   },
 })(
-  ({ data: { loading, allEntries }, setEntryDetailId, createEntry, match }) => {
+  ({
+    data: { loading, entriesByUser },
+    setEntryDetailId,
+    createEntry,
+    match,
+  }) => {
     if (loading) {
       return <div>Finding entries...</div>;
     }
 
-    if (!allEntries) {
+    if (!entriesByUser) {
       return <div>No entries</div>;
     }
 
     return (
       <EntryList
-        entries={allEntries}
+        entries={entriesByUser}
         onSelectEntry={setEntryDetailId}
         createEntry={createEntry}
         selectedId={match.params.entryId || ''}
@@ -63,7 +65,9 @@ EntryListContainer.propTypes = {
 };
 
 export default compose(
-  graphql(allEntriesQuery),
+  graphql(entriesByUserQuery, {
+    options: { variables: { user: HARDCODED_USER_ID } },
+  }),
   graphql(createEntryMutation, {
     props: ({ mutate }) => ({
       createEntry: (defaultVals = {}) =>
@@ -86,14 +90,14 @@ export default compose(
           update: (proxy, { data: { createEntry } }) => {
             // Read the data from our cache for this query.
             const data = proxy.readQuery({
-              query: allEntriesQuery,
+              query: entriesByUserQuery,
               // variables: { entryId },
             });
             // Add our comment from the mutation to the end.
-            data.allEntries.push(createEntry);
+            data.entriesByUser.push(createEntry);
             // Write our data back to the cache.
             proxy.writeQuery({
-              query: allEntriesQuery,
+              query: entriesByUserQuery,
               data,
             });
           },

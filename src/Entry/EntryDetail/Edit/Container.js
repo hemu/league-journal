@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import { actions } from 'react-redux-form';
-import { entryDetailQuery } from '../../../api/entry';
+import { entryByIdQuery } from '../../../api/entry';
 import { deleteMistakeMutation } from '../../../api/mistake';
 import { deleteLessonMutation } from '../../../api/lesson';
 
@@ -32,8 +32,8 @@ export default compose(
           update: (proxy, { data: { deleteMistake: { id: removedId } } }) => {
             // Read the data from our cache for this query.
             const data = proxy.readQuery({
-              query: entryDetailQuery,
-              variables: { entryId },
+              query: entryByIdQuery,
+              variables: { id: entryId },
             });
             // Add our comment from the mutation to the end.
             data.Entry.mistakes = data.Entry.mistakes.filter(
@@ -41,8 +41,8 @@ export default compose(
             );
             // Write our data back to the cache.
             proxy.writeQuery({
-              query: entryDetailQuery,
-              variables: { entryId },
+              query: entryByIdQuery,
+              variables: { id: entryId },
               data,
             });
           },
@@ -64,8 +64,8 @@ export default compose(
           update: (proxy, { data: { deleteLesson: { id: removedId } } }) => {
             // Read the data from our cache for this query.
             const data = proxy.readQuery({
-              query: entryDetailQuery,
-              variables: { entryId },
+              query: entryByIdQuery,
+              variables: { id: entryId },
             });
             // Add our comment from the mutation to the end.
             data.Entry.lessons = data.Entry.lessons.filter(
@@ -73,8 +73,8 @@ export default compose(
             );
             // Write our data back to the cache.
             proxy.writeQuery({
-              query: entryDetailQuery,
-              variables: { entryId },
+              query: entryByIdQuery,
+              variables: { id: entryId },
               data,
             });
           },
@@ -87,9 +87,6 @@ export default compose(
       ...entry,
     }),
     (dispatch, ownProps) => ({
-      removeEntry: (entryId, mistakes, lessons) =>
-        dispatch(removeEntry(entryId, mistakes, lessons)),
-      saveEntry: (entry) => dispatch(saveEntry(entry)),
       formChange: (formAction) => dispatch(formAction),
       formAdd: (model) => {
         const formPush = actions.push(formModel(model), {
@@ -103,6 +100,9 @@ export default compose(
         dispatch(actions.remove(formModel(model), index)),
       updateMistake,
       updateLesson,
+      removeEntry: (entryId, mistakes, lessons) =>
+        dispatch(removeEntry(entryId, mistakes, lessons)),
+      saveEntry: (entry) => dispatch(saveEntry(entry)),
       removeMistakeLocal: (id, index) => {
         dispatch(actions.remove(formModel('.mistakes'), index));
       },

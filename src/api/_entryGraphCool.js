@@ -6,8 +6,8 @@ import { updateLessonMutation, deleteLessonMutation } from './lesson';
 import { entryFormInitialState } from '../modules/entryForm';
 
 export const entriesByUserQuery = gql`
-  query entriesByUserQuery($user: String!) {
-    entriesByUser(user: $user) {
+  query entriesByUserQuery {
+    allEntries(orderBy: gameDate_DESC, first: 20) {
       id
       champion
       opponentChampion
@@ -39,15 +39,32 @@ const fullEntryFragment = gql`
     partner
     opponentPartner
     csPerMin
-    cs
+    csAt5Min
+    csAt10Min
+    csAt15Min
+    csAt20Min
+    mistakes {
+      id
+      text
+      marked
+    }
+    positives
+    lessons {
+      id
+      text
+      marked
+    }
+    deathReasons
+    ganks
+    csReasons
     video
     gameId
   }
 `;
 
-export const entryByIdQuery = gql`
-  query EntryQuery($id: ID!) {
-    entryById(id: $id) {
+export const entryDetailQuery = gql`
+  query EntryQuery($entryId: ID!) {
+    Entry(id: $entryId) {
       ...FullEntry
     }
   }
@@ -68,7 +85,13 @@ export const createEntryMutation = gql`
     $partner: String
     $opponentPartner: String
     $csPerMin: Float
-    $cs: [[Int]]
+    $csAt5Min: Int
+    $csAt10Min: Int
+    $csAt15Min: Int
+    $csAt20Min: Int
+    $positives: [String!]
+    $deathReasons: [String!]
+    $csReasons: [String!]
     $video: String
     $gameId: String
   ) {
@@ -85,7 +108,13 @@ export const createEntryMutation = gql`
       partner: $partner
       opponentPartner: $opponentPartner
       csPerMin: $csPerMin
-      cs: $cs
+      csAt5Min: $csAt5Min
+      csAt10Min: $csAt10Min
+      csAt15Min: $csAt15Min
+      csAt20Min: $csAt20Min
+      positives: $positives
+      deathReasons: $deathReasons
+      csReasons: $csReasons
       video: $video
       gameId: $gameId
     ) {
@@ -168,8 +197,8 @@ export const createLessonMutation = gql`
 
 export function fetchDetailEntry(entryId) {
   return client.query({
-    query: entryByIdQuery,
-    variables: { id: entryId },
+    query: entryDetailQuery,
+    variables: { entryId },
     fetchPolicy: 'network-only',
   });
 }
@@ -324,8 +353,8 @@ export function createNewEntry(defaultVals = {}) {
           query: entriesByUserQuery,
         });
         // Add our comment from the mutation to the end.
-        if (data.entriesByUser) {
-          data.entriesByUser.push(createEntry);
+        if (data.allEntries) {
+          data.allEntries.push(createEntry);
           // Write our data back to the cache.
           proxy.writeQuery({
             query: entriesByUserQuery,
@@ -392,7 +421,7 @@ export function removeEntry(entryId, mistakes, lessons) {
         query: entriesByUserQuery,
       });
       // Add our comment from the mutation to the end.
-      data.entriesByUser = data.entriesByUser.filter(
+      data.allEntries = data.allEntries.filter(
         (entry) => entry.id !== updateResults.id,
       );
       // Write our data back to the cache.

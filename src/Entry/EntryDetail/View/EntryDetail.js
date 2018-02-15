@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Card, Button, Accordion, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import CreepScoreView from './SubViewCreepScore';
+import CreepScore from './CreepScore';
 import SecondaryList from './SecondaryList';
 import Header from './Header';
 import MarkableList from './MarkableList';
@@ -15,6 +15,7 @@ const MainCard = styled(Card)`
   height: 100%;
   &&& {
     border-radius: 0;
+    margin-bottom: 15px;
   }
 `;
 
@@ -24,15 +25,11 @@ const CardHeader = styled.div`
   padding: 20px 20px 5px;
 `;
 
-const CardContentList = styled.div`
+const CardContent = styled.div`
   &&& {
     padding: 10px 20px;
     border-top: none;
   }
-`;
-
-const SecondaryCont = styled.div`
-  margin-top: 20px;
 `;
 
 const EditBtn = styled(Button)`
@@ -61,14 +58,18 @@ class EntryDetail extends React.Component {
   }
 
   render() {
-    if (!this.props.data) {
-      return <div> ??? </div>;
+    const { props } = this;
+    const { entry, entryLoading, mistakes, lessons, notesLoading } = props;
+    const isLoading = entryLoading || notesLoading;
+    if (!entry || !mistakes || !lessons) {
+      return <div>Error contacting server.</div>;
     }
-    if (this.props.data.loading) {
+    if (isLoading) {
       return <div>Loading entry...</div>;
     }
-    const { props } = this;
-    const entry = this.props.data.Entry;
+
+    const onNoteMark = (id, marked) => props.markNote(id, entry.id, marked);
+
     return (
       <MainCont>
         <EditBtn
@@ -83,74 +84,43 @@ class EntryDetail extends React.Component {
           <Grid.Column>
             <MainCard raised fluid>
               <CardHeader>Mistakes</CardHeader>
-              <CardContentList>
-                <MarkableList
-                  items={entry.mistakes}
-                  onMark={props.markMistake}
-                />
-              </CardContentList>
+              <CardContent>
+                <MarkableList items={mistakes} onMark={onNoteMark} />
+              </CardContent>
             </MainCard>
           </Grid.Column>
           <Grid.Column>
             <MainCard raised fluid>
               <CardHeader>Lessons</CardHeader>
-              <CardContentList>
-                <MarkableList items={entry.lessons} onMark={props.markLesson} />
-              </CardContentList>
+              <CardContent>
+                <MarkableList items={lessons} onMark={onNoteMark} />
+              </CardContent>
             </MainCard>
           </Grid.Column>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <MainCard fluid raised>
+                <CardHeader>Creep Score</CardHeader>
+                <CardContent>
+                  <CreepScore creepScore={entry.cs} />
+                </CardContent>
+              </MainCard>
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
-        <SecondaryCont>
-          <Card fluid raised>
-            <Accordion fluid styled exclusive={false}>
-              <Accordion.Title
-                active={this.state.activeIndex.includes(0)}
-                onClick={this.handleAccordionClick}
-                index={0}
-              >
-                <Icon name="dropdown" />Creep Score
-              </Accordion.Title>
-              <Accordion.Content active={this.state.activeIndex.includes(0)}>
-                <CreepScoreView
-                  csReasons={entry.csReasons}
-                  csPerMin={entry.csPerMin}
-                  csAt5Min={entry.csAt5Min}
-                  csAt10Min={entry.csAt10Min}
-                  csAt15Min={entry.csAt15Min}
-                  csAt20Min={entry.csAt20Min}
-                />
-              </Accordion.Content>
-              <Accordion.Title
-                active={this.state.activeIndex.includes(1)}
-                onClick={this.handleAccordionClick}
-                index={1}
-              >
-                <Icon name="dropdown" />Death Reasons
-              </Accordion.Title>
-              <Accordion.Content active={this.state.activeIndex.includes(1)}>
-                <SecondaryList items={entry.deathReasons} />
-              </Accordion.Content>
-              <Accordion.Title
-                active={this.state.activeIndex.includes(2)}
-                onClick={this.handleAccordionClick}
-                index={2}
-              >
-                <Icon name="dropdown" />Positives
-              </Accordion.Title>
-              <Accordion.Content active={this.state.activeIndex.includes(2)}>
-                <SecondaryList items={entry.positives} />
-              </Accordion.Content>
-            </Accordion>
-          </Card>
-        </SecondaryCont>
       </MainCont>
     );
   }
 }
 
 EntryDetail.propTypes = {
-  data: PropTypes.shape({ Entry: PropTypes.object, loading: PropTypes.bool })
-    .isRequired,
+  entry: PropTypes.shape({ id: PropTypes.string }).isRequired,
+  mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  entryLoading: PropTypes.bool.isRequired,
+  notesLoading: PropTypes.bool.isRequired,
+  markNote: PropTypes.func.isRequired,
+  updateNoteText: PropTypes.func.isRequired,
 };
 
 export default EntryDetail;

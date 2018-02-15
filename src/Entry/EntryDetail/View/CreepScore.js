@@ -4,37 +4,18 @@ import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import SecondaryList from './SecondaryList';
 
-const GridCont = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-`;
+const MainCont = styled.div``;
 
-const CreepScoreView = ({
-  csReasons,
-  // csPerMin,
-  csAt5Min,
-  csAt10Min,
-  csAt15Min,
-  csAt20Min,
-}) => {
-  const possibleLabels = [0, 5, 10, 15, 20];
-  const dataPoints = [0, csAt5Min, csAt10Min, csAt15Min, csAt20Min].filter(
-    (v) => v != null,
-  );
-  const labels = dataPoints.map((v, i) => possibleLabels[i]);
+const CreepScoreView = ({ creepScore }) => {
+  const dataPoints = [[0, 0], ...creepScore].filter((v) => v != null);
+  const labels = dataPoints.map(([min, score]) => min);
+  const values = dataPoints.map(([min, score]) => score);
 
   const data = {
     labels,
     datasets: [
       {
-        // data: [
-        //   { x: 0, y: 0 },
-        //   { x: 5, y: 20 },
-        //   { x: 10, y: 35 },
-        //   { x: 15, y: 40 },
-        //   { x: 20, y: 80 },
-        // ],
-        data: dataPoints,
+        data: values,
         lineTension: 0,
         backgroundColor: '#FFBE85',
         fill: false,
@@ -43,11 +24,10 @@ const CreepScoreView = ({
         pointBackgroundColor: '#FFBE85',
         pointBorderColor: '#E07719',
         pointBorderWidth: 2,
-        // label: 'My CS',
       },
       {
-        data: [0, 40, 80, 120, 160],
-        label: 'Target CS: 8/min',
+        data: [0, 50, 100, 150, 200],
+        label: 'Target CS: 10/min',
         fill: false,
         backgroundColor: '#FFF',
         borderColor: '#AAA',
@@ -98,23 +78,11 @@ const CreepScoreView = ({
     },
   };
 
-  return (
-    <GridCont>
-      <SecondaryList items={csReasons} />
-      <div>
-        <Line data={data} options={options} />
-      </div>
-    </GridCont>
-  );
+  return <Line data={data} options={options} />;
 };
 
 CreepScoreView.propTypes = {
-  csReasons: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // csPerMin: PropTypes.number.isRequired,
-  csAt5Min: PropTypes.number.isRequired,
-  csAt10Min: PropTypes.number.isRequired,
-  csAt15Min: PropTypes.number.isRequired,
-  csAt20Min: PropTypes.number.isRequired,
+  creepScore: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
 };
 
 export default CreepScoreView;

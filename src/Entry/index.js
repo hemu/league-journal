@@ -16,7 +16,6 @@ const MainCont = styled.div`
 const Entry = ({ match }) => (
   <MainCont>
     <Route path={`${match.url}/:entryId?`} component={EntryListContainer} />
-    {/* <EntryListContainer /> */}
     <div>
       <Switch>
         <Route

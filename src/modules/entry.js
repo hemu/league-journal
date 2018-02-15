@@ -3,8 +3,8 @@ import Rx from 'rxjs/Rx';
 import { push } from 'react-router-redux';
 import client from '../api/client';
 import {
-  entryDetailQuery,
-  allEntriesQuery,
+  entryByIdQuery,
+  entriesByUserQuery,
   saveEntry as saveEntryApi,
   removeEntry as removeEntryApi,
   updateMistake as updateMistakeApi,
@@ -110,7 +110,7 @@ export const entryEditOnEpic = (action$) =>
     .filter((action) => action.type === SET_EDIT_MODE && action.editMode)
     .mergeMap((action) => {
       const data = client.readQuery({
-        query: entryDetailQuery,
+        query: entryByIdQuery,
         variables: {
           entryId: action.entryId,
         },
@@ -184,10 +184,10 @@ export const setEntryDetailEpic = (action$) =>
     let { entryId } = action;
     if (!entryId) {
       const data = client.readQuery({
-        query: allEntriesQuery,
+        query: entriesByUserQuery,
       });
-      if (data.allEntries.length > 0) {
-        entryId = data.allEntries[0].id;
+      if (data.entriesByUser.length > 0) {
+        entryId = data.entriesByUser[0].id;
       }
     }
     return Rx.Observable.of(push(`/entry/${entryId}`));

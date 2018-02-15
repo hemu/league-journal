@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { orderBy } from 'lodash';
 import { graphql, compose } from 'react-apollo';
-import { latestNotesQuery } from '../../api/notes';
+import { latestNotesQuery } from '../../api/note';
 import { markMistakeMutation, markedMistakesQuery } from '../../api/mistake';
 import { markLessonMutation, markedLessonsQuery } from '../../api/lesson';
 import LatestNotes from './LatestNotes';
