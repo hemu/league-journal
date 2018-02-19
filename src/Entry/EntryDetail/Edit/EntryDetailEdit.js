@@ -13,26 +13,26 @@ import { FormInput, FieldLabel } from './FormElements';
 
 import { baseFormModel } from '../../helpers';
 
-const multiElemSections = [
-  {
-    model: 'csReasons',
-    title: "Why didn't I hit CS goals?",
-    addLabel: 'A REASON FOR LOW CS',
-    placeholder: 'I missed CS because...',
-  },
-  {
-    model: 'deathReasons',
-    title: 'Reasons for Deaths',
-    addLabel: 'A REASON I DIED',
-    placeholder: 'My death reason is...',
-  },
-  {
-    model: 'positives',
-    title: 'Positives',
-    addLabel: 'SOMETHING I DID WELL',
-    placeholder: 'I did this well...',
-  },
-];
+// const multiElemSections = [
+//   {
+//     model: 'csReasons',
+//     title: "Why didn't I hit CS goals?",
+//     addLabel: 'A REASON FOR LOW CS',
+//     placeholder: 'I missed CS because...',
+//   },
+//   {
+//     model: 'deathReasons',
+//     title: 'Reasons for Deaths',
+//     addLabel: 'A REASON I DIED',
+//     placeholder: 'My death reason is...',
+//   },
+//   {
+//     model: 'positives',
+//     title: 'Positives',
+//     addLabel: 'SOMETHING I DID WELL',
+//     placeholder: 'I did this well...',
+//   },
+// ];
 
 const FormSectionCont = styled.div`
   padding-top: 15px;
@@ -219,7 +219,7 @@ const EntryDetailEdit = (props) => {
           </AddBtn>
         </EntrySection>
 
-        {multiElemSections.map((section) => (
+        {/* {multiElemSections.map((section) => (
           <EntrySection title={section.title} key={section.title}>
             <ListGrid>
               {props[section.model].map((elem, elemIndex) => (
@@ -248,9 +248,9 @@ const EntryDetailEdit = (props) => {
               <Icon name="add" />ADD {section.addLabel}
             </AddBtn>
           </EntrySection>
-        ))}
+        ))} */}
 
-        <EntrySection title="Youtube">
+        {/* <EntrySection title="Youtube">
           <Form.Field>
             <FieldLabel>URL</FieldLabel>
             <FormInput
@@ -261,7 +261,7 @@ const EntryDetailEdit = (props) => {
               updateOn="blur"
             />
           </Form.Field>
-        </EntrySection>
+        </EntrySection> */}
       </ReactForm>
     </FormContainer>
   );

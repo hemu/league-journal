@@ -2,11 +2,12 @@ import { connect } from 'react-redux';
 import { graphql, compose } from 'react-apollo';
 import { actions } from 'react-redux-form';
 import { entryByIdQuery } from '../../../api/entry';
+import { notesQuery, markNoteMutation } from '../../../api/note';
 import { deleteMistakeMutation } from '../../../api/mistake';
 import { deleteLessonMutation } from '../../../api/lesson';
 
 import EntryDetailEdit from './EntryDetailEdit';
-import { LOCAL_ID_PREFIX } from '../../../const';
+import { LOCAL_ID_PREFIX, SystemNoteTypeIds } from '../../../const';
 import {
   saveEntry,
   removeEntry,
@@ -17,6 +18,28 @@ import {
 import { formModel } from '../../helpers';
 
 export default compose(
+  graphql(notesQuery, {
+    skip: (ownProps) => !ownProps.match.params.entryId,
+    options: ({ match }) => ({
+      variables: {
+        entry: match.params.entryId,
+      },
+    }),
+    props: ({ notesQuery: query }) => ({
+      mistakes: query.notesByEntry
+        ? query.notesByEntry.filter(
+          (note) => note.type === SystemNoteTypeIds.Mistake,
+        )
+        : [],
+      lessons: query.notesByEntry
+        ? query.notesByEntry.filter(
+          (note) => note.type === SystemNoteTypeIds.Lesson,
+        )
+        : [],
+      notesLoading: query.loading,
+    }),
+    name: 'notesQuery',
+  }),
   graphql(deleteMistakeMutation, {
     props: ({ mutate }) => ({
       removeMistake: (id, index, entryId) =>
@@ -36,7 +59,7 @@ export default compose(
               variables: { id: entryId },
             });
             // Add our comment from the mutation to the end.
-            data.Entry.mistakes = data.Entry.mistakes.filter(
+            data.entryById.mistakes = data.entryById.mistakes.filter(
               (mistake) => mistake.id !== removedId,
             );
             // Write our data back to the cache.
@@ -68,7 +91,7 @@ export default compose(
               variables: { id: entryId },
             });
             // Add our comment from the mutation to the end.
-            data.Entry.lessons = data.Entry.lessons.filter(
+            data.entryById.lessons = data.entryById.lessons.filter(
               (lesson) => lesson.id !== removedId,
             );
             // Write our data back to the cache.

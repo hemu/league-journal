@@ -112,19 +112,19 @@ export const entryEditOnEpic = (action$) =>
       const data = client.readQuery({
         query: entryByIdQuery,
         variables: {
-          entryId: action.entryId,
+          id: action.entryId,
         },
       });
-      const entry = data.Entry;
-      entry.deathReasons = entry.deathReasons.map((text) => ({
-        text,
-      }));
-      entry.csReasons = entry.csReasons.map((text) => ({
-        text,
-      }));
-      entry.positives = entry.positives.map((text) => ({
-        text,
-      }));
+      const entry = data.entryById;
+      // entry.deathReasons = entry.deathReasons.map((text) => ({
+      //   text,
+      // }));
+      // entry.csReasons = entry.csReasons.map((text) => ({
+      //   text,
+      // }));
+      // entry.positives = entry.positives.map((text) => ({
+      //   text,
+      // }));
       return Rx.Observable.concat(
         Rx.Observable.of(actions.load('forms.entry', entry)),
         Rx.Observable.of(push(`${action.fromLocation}/edit`)),
