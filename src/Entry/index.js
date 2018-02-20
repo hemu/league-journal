@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router-dom';
 
-import EntryListContainer from './EntryList/Container';
-
+import EntryListContainer from './EntryListPanel/Container';
 import EntryDetailContainer from './EntryDetail/View/Container';
 import EntryDetailEditContainer from './EntryDetail/Edit/Container';
+import RecentGamesPanelContainer from './RecentGamesPanel/Container';
 
 const MainCont = styled.div`
   display: grid;
-  grid-template-columns: 280px auto;
+  grid-template-columns: 220px auto 170px;
 `;
 
 const Entry = ({ match }) => (
@@ -28,6 +28,7 @@ const Entry = ({ match }) => (
         />
       </Switch>
     </div>
+    <RecentGamesPanelContainer />
   </MainCont>
 );
 

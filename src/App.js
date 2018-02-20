@@ -13,17 +13,14 @@ import Dashboard from './Dashboard';
 import SignIn from './Auth/SignIn';
 import SignUp from './Auth/SignUp';
 
-const MainContainer = styled.div`
-  display: grid;
-  grid-template-columns: 90px auto;
-`;
+const MainContainer = styled.div``;
 
 const App = () => (
   <BrowserRouter>
     <ApolloProvider client={client}>
       <ConnectedRouter history={routerHistory}>
         <MainContainer>
-          <Navbar />
+          {/* <Navbar /> */}
           <Switch>
             {/* <Route path="/signup" component={SignUp} />
             <Route path="/signin" component={SignIn} /> */}

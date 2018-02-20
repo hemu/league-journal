@@ -16,7 +16,7 @@ moment.updateLocale('en', {
 const ListItemCont = styled.div`
   display: grid;
   cursor: pointer;
-  grid-template-columns: 25px auto 70px;
+  grid-template-columns: 20px auto 70px;
   align-items: center;
   width: 100%;
   height: 36px;
@@ -39,33 +39,44 @@ const EndCont = styled.div`
   display: grid;
   grid-template-rows: 1fr 1fr;
 `;
-const MatchupText = styled.div`
-  font-size: 13px;
+const ChampText = styled.span`
+  font-size: 12px;
+  font-weight: bold;
+`;
+const OpponentText = styled.span`
+  font-size: 10px;
 `;
 
 const KDACont = styled.div`
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 11px;
+  line-height: 11px;
   align-self: end;
   text-align: center;
 `;
 
 const DateCont = styled.div`
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 9px;
+  line-height: 11px;
   color: #999;
   align-self: start;
   text-align: center;
   font-style: italic;
 `;
 
-const matchup = (champion, opponentChampion) => {
-  const text = `${champion || 'Unknown'} vs ${opponentChampion || 'Unknown'}`;
-  return text.length > MAX_MATCHUP_LENGTH
-    ? `${text.substring(0, MAX_MATCHUP_LENGTH - 3)}...`
-    : text;
-};
-
+const Matchup = ({ champion, opponentChampion }) => (
+  // const text = `${champion || 'Unknown'} / ${opponentChampion || 'Unknown'}`;
+  // const textOverflow = text.length > MAX_MATCHUP_LENGTH;
+  // if (textOverflow) {
+  //   text = `${text.substring(0, MAX_MATCHUP_LENGTH - 3)}...`;
+  //   return <div>
+  //     <ChampText>{champion || 'Unknown'}</ChampText>/<OpponentText>{opponentChampion || 'Unknown'}</OpponentText>
+  //   </div>
+  // }
+  <div>
+    <ChampText>{champion || 'Unknown'}</ChampText>
+    <OpponentText> / {opponentChampion || 'Unknown'}</OpponentText>
+  </div>
+);
 const ListItem = ({ isLocalEntry, entry, active, entryIndex, onSelect }) => (
   <ListItemCont
     data-id={entry.id}
@@ -81,11 +92,10 @@ const ListItem = ({ isLocalEntry, entry, active, entryIndex, onSelect }) => (
         <LossIndicator name="circle thin" />
       )}
     </div>
-    <MatchupText>
-      {isLocalEntry
-        ? 'New (Unsaved)'
-        : matchup(entry.champion, entry.opponentChampion)}
-    </MatchupText>
+    <Matchup
+      champion={entry.champion}
+      opponentChampion={entry.opponentChampion}
+    />
     <EndCont>
       <KDACont>
         {entry.kills}/{entry.deaths}/{entry.assists}

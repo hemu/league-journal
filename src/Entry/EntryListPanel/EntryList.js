@@ -7,7 +7,7 @@ import EntryListItem from './EntryListItem';
 import { grayBlue } from '../../const/colors';
 
 const MainCont = styled.div`
-  padding: 20px 13px;
+  padding: 20px 8px;
   background-color: ${grayBlue};
 `;
 
