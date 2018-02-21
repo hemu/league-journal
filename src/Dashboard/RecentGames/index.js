@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import RecentGames from './RecentGames';
-import { createNewEntry } from '../../modules/entry';
+// import { createNewEntry } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
 import { HARDCODED_ACCOUNT_ID } from '../../const';
 
@@ -38,6 +38,6 @@ export default connect(
   }),
   (dispatch) => ({
     fetchRecentGames: () => dispatch(fetchRecentGamesApi()),
-    createEntry: (entry) => dispatch(createNewEntry(entry)),
+    createEntry: (entry) => {},
   }),
 )(RecentGamesContainer);

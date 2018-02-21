@@ -2,13 +2,28 @@ import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
 
 import { entryByIdQuery } from '../../../api/entry';
-import { notesQuery, markNoteMutation } from '../../../api/note';
-import { setEditMode } from '../../../modules/entry';
+import {
+  notesQuery,
+  updateNoteMutation,
+  markNoteMutation,
+  createNoteMutation,
+} from '../../../api/note';
+import { fetchNotes as fetchNotesApi } from '../../../modules/entry';
 import { SystemNoteTypeIds } from '../../../const';
 
 import EntryDetail from './EntryDetail';
 
 export default compose(
+  connect(
+    ({ forms: { entryNote } }, { match: { params } }) => ({
+      entryId: params ? params.entryId : null,
+      mistakes: entryNote[SystemNoteTypeIds.Mistake],
+      lessons: entryNote[SystemNoteTypeIds.Lesson],
+    }),
+    (dispatch, ownProps) => ({
+      fetchNotes: (entryId) => dispatch(fetchNotesApi(entryId)),
+    }),
+  ),
   graphql(entryByIdQuery, {
     skip: (ownProps) => !ownProps.match.params.entryId,
     options: ({ match }) => ({
@@ -29,19 +44,17 @@ export default compose(
         entry: match.params.entryId,
       },
     }),
-    props: ({ notesQuery: query }) => ({
-      mistakes: query.notesByEntry
-        ? query.notesByEntry.filter(
-          (note) => note.type === SystemNoteTypeIds.Mistake,
-        )
-        : [],
-      lessons: query.notesByEntry
-        ? query.notesByEntry.filter(
-          (note) => note.type === SystemNoteTypeIds.Lesson,
-        )
-        : [],
-      notesLoading: query.loading,
-    }),
+    props: ({ notesQuery: query }) => {
+      const notes = query.notesByEntry ? query.notesByEntry : [];
+      return {
+        // mistakes: notes.filter(
+        //   (note) => note.type === SystemNoteTypeIds.Mistake,
+        // ),
+        // lessons: notes.filter((note) => note.type === SystemNoteTypeIds.Lesson),
+        notesLoading: query.loading,
+        notesCount: notes.length,
+      };
+    },
     name: 'notesQuery',
   }),
   graphql(markNoteMutation, {
@@ -65,28 +78,79 @@ export default compose(
         }),
     }),
   }),
-  // graphql(markLessonMutation, {
-  //   props: ({ mutate }) => ({
-  //     markLesson: (id, marked) =>
-  //       mutate({
-  //         variables: {
-  //           id,
-  //           marked,
-  //         },
-  //         optimisticResponse: {
-  //           __typename: 'Mutation',
-  //           updateLesson: {
-  //             __typename: 'Lesson',
-  //             id,
-  //             marked,
-  //           },
-  //         },
-  //       }),
-  //   }),
-  // }),
-  connect(null, (dispatch, ownProps) => ({
-    setEditMode: (isEditMode, entryId) =>
-      dispatch(setEditMode(isEditMode, entryId, ownProps.location.pathname)),
-    // ownProps.history.push(`${ownProps.history.location.pathname}/edit`);
-  })),
+  graphql(updateNoteMutation, {
+    props: ({ mutate }) => ({
+      updateNoteText: (id, entry, text) =>
+        mutate({
+          variables: {
+            id,
+            entry,
+            text: text || ' ',
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateNoteText: {
+              __typename: 'Note',
+              id,
+              text,
+            },
+          },
+        }),
+    }),
+  }),
+  graphql(createNoteMutation, {
+    props: ({ ownProps: { fetchNotes }, mutate }) => ({
+      // props: ({ ownProps, mutate }) => ({
+      createNote: (entry, user, marked, text, type) =>
+        mutate({
+          variables: {
+            entry,
+            user,
+            marked,
+            text: text || ' ',
+            type,
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            createNote: {
+              __typename: 'Note',
+              id: Math.round(Math.random() * -1000000).toString(),
+              text: text || ' ',
+              type,
+              marked,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          },
+          update: (proxy, updateState) => {
+            // Read the data from our cache for this query.
+            console.log('######################');
+            console.log(updateState);
+            const { data: { createNote } } = updateState;
+            const data = proxy.readQuery({
+              query: notesQuery,
+              variables: {
+                entry,
+              },
+            });
+            console.log('--------------------');
+            console.log(data);
+            // Add our comment from the mutation to the end.
+            data.notesByEntry.push(createNote);
+            // Write our data back to the cache.
+            // console.log(createNote);
+            console.log('*************');
+            console.log(data);
+            proxy.writeQuery({
+              query: notesQuery,
+              variables: {
+                entry,
+              },
+              data,
+            });
+            fetchNotes(entry);
+          },
+        }),
+    }),
+  }),
 )(EntryDetail);

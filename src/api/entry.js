@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 import client from '../api/client';
-import { isLocalId } from '../helpers';
 import { updateMistakeMutation, deleteMistakeMutation } from './mistake';
 import { updateLessonMutation, deleteLessonMutation } from './lesson';
 import { entryFormInitialState } from '../modules/entryForm';
@@ -203,25 +202,25 @@ function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
   `;
 }
 
-function updateMistakesAndLessons(mistakes, lessons, entryId) {
-  const newMistakes = mistakes.filter(
-    (mistake) => isLocalId(mistake.id) && mistake.text.trim().length !== 0,
-  );
-  const newLessons = lessons.filter(
-    (lesson) => isLocalId(lesson.id) && lesson.text.trim().length !== 0,
-  );
-  if (newMistakes.length === 0 && newLessons.length === 0) {
-    return Promise.resolve();
-  }
-  const mutation = createMistakesAndLessonsMutation(
-    newMistakes,
-    newLessons,
-    entryId,
-  );
-  return client.mutate({
-    mutation,
-  });
-}
+// function updateMistakesAndLessons(mistakes, lessons, entryId) {
+//   const newMistakes = mistakes.filter(
+//     (mistake) => isLocalId(mistake.id) && mistake.text.trim().length !== 0,
+//   );
+//   const newLessons = lessons.filter(
+//     (lesson) => isLocalId(lesson.id) && lesson.text.trim().length !== 0,
+//   );
+//   if (newMistakes.length === 0 && newLessons.length === 0) {
+//     return Promise.resolve();
+//   }
+//   const mutation = createMistakesAndLessonsMutation(
+//     newMistakes,
+//     newLessons,
+//     entryId,
+//   );
+//   return client.mutate({
+//     mutation,
+//   });
+// }
 
 const validateNum = (val) => (Number.isNaN(parseInt(val, 10)) ? 0 : val);
 
@@ -252,13 +251,13 @@ export function saveEntry(entry) {
       .filter((p) => p.trim().length !== 0),
   };
 
-  return updateMistakesAndLessons(mistakes, lessons, entry.id).then(() =>
-    client.mutate({
-      mutation: saveEntryMutation,
-      variables: {
-        ...finalEntry,
-      },
-    }));
+  // return updateMistakesAndLessons(mistakes, lessons, entry.id).then(() =>
+  //   client.mutate({
+  //     mutation: saveEntryMutation,
+  //     variables: {
+  //       ...finalEntry,
+  //     },
+  //   }));
 }
 
 export function updateMistake(id, text) {

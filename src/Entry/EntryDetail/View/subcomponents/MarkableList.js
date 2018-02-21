@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { entryColors } from '../../../const/colors';
+import { entryColors } from '../../../../const/colors';
 
 const StyledList = styled.ul`
   list-style: none;

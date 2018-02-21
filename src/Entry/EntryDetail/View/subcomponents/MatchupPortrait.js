@@ -2,9 +2,9 @@ import React from 'react';
 import { Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { entryColors, white } from '../../../const/colors';
-import { getChampByName } from '../../../staticData/champion';
-import { getRoleImg } from '../../../staticData';
+import { entryColors, white } from '../../../../const/colors';
+import { getChampByName } from '../../../../staticData/champion';
+import { getRoleImg } from '../../../../staticData';
 
 function champInnerBorder(outcome, isOpponent) {
   if ((outcome === 'W' && !isOpponent) || (outcome !== 'W' && isOpponent)) {

@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
-import styled from 'styled-components';
-import SecondaryList from './SecondaryList';
-
-const MainCont = styled.div``;
 
 const CreepScoreView = ({ creepScore }) => {
   const dataPoints = [[0, 0], ...creepScore].filter((v) => v != null);
@@ -56,10 +52,10 @@ const CreepScoreView = ({ creepScore }) => {
       xAxes: [
         {
           display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Minutes',
-          },
+          // scaleLabel: {
+          //   display: true,
+          //   labelString: 'Minutes',
+          // },
           ticks: {
             min: 0,
             max: 20,

@@ -4,6 +4,7 @@ import { combineForms } from 'react-redux-form';
 import { routerReducer } from 'react-router-redux';
 import { entryFormInitialState } from './entryForm';
 import { signinFormInitialState, signupFormInitialState } from './authForm';
+import { entryNoteFormInitialState } from './entryNoteForm';
 
 import match, { fetchRecentGamesEpic } from './match';
 
@@ -17,7 +18,8 @@ import entry, {
   removeMistakeEpic,
   removeLessonEpic,
   setEntryDetailEpic,
-  createEntryEpic,
+  // createEntryEpic,
+  fetchNotesEpic,
 } from './entry';
 
 export const rootEpic = combineEpics(
@@ -31,7 +33,8 @@ export const rootEpic = combineEpics(
   removeLessonEpic,
   fetchRecentGamesEpic,
   setEntryDetailEpic,
-  createEntryEpic,
+  // createEntryEpic,
+  fetchNotesEpic,
 );
 
 export const rootReducer = combineReducers({
@@ -42,6 +45,7 @@ export const rootReducer = combineReducers({
       entry: entryFormInitialState,
       signup: signupFormInitialState,
       signin: signinFormInitialState,
+      entryNote: entryNoteFormInitialState,
     },
     'forms',
   ),

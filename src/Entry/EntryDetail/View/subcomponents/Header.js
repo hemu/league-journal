@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { entryColors } from '../../../const/colors';
+import { entryColors } from '../../../../const/colors';
 
 import MatchupPortrait from './MatchupPortrait';
 

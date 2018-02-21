@@ -1,6 +1,7 @@
 import { actions } from 'react-redux-form';
 import Rx from 'rxjs/Rx';
 import { push } from 'react-router-redux';
+import { sortBy, groupBy } from 'lodash';
 import client from '../api/client';
 import {
   entryByIdQuery,
@@ -11,18 +12,19 @@ import {
   updateLesson as updateLessonApi,
   removeMistake as removeMistakeApi,
   removeLesson as removeLessonApi,
-  createNewEntry as createNewEntryApi,
+  // createNewEntry as createNewEntryApi,
 } from '../api/entry';
+import { notesQuery } from '../api/note';
 import { getMatchDetails } from '../api/riot';
 import { createAction } from './helpers';
 import { isLocalEntry, isLocalId } from '../helpers';
 
-const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL';
+const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL_ID';
 
 const SAVE_ENTRY = 'entries/SAVE_ENTRY';
 const SAVE_ENTRY_SUCCESS = 'entries/SAVE_ENTRY_SUCCESS';
 
-const CREATE_ENTRY = 'entries/CREATE_ENTRY';
+// const CREATE_ENTRY = 'entries/CREATE_ENTRY';
 const CREATE_ENTRY_SUCCESS = 'entries/CREATE_ENTRY_SUCCESS';
 
 const REMOVE_ENTRY = 'entries/REMOVE_ENTRY';
@@ -41,6 +43,8 @@ const UPDATE_LESSON_SUCCESS = 'entries/UPDATE_LESSON_SUCCESS';
 const REMOVE_LESSON = 'entries/REMOVE_LESSON';
 const REMOVE_LESSON_SUCCESS = 'entries/REMOVE_LESSON_SUCCESS';
 
+const FETCH_NOTES = 'entries/FETCH_NOTES';
+
 // const DEBUG_ACTION = 'entries/DEBUG_ACTION';
 
 const SET_EDIT_MODE = 'entries/SET_EDIT_MODE';
@@ -51,7 +55,7 @@ export const setEntryDetailId = createAction(SET_ENTRY_DETAIL_ID, 'entryId');
 export const saveEntry = createAction(SAVE_ENTRY, 'entry');
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
 
-export const createNewEntry = createAction(CREATE_ENTRY, 'entry');
+// export const createNewEntry = createAction(CREATE_ENTRY, 'entry');
 export const createNewEntrySuccess = createAction(
   CREATE_ENTRY_SUCCESS,
   'entry',
@@ -79,6 +83,7 @@ export const removeLesson = createAction(REMOVE_LESSON, 'id');
 const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 
 // const debugAction = createAction(DEBUG_ACTION, 'msg');
+export const fetchNotes = createAction(FETCH_NOTES, 'entryId');
 
 export const setEditMode = createAction(
   SET_EDIT_MODE,
@@ -131,15 +136,15 @@ export const entryEditOnEpic = (action$) =>
       );
     });
 
-export const createEntryEpic = (action$) =>
-  action$.ofType(CREATE_ENTRY).mergeMap((action) =>
-    getMatchDetails(action.entry.gameId)
-      .then((details) =>
-        createNewEntryApi({
-          ...action.entry,
-          ...details,
-        }))
-      .then((success) => push(`/entry/${success.data.createEntry.id}`)));
+// export const createEntryEpic = (action$) =>
+//   action$.ofType(CREATE_ENTRY).mergeMap((action) =>
+//     getMatchDetails(action.entry.gameId)
+//       .then((details) =>
+//         createNewEntryApi({
+//           ...action.entry,
+//           ...details,
+//         }))
+//       .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 
 export const saveEntryEpic = (action$) =>
   action$
@@ -191,6 +196,22 @@ export const setEntryDetailEpic = (action$) =>
       }
     }
     return Rx.Observable.of(push(`/entry/${entryId}`));
+  });
+
+export const fetchNotesEpic = (action$) =>
+  action$.ofType(FETCH_NOTES).mergeMap((action) => {
+    const data = client.readQuery({
+      query: notesQuery,
+      variables: {
+        entry: action.entryId,
+      },
+    });
+    return Rx.Observable.of(
+      actions.load(
+        'forms.entryNote',
+        groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
+      ),
+    );
   });
 
 // ------- REDUCER -----------------------------------------------
