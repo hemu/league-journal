@@ -3,7 +3,6 @@ import { HARDCODED_ACCOUNT_ID } from '../const';
 import { recentGamesMock } from './mock';
 
 // const PROXY_ADDRESS = 'http://localhost:8080';
-
 export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
   return recentGamesMock();
   // return axios

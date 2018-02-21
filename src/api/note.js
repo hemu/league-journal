@@ -66,6 +66,14 @@ export const createNoteMutation = gql`
   }
 `;
 
+export const deleteNoteMutation = gql`
+  mutation DeleteNote($id: ID!, $entry: ID!) {
+    deleteNote(id: $id, entry: $entry) {
+      id
+    }
+  }
+`;
+
 export const markNoteMutation = gql`
   mutation MarkNote($id: ID!, $entry: ID!, $marked: Boolean!) {
     markNote(id: $id, entry: $entry, marked: $marked) {
@@ -83,52 +91,3 @@ export const updateNoteMutation = gql`
     }
   }
 `;
-
-// export function createNote(entry, user, marked, text, type) {
-//   return client.mutate({
-//     mutation: createNoteMutation,
-//     variables: {
-//       entry,
-//       user,
-//       marked,
-//       text: text || ' ',
-//       type,
-//     },
-//     optimisticResponse: {
-//       __typename: 'Mutation',
-//       createNote: {
-//         __typename: 'Note',
-//         id: Math.round(Math.random() * -1000000).toString(),
-//         text: text || ' ',
-//         type,
-//         marked,
-//         createdAt: new Date().toISOString(),
-//         updatedAt: new Date().toISOString(),
-//       },
-//     },
-//     update: (proxy, { data: { createNote } }) => {
-//       // Read the data from our cache for this query.
-//       const data = proxy.readQuery({
-//         query: notesQuery,
-//         variables: {
-//           entry,
-//         },
-//       });
-//       console.log('--------------------');
-//       console.log(data);
-//       // Add our comment from the mutation to the end.
-//       data.notesByEntry.push(createNote);
-//       // Write our data back to the cache.
-//       console.log(createNote);
-//       console.log('*************');
-//       console.log(data);
-//       proxy.writeQuery({
-//         query: notesQuery,
-//         variables: {
-//           entry,
-//         },
-//         data,
-//       });
-//     },
-//   });
-// }

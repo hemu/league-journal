@@ -106,7 +106,11 @@ class EntryDetail extends React.Component {
   changeNote(model, value, noteId) {
     return (dispatch) => {
       dispatch(actions.change(model, value));
-      this.props.updateNoteText(noteId, this.props.entry.id, value);
+      if (!value || !value.trim()) {
+        this.props.deleteNote(noteId, this.props.entry.id);
+      } else {
+        this.props.updateNoteText(noteId, this.props.entry.id, value);
+      }
     };
   }
 
@@ -209,6 +213,7 @@ EntryDetail.propTypes = {
   markNote: PropTypes.func.isRequired,
   updateNoteText: PropTypes.func.isRequired,
   createNote: PropTypes.func.isRequired,
+  deleteNote: PropTypes.func.isRequired,
 };
 
 EntryDetail.defaultProps = {

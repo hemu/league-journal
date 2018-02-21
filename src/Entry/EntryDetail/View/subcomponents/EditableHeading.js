@@ -58,6 +58,7 @@ class EditableHeading extends React.Component {
     };
     this.handleDisplayClick = this.handleDisplayClick.bind(this);
     this.handleInputBlur = this.handleInputBlur.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.inputRef = null;
   }
 
@@ -81,6 +82,12 @@ class EditableHeading extends React.Component {
     this.setState({ editMode: false });
   }
 
+  handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.inputRef.inputRef.blur();
+    }
+  }
+
   render() {
     const { isLatest, emptyPlaceholder, editMode, ...validProps } = this.props;
     return (
@@ -95,6 +102,7 @@ class EditableHeading extends React.Component {
             getRef={(node) => {
               this.inputRef = node;
             }}
+            onKeyPress={this.handleKeyPress}
             onFocus={(e) => {
               // this trick puts cursor at end of input on focus
               const val = e.target.value;

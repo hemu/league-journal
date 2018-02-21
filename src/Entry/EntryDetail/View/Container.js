@@ -7,6 +7,7 @@ import {
   updateNoteMutation,
   markNoteMutation,
   createNoteMutation,
+  deleteNoteMutation,
 } from '../../../api/note';
 import { fetchNotes as fetchNotesApi } from '../../../modules/entry';
 import { SystemNoteTypeIds } from '../../../const';
@@ -100,7 +101,6 @@ export default compose(
   }),
   graphql(createNoteMutation, {
     props: ({ ownProps: { fetchNotes }, mutate }) => ({
-      // props: ({ ownProps, mutate }) => ({
       createNote: (entry, user, marked, text, type) =>
         mutate({
           variables: {
@@ -123,9 +123,6 @@ export default compose(
             },
           },
           update: (proxy, updateState) => {
-            // Read the data from our cache for this query.
-            console.log('######################');
-            console.log(updateState);
             const { data: { createNote } } = updateState;
             const data = proxy.readQuery({
               query: notesQuery,
@@ -133,14 +130,45 @@ export default compose(
                 entry,
               },
             });
-            console.log('--------------------');
-            console.log(data);
-            // Add our comment from the mutation to the end.
             data.notesByEntry.push(createNote);
-            // Write our data back to the cache.
-            // console.log(createNote);
-            console.log('*************');
-            console.log(data);
+            proxy.writeQuery({
+              query: notesQuery,
+              variables: {
+                entry,
+              },
+              data,
+            });
+            fetchNotes(entry);
+          },
+        }),
+    }),
+  }),
+  graphql(deleteNoteMutation, {
+    props: ({ ownProps: { fetchNotes }, mutate }) => ({
+      deleteNote: (id, entry) =>
+        mutate({
+          variables: {
+            id,
+            entry,
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            deleteNote: {
+              __typename: 'Note',
+              id,
+            },
+          },
+          update: (proxy, updateState) => {
+            const { data: { deleteNote } } = updateState;
+            const data = proxy.readQuery({
+              query: notesQuery,
+              variables: {
+                entry,
+              },
+            });
+            data.notesByEntry = data.notesByEntry.filter(
+              (note) => note.id !== deleteNote.id,
+            );
             proxy.writeQuery({
               query: notesQuery,
               variables: {
