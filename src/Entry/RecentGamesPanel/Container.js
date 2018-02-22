@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import RecentGames from './RecentGames';
-// import { createNewEntry } from '../../modules/entry';
+import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
 import { HARDCODED_ACCOUNT_ID } from '../../const';
 
@@ -12,15 +12,20 @@ class RecentGamesContainer extends React.Component {
   }
 
   render() {
-    const { games, createEntry } = this.props;
-    return <RecentGames games={games} createEntry={createEntry} />;
+    const { games, createEntryFromGameId } = this.props;
+    return (
+      <RecentGames
+        games={games}
+        createEntryFromGameId={createEntryFromGameId}
+      />
+    );
   }
 }
 
 RecentGamesContainer.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
   fetchRecentGames: PropTypes.func.isRequired,
-  createEntry: PropTypes.func.isRequired,
+  createEntryFromGameId: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -29,6 +34,6 @@ export default connect(
   }),
   (dispatch) => ({
     fetchRecentGames: (accountId) => dispatch(fetchRecentGamesApi(accountId)),
-    createEntry: (entry) => {},
+    createEntryFromGameId: (gameId) => dispatch(createEntryFromGame(gameId)),
   }),
 )(RecentGamesContainer);

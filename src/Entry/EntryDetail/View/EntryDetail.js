@@ -1,15 +1,16 @@
 import React from 'react';
-import { Grid, Card, Button, Accordion, Icon } from 'semantic-ui-react';
+import { Grid, Card } from 'semantic-ui-react';
 import { actions, track } from 'react-redux-form';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CreepScore from './subcomponents/CreepScore';
-import SecondaryList from './subcomponents/SecondaryList';
+// import SecondaryList from './subcomponents/SecondaryList';
 import Header from './subcomponents/Header';
-import MarkableList from './subcomponents/MarkableList';
+// import MarkableList from './subcomponents/MarkableList';
 import MainLesson from './subcomponents/MainLesson';
-import EditableNote from './subcomponents/EditableNote';
+import NoteList from './subcomponents/Mistake/NoteList';
 import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
+import { GenericErrorBoundary } from '../../../Error';
 
 const MainCont = styled.div`
   padding: 20px;
@@ -37,34 +38,9 @@ const CardContent = styled.div`
   }
 `;
 
-const EditBtn = styled(Button)`
-  &&& {
-    background-color: #37474f;
-  }
-`;
-
-const AddBtn = styled(Button)`
-  &&& {
-    color: #aaa;
-    background-color: #fff;
-    border: 3px dashed #f0f0f0;
-    margin-top: 5px;
-  }
-`;
-
-function ordinal(num) {
-  let suffix = 'th';
-  if (num === 1) suffix = 'st';
-  if (num === 2) suffix = 'nd';
-  if (num === 3) suffix = 'rd';
-  return `${num}${suffix}`;
-}
-
 class EntryDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { activeIndex: [0] };
-    this.handleAccordionClick = this.handleAccordionClick.bind(this);
     this.changeNote = this.changeNote.bind(this);
   }
 
@@ -91,18 +67,6 @@ class EntryDetail extends React.Component {
     }
   }
 
-  handleAccordionClick(e, titleProps) {
-    const { index } = titleProps;
-    const { activeIndex } = this.state;
-    const arrIndex = activeIndex.indexOf(index);
-    if (arrIndex !== -1) {
-      activeIndex.splice(arrIndex, 1);
-    } else {
-      activeIndex.push(index);
-    }
-    this.setState({ activeIndex });
-  }
-
   changeNote(model, value, noteId) {
     return (dispatch) => {
       dispatch(actions.change(model, value));
@@ -116,14 +80,7 @@ class EntryDetail extends React.Component {
 
   render() {
     const { props } = this;
-    const {
-      entry,
-      entryLoading,
-      mistakes,
-      lessons,
-      // notesLoading,
-      createNote,
-    } = props;
+    const { entry, entryLoading, mistakes, lessons, createNote } = props;
     const isLoading = entryLoading;
     if (!entry || !mistakes || !lessons) {
       return <div>Error contacting server.</div>;
@@ -140,29 +97,23 @@ class EntryDetail extends React.Component {
         <MainLesson changeNote={this.changeNote} />
         <Grid stackable centered columns={2}>
           <Grid.Column>
-            <MainCard fluid raised>
-              <CardHeader>Mistakes</CardHeader>
-              <CardContent>
-                {mistakes.map((mistake, elemIndex) => (
-                  <EditableNote
-                    key={mistake.id}
-                    model={track(
-                      `forms.entryNote[${SystemNoteTypeIds.Mistake}][].text`,
-                      { id: mistake.id },
-                    )}
-                    isLatest={false}
-                    emptyPlaceholder={`My ${ordinal(
-                      elemIndex + 1,
-                    )} mistake was...`}
-                    changeAction={(model, value) =>
-                      this.changeNote(model, value, mistake.id)
+            <GenericErrorBoundary>
+              <MainCard fluid raised>
+                <CardHeader>Mistakes</CardHeader>
+                <CardContent>
+                  <NoteList
+                    notes={mistakes}
+                    placeholderSuffix="mistake was..."
+                    onChange={this.changeNote}
+                    createFormModel={(id) =>
+                      track(
+                        `forms.entryNote[${SystemNoteTypeIds.Mistake}][].text`,
+                        {
+                          id,
+                        },
+                      )
                     }
-                  />
-                ))}
-                {mistakes.length < 5 ? (
-                  <AddBtn
-                    type="button"
-                    onClick={() =>
+                    onAddNote={() =>
                       createNote(
                         entry.id,
                         HARDCODED_USER_ID,
@@ -171,30 +122,20 @@ class EntryDetail extends React.Component {
                         SystemNoteTypeIds.Mistake,
                       )
                     }
-                    fluid
-                  >
-                    <Icon name="add" />ADD MISTAKE
-                  </AddBtn>
-                ) : (
-                  ''
-                )}
-
-                {/* <MarkableList
-              items={mistakes}
-              onMark={onNoteMark}
-              parentModel="entryForm"
-              model="mistakes"
-            /> */}
-              </CardContent>
-            </MainCard>
+                  />
+                </CardContent>
+              </MainCard>
+            </GenericErrorBoundary>
           </Grid.Column>
           <Grid.Column>
-            <MainCard fluid raised>
-              <CardHeader>Creep Score</CardHeader>
-              <CardContent>
-                <CreepScore creepScore={entry.cs} />
-              </CardContent>
-            </MainCard>
+            <GenericErrorBoundary>
+              <MainCard fluid raised>
+                <CardHeader>Creep Score</CardHeader>
+                <CardContent>
+                  <CreepScore creepScore={entry.cs} />
+                </CardContent>
+              </MainCard>
+            </GenericErrorBoundary>
           </Grid.Column>
         </Grid>
       </MainCont>

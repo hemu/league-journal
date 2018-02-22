@@ -12,8 +12,10 @@ import {
   updateLesson as updateLessonApi,
   removeMistake as removeMistakeApi,
   removeLesson as removeLessonApi,
-  // createNewEntry as createNewEntryApi,
+  createNewEntry as createNewEntryApi,
 } from '../api/entry';
+
+import { HARDCODED_USER_ID } from '../const';
 import { notesQuery } from '../api/note';
 import { getMatchDetails } from '../api/riot';
 import { createAction } from './helpers';
@@ -24,7 +26,7 @@ const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL_ID';
 const SAVE_ENTRY = 'entries/SAVE_ENTRY';
 const SAVE_ENTRY_SUCCESS = 'entries/SAVE_ENTRY_SUCCESS';
 
-// const CREATE_ENTRY = 'entries/CREATE_ENTRY';
+const CREATE_ENTRY_FROM_GAME = 'entries/CREATE_ENTRY_FROM_GAME';
 const CREATE_ENTRY_SUCCESS = 'entries/CREATE_ENTRY_SUCCESS';
 
 const REMOVE_ENTRY = 'entries/REMOVE_ENTRY';
@@ -55,7 +57,11 @@ export const setEntryDetailId = createAction(SET_ENTRY_DETAIL_ID, 'entryId');
 export const saveEntry = createAction(SAVE_ENTRY, 'entry');
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
 
-// export const createNewEntry = createAction(CREATE_ENTRY, 'entry');
+export const createEntryFromGame = createAction(
+  CREATE_ENTRY_FROM_GAME,
+  'gameId',
+);
+
 export const createNewEntrySuccess = createAction(
   CREATE_ENTRY_SUCCESS,
   'entry',
@@ -136,15 +142,22 @@ export const entryEditOnEpic = (action$) =>
       );
     });
 
-// export const createEntryEpic = (action$) =>
-//   action$.ofType(CREATE_ENTRY).mergeMap((action) =>
-//     getMatchDetails(action.entry.gameId)
-//       .then((details) =>
-//         createNewEntryApi({
-//           ...action.entry,
-//           ...details,
-//         }))
-//       .then((success) => push(`/entry/${success.data.createEntry.id}`)));
+export const createEntryFromGameEpic = (action$) =>
+  action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
+    getMatchDetails(action.gameId)
+      .then((details) => {
+        console.log(details);
+        return createNewEntryApi({
+          ...action.entry,
+          ...details,
+          user: HARDCODED_USER_ID,
+        });
+      })
+      .then((success) => {
+        console.log('-------------');
+        console.log(success);
+        return push(`/entry/${success.data.createEntry.id}`);
+      }));
 
 export const saveEntryEpic = (action$) =>
   action$
@@ -206,6 +219,7 @@ export const fetchNotesEpic = (action$) =>
         entry: action.entryId,
       },
     });
+
     return Rx.Observable.of(
       actions.load(
         'forms.entryNote',
@@ -220,6 +234,7 @@ export const fetchNotesEpic = (action$) =>
 const initialState = {
   // entryDetailId: '',
   editMode: false,
+  fetchingNotes: false,
 };
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -242,6 +257,13 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         editMode: action.editMode,
+      };
+    }
+
+    case FETCH_NOTES: {
+      return {
+        ...state,
+        fetchingNotes: true,
       };
     }
 

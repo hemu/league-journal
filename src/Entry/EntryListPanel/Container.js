@@ -5,8 +5,7 @@ import { graphql, compose } from 'react-apollo';
 import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
 import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
-import { entryFormInitialState } from '../../modules/entryForm';
-import { entriesByUserQuery, createEntryMutation } from '../../api/entry';
+import { entriesByUserQuery } from '../../api/entry';
 import { HARDCODED_USER_ID } from '../../const';
 
 const EntryListContainer = lifecycle({
@@ -61,49 +60,48 @@ const EntryListContainer = lifecycle({
 EntryListContainer.propTypes = {
   data: PropTypes.shape({}).isRequired,
   setEntryDetailId: PropTypes.func.isRequired,
-  createEntry: PropTypes.func.isRequired,
 };
 
 export default compose(
   graphql(entriesByUserQuery, {
     options: { variables: { user: HARDCODED_USER_ID } },
   }),
-  graphql(createEntryMutation, {
-    props: ({ mutate }) => ({
-      createEntry: (defaultVals = {}) =>
-        mutate({
-          variables: {
-            ...entryFormInitialState,
-            gameDate: new Date(),
-            ...defaultVals,
-          },
-          optimisticResponse: {
-            __typename: 'Mutation',
-            createEntry: {
-              __typename: 'Entry',
-              id: 'TEMP_LOCAL_ID',
-              ...entryFormInitialState,
-              gameDate: new Date(),
-              ...defaultVals,
-            },
-          },
-          update: (proxy, { data: { createEntry } }) => {
-            // Read the data from our cache for this query.
-            const data = proxy.readQuery({
-              query: entriesByUserQuery,
-              // variables: { entryId },
-            });
-            // Add our comment from the mutation to the end.
-            data.entriesByUser.push(createEntry);
-            // Write our data back to the cache.
-            proxy.writeQuery({
-              query: entriesByUserQuery,
-              data,
-            });
-          },
-        }),
-    }),
-  }),
+  // graphql(createEntryMutation, {
+  //   props: ({ mutate }) => ({
+  //     createEntry: (defaultVals = {}) =>
+  //       mutate({
+  //         variables: {
+  //           ...entryFormInitialState,
+  //           gameDate: new Date(),
+  //           ...defaultVals,
+  //         },
+  //         optimisticResponse: {
+  //           __typename: 'Mutation',
+  //           createEntry: {
+  //             __typename: 'Entry',
+  //             id: 'TEMP_LOCAL_ID',
+  //             ...entryFormInitialState,
+  //             gameDate: new Date(),
+  //             ...defaultVals,
+  //           },
+  //         },
+  //         update: (proxy, { data: { createEntry } }) => {
+  //           // Read the data from our cache for this query.
+  //           const data = proxy.readQuery({
+  //             query: entriesByUserQuery,
+  //             // variables: { entryId },
+  //           });
+  //           // Add our comment from the mutation to the end.
+  //           data.entriesByUser.push(createEntry);
+  //           // Write our data back to the cache.
+  //           proxy.writeQuery({
+  //             query: entriesByUserQuery,
+  //             data,
+  //           });
+  //         },
+  //       }),
+  //   }),
+  // }),
   connect(null, (dispatch) => ({
     setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),
   })),

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Image, Button, Icon } from 'semantic-ui-react';
 import { getChampByName } from '../../staticData/champion';
 import { grayBlue } from '../../const/colors';
+import { GenericErrorBoundary } from '../../Error';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -91,41 +92,32 @@ const Title = styled.div`
   padding: 10px 0;
 `;
 
-const GamesList = ({ games, createEntry }) => (
+const GamesList = ({ games, createEntryFromGameId }) => (
   <MainCont>
-    <StyledList>
-      <Title>Recent Games</Title>
-      {games.length === 0 ? (
-        <div>No recent games found</div>
-      ) : (
-        games.map((game) => (
-          <ListItem key={game.gameId}>
-            <NewEntryBtn icon>
-              <Icon name="plus" />
-            </NewEntryBtn>
-            <ChampImg src={getChampByName(game.champion).img} height={30} />
-            {/* <ChampText>{game.champion}</ChampText> */}
-            <EndCont>
-              <LaneCont>{game.lane}</LaneCont>
-              <DateCont>{moment(game.timestamp).fromNow()}</DateCont>
-            </EndCont>
-
-            {/* <TextBtn
-              onClick={() =>
-                createEntry({
-                  champion: game.champion,
-                  role: game.lane,
-                  gameDate: new Date(game.timestamp),
-                  gameId: game.gameId.toString(),
-                })
-              }
-            >
-              New Entry
-            </TextBtn> */}
-          </ListItem>
-        ))
-      )}
-    </StyledList>
+    <GenericErrorBoundary>
+      <StyledList>
+        <Title>Recent Games</Title>
+        {games.length === 0 ? (
+          <div>No recent games found</div>
+        ) : (
+          games.map((game) => (
+            <ListItem key={game.gameId}>
+              <NewEntryBtn
+                onClick={() => createEntryFromGameId(game.gameId)}
+                icon
+              >
+                <Icon name="plus" />
+              </NewEntryBtn>
+              <ChampImg src={getChampByName(game.champion).img} height={30} />
+              <EndCont>
+                <LaneCont>{game.lane}</LaneCont>
+                <DateCont>{moment(game.timestamp).fromNow()}</DateCont>
+              </EndCont>
+            </ListItem>
+          ))
+        )}
+      </StyledList>
+    </GenericErrorBoundary>
   </MainCont>
 );
 
@@ -138,18 +130,18 @@ GamesList.propTypes = {
       champion: PropTypes.string.isRequired,
     }),
   ).isRequired,
-  createEntry: PropTypes.func.isRequired,
+  createEntryFromGameId: PropTypes.func.isRequired,
 };
 
-const RecentGames = ({ games, createEntry }) => (
+const RecentGames = ({ games, createEntryFromGameId }) => (
   // <DashboardItem title="Recent Games" mainColor={mainColor}>
-  <GamesList games={games} createEntry={createEntry} />
+  <GamesList games={games} createEntryFromGameId={createEntryFromGameId} />
   // </DashboardItem>
 );
 
 RecentGames.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
-  createEntry: PropTypes.func.isRequired,
+  createEntryFromGameId: PropTypes.func.isRequired,
 };
 
 export default RecentGames;

@@ -27,19 +27,21 @@ export const FormInput = styled(Control.text)`
   width: 100%;
 `;
 
-const TextDisplay = ({ value, onClick, emptyPlaceholder }) => {
-  if (value && value.trim()) {
-    return <DisplayCont onClick={onClick}>{value}</DisplayCont>;
-  }
-  return (
+const TextDisplay = ({ value, onClick, emptyPlaceholder }) =>
+  (value && value.trim() ? (
+    <DisplayCont onClick={onClick}>{value}</DisplayCont>
+  ) : (
     <EmptyDisplayCont onClick={onClick}>{emptyPlaceholder}</EmptyDisplayCont>
-  );
-};
+  ));
 
 TextDisplay.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   onClick: PropTypes.func.isRequired,
   emptyPlaceholder: PropTypes.string.isRequired,
+};
+
+TextDisplay.defaultProps = {
+  value: '',
 };
 
 class EditableNote extends React.Component {
@@ -83,29 +85,30 @@ class EditableNote extends React.Component {
   }
 
   render() {
-    const { isLatest, emptyPlaceholder, editMode, ...validProps } = this.props;
+    const { emptyPlaceholder, model } = this.props;
     return this.state.editMode ? (
       <FormInput
-        {...validProps}
         component={Input}
-        size="mini"
-        updateOn="blur"
-        onBlur={this.handleInputBlur}
         getRef={(node) => {
           this.inputRef = node;
         }}
-        onKeyPress={this.handleKeyPress}
+        model={model}
+        onBlur={this.handleInputBlur}
         onFocus={(e) => {
           // this trick puts cursor at end of input on focus
           const val = e.target.value;
           e.target.value = '';
           e.target.value = val;
         }}
+        onKeyPress={this.handleKeyPress}
+        size="mini"
+        updateOn="blur"
       />
     ) : (
       <Control
         component={TextDisplay}
-        {...this.props}
+        model={model}
+        emptyPlaceholder={emptyPlaceholder}
         onClick={this.handleDisplayClick}
       />
     );
@@ -113,9 +116,10 @@ class EditableNote extends React.Component {
 }
 
 EditableNote.propTypes = {
-  isLatest: PropTypes.bool.isRequired,
   emptyPlaceholder: PropTypes.string.isRequired,
   editMode: PropTypes.bool,
+  isLatest: PropTypes.bool.isRequired,
+  model: PropTypes.func.isRequired,
 };
 
 EditableNote.defaultProps = {

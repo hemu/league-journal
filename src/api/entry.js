@@ -55,25 +55,27 @@ export const entryByIdQuery = gql`
 
 export const createEntryMutation = gql`
   mutation CreateEntry(
-    $gameDate: DateTime!
-    $rank: String
+    $user: String!
+    $gameId: String!
+    $gameDate: String
+    # $rank: String
     $outcome: String
-    $role: String!
+    $role: String
     $kills: Int
     $deaths: Int
     $assists: Int
-    $champion: String!
-    $opponentChampion: String!
+    $champion: String
+    $opponentChampion: String
     $partner: String
     $opponentPartner: String
     $csPerMin: Float
-    $cs: [[Int]]
-    $video: String
-    $gameId: String
+    $cs: [[Int]] # $video: String
   ) {
     createEntry(
+      user: $user
+      gameId: $gameId
       gameDate: $gameDate
-      rank: $rank
+      # rank: $rank
       outcome: $outcome
       role: $role
       kills: $kills
@@ -84,9 +86,7 @@ export const createEntryMutation = gql`
       partner: $partner
       opponentPartner: $opponentPartner
       csPerMin: $csPerMin
-      cs: $cs
-      video: $video
-      gameId: $gameId
+      cs: $cs # video: $video
     ) {
       ...FullEntry
     }
@@ -298,22 +298,22 @@ export function removeLesson(id) {
   });
 }
 
-export function createNewEntry(defaultVals = {}) {
+export function createNewEntry(entry) {
   return client.mutate({
     mutation: createEntryMutation,
     variables: {
-      ...entryFormInitialState,
-      gameDate: new Date(),
-      ...defaultVals,
+      // ...entryFormInitialState,
+      gameDate: new Date().toISOString(),
+      ...entry,
     },
     optimisticResponse: {
       __typename: 'Mutation',
       createEntry: {
         __typename: 'Entry',
         id: 'TEMP_LOCAL_ID',
-        ...entryFormInitialState,
-        gameDate: new Date(),
-        ...defaultVals,
+        // ...entryFormInitialState,
+        gameDate: new Date().toISOString(),
+        ...entry,
       },
     },
     update: (proxy, { data: { createEntry } }) => {
@@ -321,6 +321,7 @@ export function createNewEntry(defaultVals = {}) {
       try {
         const data = proxy.readQuery({
           query: entriesByUserQuery,
+          variables: { user: entry.user },
         });
         // Add our comment from the mutation to the end.
         if (data.entriesByUser) {
@@ -328,6 +329,7 @@ export function createNewEntry(defaultVals = {}) {
           // Write our data back to the cache.
           proxy.writeQuery({
             query: entriesByUserQuery,
+            variables: { user: entry.user },
             data,
           });
         }
@@ -388,6 +390,7 @@ export function removeEntry(entryId, mistakes, lessons) {
       // Read the data from our cache for this query.
       const updateResults = updateData[entryMutationAlias];
       const data = proxy.readQuery({
+        // XXX: need to include user as a variable here
         query: entriesByUserQuery,
       });
       // Add our comment from the mutation to the end.
@@ -396,6 +399,7 @@ export function removeEntry(entryId, mistakes, lessons) {
       );
       // Write our data back to the cache.
       proxy.writeQuery({
+        // XXX: need to include user as a variable here
         query: entriesByUserQuery,
         data,
       });

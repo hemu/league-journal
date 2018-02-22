@@ -18,7 +18,7 @@ import entry, {
   removeMistakeEpic,
   removeLessonEpic,
   setEntryDetailEpic,
-  // createEntryEpic,
+  createEntryFromGameEpic,
   fetchNotesEpic,
 } from './entry';
 
@@ -33,7 +33,7 @@ export const rootEpic = combineEpics(
   removeLessonEpic,
   fetchRecentGamesEpic,
   setEntryDetailEpic,
-  // createEntryEpic,
+  createEntryFromGameEpic,
   fetchNotesEpic,
 );
 
