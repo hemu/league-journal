@@ -18,8 +18,8 @@ export default compose(
   connect(
     ({ forms: { entryNote } }, { match: { params } }) => ({
       entryId: params ? params.entryId : null,
-      // mistakes: entryNote[SystemNoteTypeIds.Mistake] || [],
-      // lessons: entryNote[SystemNoteTypeIds.Lesson] || [],
+      mistakes: entryNote[SystemNoteTypeIds.Mistake] || [],
+      lessons: entryNote[SystemNoteTypeIds.Lesson] || [],
     }),
     (dispatch, ownProps) => ({
       fetchNotes: (entryId) => dispatch(fetchNotesApi(entryId)),
@@ -48,10 +48,10 @@ export default compose(
     props: ({ notesQuery: query }) => {
       const notes = query.notesByEntry ? query.notesByEntry : [];
       return {
-        mistakes: notes.filter(
-          (note) => note.type === SystemNoteTypeIds.Mistake,
-        ),
-        lessons: notes.filter((note) => note.type === SystemNoteTypeIds.Lesson),
+        // mistakes: notes.filter(
+        //   (note) => note.type === SystemNoteTypeIds.Mistake,
+        // ),
+        // lessons: notes.filter((note) => note.type === SystemNoteTypeIds.Lesson),
         notesLoading: query.loading,
       };
     },

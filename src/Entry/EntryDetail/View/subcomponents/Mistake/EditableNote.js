@@ -85,7 +85,7 @@ class EditableNote extends React.Component {
   }
 
   render() {
-    const { emptyPlaceholder, model } = this.props;
+    const { emptyPlaceholder, model, changeAction } = this.props;
     return this.state.editMode ? (
       <FormInput
         component={Input}
@@ -103,6 +103,7 @@ class EditableNote extends React.Component {
         onKeyPress={this.handleKeyPress}
         size="mini"
         updateOn="blur"
+        changeAction={changeAction}
       />
     ) : (
       <Control
@@ -120,6 +121,7 @@ EditableNote.propTypes = {
   editMode: PropTypes.bool,
   isLatest: PropTypes.bool.isRequired,
   model: PropTypes.func.isRequired,
+  changeAction: PropTypes.func.isRequired,
 };
 
 EditableNote.defaultProps = {

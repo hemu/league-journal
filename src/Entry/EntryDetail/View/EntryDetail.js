@@ -38,12 +38,18 @@ const CardContent = styled.div`
   }
 `;
 
-class EntryDetail extends React.Component {
-  constructor(props) {
-    super(props);
-    this.changeNote = this.changeNote.bind(this);
-  }
+function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
+  return (model, value, noteId) => (dispatch) => {
+    dispatch(actions.change(model, value));
+    if (!value || !value.trim()) {
+      deleteNote(noteId, entryId);
+    } else {
+      updateNoteText(noteId, entryId, value);
+    }
+  };
+}
 
+class EntryDetail extends React.Component {
   componentDidMount() {
     const { notesLoading, entryId } = this.props;
     if (notesLoading === false && entryId) {
@@ -67,20 +73,17 @@ class EntryDetail extends React.Component {
     }
   }
 
-  changeNote(model, value, noteId) {
-    return (dispatch) => {
-      dispatch(actions.change(model, value));
-      if (!value || !value.trim()) {
-        this.props.deleteNote(noteId, this.props.entry.id);
-      } else {
-        this.props.updateNoteText(noteId, this.props.entry.id, value);
-      }
-    };
-  }
-
   render() {
     const { props } = this;
-    const { entry, entryLoading, mistakes, lessons, createNote } = props;
+    const {
+      entry,
+      entryLoading,
+      mistakes,
+      lessons,
+      createNote,
+      updateNoteText,
+      deleteNote,
+    } = props;
     const isLoading = entryLoading;
     if (!entry || !mistakes || !lessons) {
       return <div>Error contacting server.</div>;
@@ -89,12 +92,17 @@ class EntryDetail extends React.Component {
       return <div>Loading entry...</div>;
     }
 
-    const onNoteMark = (id, marked) => props.markNote(id, entry.id, marked);
+    const noteChangeHandler = createChangeNoteHandler(
+      entry.id,
+      updateNoteText,
+      deleteNote,
+    );
+    // const onNoteMark = (id, marked) => props.markNote(id, entry.id, marked);
 
     return (
       <MainCont>
         <Header {...entry} />
-        <MainLesson changeNote={this.changeNote} />
+        <MainLesson changeNote={noteChangeHandler} />
         <Grid stackable centered columns={2}>
           <Grid.Column>
             <GenericErrorBoundary>
@@ -104,7 +112,7 @@ class EntryDetail extends React.Component {
                   <NoteList
                     notes={mistakes}
                     placeholderSuffix="mistake was..."
-                    onChange={this.changeNote}
+                    onChange={noteChangeHandler}
                     createFormModel={(id) =>
                       track(
                         `forms.entryNote[${SystemNoteTypeIds.Mistake}][].text`,

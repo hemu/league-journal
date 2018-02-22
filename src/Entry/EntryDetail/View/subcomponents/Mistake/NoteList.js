@@ -44,7 +44,13 @@ List.propTypes = {
   placeholderSuffix: PropTypes.string.isRequired,
 };
 
-const NoteList = ({ notes, placeholderSuffix, onChange, createFormModel }) => (
+const NoteList = ({
+  notes,
+  placeholderSuffix,
+  onChange,
+  onAddNote,
+  createFormModel,
+}) => (
   <div>
     <List
       notes={notes.map((note) => ({
@@ -55,7 +61,7 @@ const NoteList = ({ notes, placeholderSuffix, onChange, createFormModel }) => (
       placeholderSuffix={placeholderSuffix}
     />
     {notes.length < 5 ? (
-      <AddBtn type="button" onClick={onChange} fluid>
+      <AddBtn type="button" onClick={onAddNote} fluid>
         <Icon name="add" />ADD MISTAKE
       </AddBtn>
     ) : (
@@ -69,6 +75,7 @@ NoteList.propTypes = {
   notes: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string }))
     .isRequired,
   onChange: PropTypes.func.isRequired,
+  onAddNote: PropTypes.func.isRequired,
   placeholderSuffix: PropTypes.string.isRequired,
 };
 

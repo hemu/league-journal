@@ -46,6 +46,7 @@ const REMOVE_LESSON = 'entries/REMOVE_LESSON';
 const REMOVE_LESSON_SUCCESS = 'entries/REMOVE_LESSON_SUCCESS';
 
 const FETCH_NOTES = 'entries/FETCH_NOTES';
+const FETCH_NOTES_SUCCESS = 'entries/FETCH_NOTES_SUCCESS';
 
 // const DEBUG_ACTION = 'entries/DEBUG_ACTION';
 
@@ -90,6 +91,7 @@ const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 
 // const debugAction = createAction(DEBUG_ACTION, 'msg');
 export const fetchNotes = createAction(FETCH_NOTES, 'entryId');
+export const fetchNotesSuccess = createAction(FETCH_NOTES_SUCCESS);
 
 export const setEditMode = createAction(
   SET_EDIT_MODE,
@@ -200,6 +202,7 @@ export const removeLessonEpic = (action$) =>
 export const setEntryDetailEpic = (action$) =>
   action$.ofType(SET_ENTRY_DETAIL_ID).mergeMap((action) => {
     let { entryId } = action;
+    // if no entry id is specified, automatically set to the first entry
     if (!entryId) {
       const data = client.readQuery({
         query: entriesByUserQuery,
