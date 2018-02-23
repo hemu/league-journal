@@ -147,19 +147,12 @@ export const entryEditOnEpic = (action$) =>
 export const createEntryFromGameEpic = (action$) =>
   action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
     getMatchDetails(action.gameId)
-      .then((details) => {
-        console.log(details);
-        return createNewEntryApi({
-          ...action.entry,
-          ...details,
-          user: HARDCODED_USER_ID,
-        });
-      })
-      .then((success) => {
-        console.log('-------------');
-        console.log(success);
-        return push(`/entry/${success.data.createEntry.id}`);
-      }));
+      .then((details) => createNewEntryApi({
+        ...action.entry,
+        ...details,
+        user: HARDCODED_USER_ID,
+      }))
+      .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 
 export const saveEntryEpic = (action$) =>
   action$

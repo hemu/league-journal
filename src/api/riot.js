@@ -4,7 +4,7 @@ import { recentGamesMock } from './mock';
 
 // const PROXY_ADDRESS = 'http://localhost:8080';
 export function getRecentGames(accountId = HARDCODED_ACCOUNT_ID) {
-  // return recentGamesMock();
+  return recentGamesMock();
   return axios
     .post(
       // 'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',

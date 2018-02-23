@@ -48,7 +48,7 @@ class EditableNote extends React.Component {
   constructor(props) {
     super(props);
     let editMode = props.editMode;
-    editMode = props.isLatest ? true : editMode;
+    editMode = props.initWithEditFocus ? true : editMode;
     this.state = {
       editMode,
     };
@@ -119,7 +119,7 @@ class EditableNote extends React.Component {
 EditableNote.propTypes = {
   emptyPlaceholder: PropTypes.string.isRequired,
   editMode: PropTypes.bool,
-  isLatest: PropTypes.bool.isRequired,
+  initWithEditFocus: PropTypes.bool.isRequired,
   model: PropTypes.func.isRequired,
   changeAction: PropTypes.func.isRequired,
 };
