@@ -85,7 +85,7 @@ class EditableNote extends React.Component {
   }
 
   render() {
-    const { emptyPlaceholder, model, changeAction } = this.props;
+    const { changeAction, emptyPlaceholder, model, onBlur } = this.props;
     return this.state.editMode ? (
       <FormInput
         component={Input}
@@ -93,7 +93,10 @@ class EditableNote extends React.Component {
           this.inputRef = node;
         }}
         model={model}
-        onBlur={this.handleInputBlur}
+        onBlur={() => {
+          this.handleInputBlur();
+          onBlur();
+        }}
         onFocus={(e) => {
           // this trick puts cursor at end of input on focus
           const val = e.target.value;
@@ -117,11 +120,12 @@ class EditableNote extends React.Component {
 }
 
 EditableNote.propTypes = {
-  emptyPlaceholder: PropTypes.string.isRequired,
+  changeAction: PropTypes.func.isRequired,
   editMode: PropTypes.bool,
+  emptyPlaceholder: PropTypes.string.isRequired,
   initWithEditFocus: PropTypes.bool.isRequired,
   model: PropTypes.func.isRequired,
-  changeAction: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
 };
 
 EditableNote.defaultProps = {

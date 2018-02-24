@@ -22,7 +22,7 @@ function ordinal(num) {
   return `${num}${suffix}`;
 }
 
-const List = ({ notes, onChange, placeholderSuffix, recentlyAdded }) =>
+const List = ({ notes, onChange, onBlur, placeholderSuffix, recentlyAdded }) =>
   (notes.length > 0 ? (
     notes.map((note, elemIndex) => (
       <EditableNote
@@ -31,6 +31,7 @@ const List = ({ notes, onChange, placeholderSuffix, recentlyAdded }) =>
         initWithEditFocus={recentlyAdded && elemIndex === notes.length - 1}
         emptyPlaceholder={`My ${ordinal(elemIndex + 1)} ${placeholderSuffix}`}
         changeAction={(model, value) => onChange(model, value, note.id)}
+        onBlur={onBlur}
       />
     ))
   ) : (
@@ -42,6 +43,7 @@ List.propTypes = {
     PropTypes.shape({ id: PropTypes.string, model: PropTypes.func }),
   ).isRequired,
   onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
   placeholderSuffix: PropTypes.string.isRequired,
   recentlyAdded: PropTypes.bool.isRequired,
 };
@@ -66,6 +68,7 @@ const NoteList = enhance(
         onChange={onChange}
         placeholderSuffix={placeholderSuffix}
         recentlyAdded={recentlyAdded}
+        onBlur={() => setRecentAdded(false)}
       />
       {notes.length < 5 && (
         <AddBtn
