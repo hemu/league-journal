@@ -1,34 +1,33 @@
 import React from 'react';
-// import logo from './logo.svg';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
-import { ConnectedRouter } from 'react-router-redux';
 import styled from 'styled-components';
-import client from './api/client';
-import { routerHistory } from './store';
-import Navbar from './Navigation';
+import Amplify from 'aws-amplify';
 import './App.css';
-import Entry from './Entry';
-import Dashboard from './Dashboard';
-import SignIn from './Auth/SignIn';
-import SignUp from './Auth/SignUp';
+import client from './api/client';
+import Routes from './Route';
 
-const MainContainer = styled.div``;
+window.LOG_LEVEL = 'DEBUG';
+
+Amplify.configure({
+  Auth: {
+    // REQUIRED - Amazon Cognito Identity Pool ID
+    identityPoolId: 'us-east-1:731e288f-b489-46b8-9721-b70e91af4e3c',
+    // REQUIRED - Amazon Cognito Region
+    region: 'us-east-1',
+    // OPTIONAL - Amazon Cognito User Pool ID
+    userPoolId: 'us-east-1_yiM257UGL',
+    // OPTIONAL - Amazon Cognito Web Client ID
+    userPoolWebClientId: '3mhmofc7vrmqbuerck3r5iufs9',
+    // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
+    mandatorySignIn: true,
+  },
+});
 
 const App = () => (
   <BrowserRouter>
     <ApolloProvider client={client}>
-      <ConnectedRouter history={routerHistory}>
-        <MainContainer>
-          {/* <Navbar /> */}
-          <Switch>
-            {/* <Route path="/signup" component={SignUp} />
-            <Route path="/signin" component={SignIn} /> */}
-            <Route exact path="/" component={Dashboard} />
-            <Route path="/entry" component={Entry} />
-          </Switch>
-        </MainContainer>
-      </ConnectedRouter>
+      <Routes />
     </ApolloProvider>
   </BrowserRouter>
 );
