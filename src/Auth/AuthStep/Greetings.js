@@ -124,14 +124,12 @@ export default class Greetings extends AuthPiece {
   }
 
   render() {
-    console.log('rendering Greeting....');
     const { hide } = this.props;
     if (hide && hide.includes(Greetings)) {
       return null;
     }
 
     const { authState } = this.state;
-    console.log(`authState: ${authState}`);
     const signedIn = authState === 'signedIn';
 
     const theme = this.props.theme || AmplifyTheme;

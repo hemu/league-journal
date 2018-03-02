@@ -2,7 +2,6 @@ import gql from 'graphql-tag';
 import client from '../api/client';
 import { updateMistakeMutation, deleteMistakeMutation } from './mistake';
 import { updateLessonMutation, deleteLessonMutation } from './lesson';
-import { entryFormInitialState } from '../modules/entryForm';
 
 export const entriesByUserQuery = gql`
   query entriesByUserQuery($user: String!) {

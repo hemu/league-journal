@@ -65,6 +65,7 @@ EntryListContainer.propTypes = {
 export default compose(
   graphql(entriesByUserQuery, {
     options: { variables: { user: HARDCODED_USER_ID } },
+    // options: ({ authData }) => ({ variables: { avatarSize } })
   }),
   connect(null, (dispatch) => ({
     setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),

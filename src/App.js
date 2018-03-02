@@ -7,7 +7,7 @@ import './App.css';
 import client from './api/client';
 import Routes from './Route';
 
-window.LOG_LEVEL = 'DEBUG';
+// window.LOG_LEVEL = 'DEBUG';
 
 Amplify.configure({
   Auth: {
@@ -22,6 +22,24 @@ Amplify.configure({
     // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
     mandatorySignIn: true,
   },
+  // API: {
+  //   endpoints: [
+  //     {
+  //       name: 'recentGames',
+  //       // endpoint: 'http://localhost:8080/recentGames',
+  //       endpoint:
+  //         'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',
+  //       service: 'lambda',
+  //       region: 'us-east-1',
+  //     },
+  //     {
+  //       name: 'matchDetail',
+  //       endpoint: 'http://localhost:8080/matchDetail',
+  //       service: 'lambda',
+  //       region: 'us-east-1',
+  //     },
+  //   ],
+  // },
 });
 
 const App = () => (

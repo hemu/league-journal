@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import { Auth, I18n } from 'aws-amplify';
-
 import {
   FormSection,
   SectionHeader,
@@ -13,6 +11,9 @@ import {
   AuthPiece,
 } from 'aws-amplify-react';
 
+import { fetchSummonerAccount } from '../../api/riot';
+import { userAttrMap } from '../../api/user';
+
 export default class SignUp extends AuthPiece {
   constructor(props) {
     super(props);
@@ -22,17 +23,28 @@ export default class SignUp extends AuthPiece {
   }
 
   signUp() {
-    const { password, email, summoner } = this.inputs;
-    Auth.signUp({
-      username: email,
-      password,
-      attributes: {
-        email,
-        'custom:summoner': summoner,
-      },
-    })
-      .then(() => this.changeState('confirmSignUp', email))
-      .catch((err) => this.error(err));
+    const { password, email, summonerName } = this.inputs;
+    return fetchSummonerAccount(summonerName).then((result) => {
+      if (!result || !result.accountId) {
+        return this.error(
+          `Riot is telling us ${summonerName} doesn't exist :( Remember this isn't your riot username, it's your summoner name.`,
+        );
+      }
+      return Auth.signUp({
+        username: email,
+        password,
+        attributes: {
+          email,
+          [userAttrMap.summonerName]: summonerName,
+          [userAttrMap.summonerId]: `${result.accountId}`,
+        },
+      })
+        .then(() => this.changeState('confirmSignUp', email))
+        .catch((err) => {
+          console.log(err);
+          return this.error(err);
+        });
+    });
   }
 
   showComponent(theme) {
@@ -66,8 +78,8 @@ export default class SignUp extends AuthPiece {
           <InputRow
             placeholder={I18n.get('Summoner Name')}
             theme={theme}
-            key="summoner"
-            name="summoner"
+            key="summonerName"
+            name="summonerName"
             onChange={this.handleInputChange}
           />
           <ButtonRow onClick={this.signUp} theme={theme}>

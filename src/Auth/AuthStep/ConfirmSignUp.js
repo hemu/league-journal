@@ -69,7 +69,9 @@ export default class ConfirmSignUp extends AuthPiece {
         </SectionHeader>
         <SectionBody theme={theme}>
           {username ? (
-            <MessageRow>{username}</MessageRow>
+            <MessageRow>
+              We just sent an email to {username} with your confirmation code.
+            </MessageRow>
           ) : (
             <InputRow
               placeholder={I18n.get('Username')}

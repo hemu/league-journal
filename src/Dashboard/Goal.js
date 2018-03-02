@@ -118,7 +118,6 @@ class Goal extends React.Component {
 
   handleInputBlur() {
     if (this.state.value !== this.state.goal) {
-      console.log('graphql goal update...');
       this.props.saveGoal(this.state.goal.id, this.state.value);
     }
     this.setState({

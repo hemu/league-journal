@@ -4,11 +4,16 @@ import { connect } from 'react-redux';
 import RecentGames from './RecentGames';
 import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
-import { HARDCODED_ACCOUNT_ID } from '../../const';
+import { fetchUser } from '../../api/user';
+// import { HARDCODED_ACCOUNT_ID } from '../../const';
 
 class RecentGamesContainer extends React.Component {
   componentWillMount() {
-    this.props.fetchRecentGames(HARDCODED_ACCOUNT_ID);
+    fetchUser().then((user) => {
+      if (user != null) {
+        this.props.fetchRecentGames(user.summonerId);
+      }
+    });
   }
 
   render() {
