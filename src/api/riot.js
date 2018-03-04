@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { HARDCODED_ACCOUNT_ID } from '../const';
 import { recentGamesMock } from './mock';
 import { API } from 'aws-amplify';
 

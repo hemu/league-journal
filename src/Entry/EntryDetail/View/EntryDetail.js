@@ -9,7 +9,7 @@ import Header from './subcomponents/Header';
 // import MarkableList from './subcomponents/MarkableList';
 import MainLesson from './subcomponents/MainLesson';
 import NoteList from './subcomponents/Mistake/NoteList';
-import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
+import { SystemNoteTypeIds } from '../../../const';
 import { GenericErrorBoundary } from '../../../Error';
 
 const MainCont = styled.div`
@@ -83,6 +83,7 @@ class EntryDetail extends React.Component {
       createNote,
       updateNoteText,
       deleteNote,
+      user,
     } = props;
     const isLoading = entryLoading;
     if (!entry || !mistakes || !lessons) {
@@ -124,7 +125,7 @@ class EntryDetail extends React.Component {
                     onAddNote={() =>
                       createNote(
                         entry.id,
-                        HARDCODED_USER_ID,
+                        user.userId,
                         false,
                         '',
                         SystemNoteTypeIds.Mistake,
@@ -163,6 +164,9 @@ EntryDetail.propTypes = {
   updateNoteText: PropTypes.func.isRequired,
   createNote: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    userId: PropTypes.string,
+  }).isRequired,
 };
 
 EntryDetail.defaultProps = {

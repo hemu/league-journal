@@ -15,11 +15,11 @@ import {
   createNewEntry as createNewEntryApi,
 } from '../api/entry';
 
-import { HARDCODED_USER_ID } from '../const';
 import { notesQuery } from '../api/note';
 import { getMatchDetails } from '../api/riot';
 import { createAction } from './helpers';
 import { isLocalEntry, isLocalId } from '../helpers';
+import { SystemNoteTypeIds } from '../const';
 
 const SET_ENTRY_DETAIL_ID = 'entries/SET_ENTRY_DETAIL_ID';
 
@@ -61,6 +61,7 @@ export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
 export const createEntryFromGame = createAction(
   CREATE_ENTRY_FROM_GAME,
   'gameId',
+  'user',
 );
 
 export const createNewEntrySuccess = createAction(
@@ -146,12 +147,13 @@ export const entryEditOnEpic = (action$) =>
 
 export const createEntryFromGameEpic = (action$) =>
   action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
-    getMatchDetails(action.gameId)
-      .then((details) => createNewEntryApi({
-        ...action.entry,
-        ...details,
-        user: HARDCODED_USER_ID,
-      }))
+    getMatchDetails(action.gameId, action.user.summonerId)
+      .then((details) =>
+        createNewEntryApi({
+          ...action.entry,
+          ...details,
+          user: action.user.userId,
+        }))
       .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 
 export const saveEntryEpic = (action$) =>
@@ -217,10 +219,11 @@ export const fetchNotesEpic = (action$) =>
     });
 
     return Rx.Observable.of(
-      actions.load(
-        'forms.entryNote',
-        groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
-      ),
+      actions.load('forms.entryNote', {
+        [SystemNoteTypeIds.Mistake]: [],
+        [SystemNoteTypeIds.Lesson]: [],
+        ...groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
+      }),
     );
   });
 

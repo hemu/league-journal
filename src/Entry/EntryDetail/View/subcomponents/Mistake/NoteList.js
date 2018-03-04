@@ -23,7 +23,7 @@ function ordinal(num) {
 }
 
 const List = ({ notes, onChange, onBlur, placeholderSuffix, recentlyAdded }) =>
-  (notes.length > 0 ? (
+  (notes && notes.length > 0 ? (
     notes.map((note, elemIndex) => (
       <EditableNote
         key={note.id}

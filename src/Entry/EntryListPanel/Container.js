@@ -6,7 +6,6 @@ import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
 import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
 import { entriesByUserQuery } from '../../api/entry';
-import { HARDCODED_USER_ID } from '../../const';
 
 const EntryListContainer = lifecycle({
   componentDidMount() {
@@ -42,10 +41,6 @@ const EntryListContainer = lifecycle({
       return <div>Finding entries...</div>;
     }
 
-    if (!entriesByUser) {
-      return <div>No entries</div>;
-    }
-
     return (
       <EntryList
         entries={entriesByUser}
@@ -64,8 +59,9 @@ EntryListContainer.propTypes = {
 
 export default compose(
   graphql(entriesByUserQuery, {
-    options: { variables: { user: HARDCODED_USER_ID } },
-    // options: ({ authData }) => ({ variables: { avatarSize } })
+    // options: { variables: { user: HARDCODED_USER_ID } },
+    skip: ({ user }) => !user.userId,
+    options: ({ user }) => ({ variables: { user: user.userId } }),
   }),
   connect(null, (dispatch) => ({
     setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),

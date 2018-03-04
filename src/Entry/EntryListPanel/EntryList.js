@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Button } from 'semantic-ui-react';
+import { List } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { isLocalEntry } from '../../helpers';
@@ -12,25 +12,25 @@ const MainCont = styled.div`
   background-color: ${grayBlue};
 `;
 
-const NewEntryBtnCont = styled.div`
-  text-align: center;
-`;
-
 const EntryList = ({ entries, onSelectEntry, selectedId }) => (
   <MainCont>
     <GenericErrorBoundary>
-      <List selection>
-        {entries.map((entry, i) => (
-          <EntryListItem
-            key={entry.id + entry.gameDate.toString()}
-            entry={entry}
-            entryIndex={i}
-            active={selectedId === entry.id}
-            isLocalEntry={isLocalEntry(entry.id)}
-            onSelect={onSelectEntry}
-          />
-        ))}
-      </List>
+      {!entries || !entries.length ? (
+        <div>No entries</div>
+      ) : (
+        <List selection>
+          {entries.map((entry, i) => (
+            <EntryListItem
+              key={entry.id + entry.gameDate.toString()}
+              entry={entry}
+              entryIndex={i}
+              active={selectedId === entry.id}
+              isLocalEntry={isLocalEntry(entry.id)}
+              onSelect={onSelectEntry}
+            />
+          ))}
+        </List>
+      )}
     </GenericErrorBoundary>
   </MainCont>
 );
