@@ -25,7 +25,7 @@ export default class SignUp extends AuthPiece {
   signUp() {
     const { password, email, summonerName } = this.inputs;
     return fetchSummonerAccount(summonerName).then((result) => {
-      if (!result || !result.accountId) {
+      if (!result || !result.summonerId) {
         return this.error(
           `Riot is telling us ${summonerName} doesn't exist :( Remember this isn't your riot username, it's your summoner name.`,
         );
@@ -36,7 +36,7 @@ export default class SignUp extends AuthPiece {
         attributes: {
           email,
           [userAttrMap.summonerName]: summonerName,
-          [userAttrMap.summonerId]: `${result.accountId}`,
+          [userAttrMap.summonerId]: `${result.summonerId}`,
         },
       })
         .then(() => this.changeState('confirmSignUp', email))
