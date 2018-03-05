@@ -301,8 +301,6 @@ export function createNewEntry(entry) {
   return client.mutate({
     mutation: createEntryMutation,
     variables: {
-      // ...entryFormInitialState,
-      gameDate: new Date().toISOString(),
       ...entry,
     },
     optimisticResponse: {
@@ -310,8 +308,6 @@ export function createNewEntry(entry) {
       createEntry: {
         __typename: 'Entry',
         id: 'TEMP_LOCAL_ID',
-        // ...entryFormInitialState,
-        gameDate: new Date().toISOString(),
         ...entry,
       },
     },
