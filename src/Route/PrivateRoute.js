@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router-dom';
 import PrivateComponent from '../Auth';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} component={PrivateComponent(Component)} />
+  <Route {...rest} component={PrivateComponent(Component)} hey="there" />
 );
 
 PrivateRoute.propTypes = {

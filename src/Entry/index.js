@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import EntryListContainer from './EntryListPanel/Container';
 import EntryDetailContainer from './EntryDetail/View/Container';
-import EntryDetailEditContainer from './EntryDetail/Edit/Container';
+// import EntryDetailEditContainer from './EntryDetail/Edit/Container';
 import RecentGamesPanelContainer from './RecentGamesPanel/Container';
 
 import { userFromCognitoUser, isAuthed } from '../api/user';

@@ -12,13 +12,13 @@ import {
 
 const PrivateComponent = (Comp) =>
   withAuthenticator(Comp, true, [
-    <Greetings />,
-    <SignIn federated={false} />,
-    <SignUp />,
-    <ConfirmSignIn />,
-    <ConfirmSignUp />,
-    <ForgotPassword />,
-    <RequireNewPassword />,
+    // <Greetings />,
+    // <SignIn federated={false} />,
+    // <SignUp />,
+    // <ConfirmSignIn />,
+    // <ConfirmSignUp />,
+    // <ForgotPassword />,
+    // <RequireNewPassword />,
   ]);
 
 export default PrivateComponent;

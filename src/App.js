@@ -7,7 +7,7 @@ import './App.css';
 import client from './api/client';
 import Routes from './Route';
 
-// window.LOG_LEVEL = 'DEBUG';
+window.LOG_LEVEL = 'DEBUG';
 
 Amplify.configure({
   Auth: {

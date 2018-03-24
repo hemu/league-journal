@@ -206,7 +206,9 @@ export const setEntryDetailEpic = (action$) =>
         entryId = data.entriesByUser[0].id;
       }
     }
-    return Rx.Observable.of(push(`/entry/${entryId}`));
+    // return Rx.Observable.of({ type: 'FAKE_ACTION' });
+    // return Rx.Observable.of(push(`/entry/${entryId}`));
+    return Rx.Observable.of(push('/entry'));
   });
 
 export const fetchNotesEpic = (action$) =>

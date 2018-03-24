@@ -62,6 +62,7 @@ export default compose(
     // options: { variables: { user: HARDCODED_USER_ID } },
     skip: ({ user }) => !user.userId,
     options: ({ user }) => ({ variables: { user: user.userId } }),
+    // options: ({ user }) => ({ variables: { user: 'none' } })
   }),
   connect(null, (dispatch) => ({
     setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),

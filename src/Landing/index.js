@@ -22,6 +22,7 @@ const LandingPage = compose(
 )(({ signedIn }) => (
   <div>
     <h1>League Journal</h1>
+    <h2>Learn from your mistakes :)</h2>
     <div>{!signedIn && <Link to="/entry">Login / Sign Up</Link>}</div>
   </div>
 ));

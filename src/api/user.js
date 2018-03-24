@@ -27,11 +27,13 @@ export function userFromCognitoUser(cognitoUser) {
 
 export const fetchUser = async () => {
   try {
+    // This automatically takes care of refreshing, etc.
     const session = await Auth.currentSession();
-    // const user = await Auth.currentAuthenticatedUser();
-    // const userCred = await Auth.currentUserCredentials();
-    // const essentialCred = await Auth.essentialCredentials(userCred);
-    if (!session) return null;
+    console.log(session);
+    if (!session) {
+      console.log('No session');
+      return null;
+    }
     return userFromSession(session);
   } catch (err) {
     console.log(err);
