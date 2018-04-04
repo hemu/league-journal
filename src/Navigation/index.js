@@ -18,7 +18,16 @@ const NavBar = ({ summoner, isAuthenticated, signOut }) => {
     return (
       <MainBar>
         {' '}
-        {summoner} <Button size={'mini'} onClick={() => {logout(); signOut()}}>Logout</Button>
+        {summoner}{' '}
+        <Button
+          size="mini"
+          onClick={() => {
+            logout();
+            signOut();
+          }}
+        >
+          Logout
+        </Button>
       </MainBar>
     );
   }
@@ -30,12 +39,12 @@ NavBar.propTypes = {
   signOut: PropTypes.func.isRequired,
 };
 
-export default connect(({ auth }) => ({
-  summoner: auth.summoner,
-  isAuthenticated: auth.isAuthenticated,
-}),
+export default connect(
+  ({ auth }) => ({
+    summoner: auth.summoner,
+    isAuthenticated: auth.isAuthenticated,
+  }),
   (dispatch) => ({
     signOut: () => dispatch(signOut()),
   }),
-
 )(NavBar);

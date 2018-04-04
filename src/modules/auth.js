@@ -8,7 +8,7 @@ const SIGN_OUT = 'auth/SIGN_OUT';
 
 // ----- ACTION CREATORS -------------------------------
 // ----------------------------------------------------------
-export const setAuth = createAction(SIGN_IN, 'userId', 'summoner');
+export const setAuth = createAction(SIGN_IN, 'userId', 'summoner', 'summonerId');
 export const signOut = createAction(SIGN_OUT, 'userId', 'summoner');
 
 // ------- REDUCER -----------------------------------------------
@@ -16,6 +16,7 @@ export const signOut = createAction(SIGN_OUT, 'userId', 'summoner');
 const initialState = {
   userId: '',
   summoner: '',
+  summonerId: '',
   isAuthenticated: false,
 };
 
@@ -26,6 +27,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         userId: action.userId,
         summoner: action.summoner,
+        summonerId: action.summonerId,
         isAuthenticated: true,
       };
     }
@@ -34,6 +36,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         userId: '',
         summoner: '',
+        summonerId: '',
         isAuthenticated: false,
       };
     }

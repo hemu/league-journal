@@ -6,7 +6,6 @@ import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
 import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
 import { entriesByUserQuery } from '../../api/entry';
-import { HARDCODED_USER_ID } from '../../const';
 
 const EntryListContainer = lifecycle({
   componentDidMount() {

@@ -10,7 +10,8 @@ export function isAuthenticated() {
   if (new Date().getTime() < expiresAt) {
     const userId = localStorage.getItem('user_id');
     const summoner = localStorage.getItem('summoner');
-    getStore().dispatch(setAuth(userId, summoner));
+    const summonerId = localStorage.getItem('summonerId');
+    getStore().dispatch(setAuth(userId, summoner, summonerId));
     return true;
   }
   return false;
@@ -30,12 +31,13 @@ function setSession(authResult) {
   const { idTokenPayload, accessToken, idToken, expiresIn } = authResult;
   const expiresAt = JSON.stringify(expiresIn * 1000 + new Date().getTime());
   const userId = idTokenPayload.sub;
-  const { summoner } = idTokenPayload['https://lol-journal.com/user_metadata'];
+  const { summoner, summonerId } = idTokenPayload['https://lol-journal.com/user_metadata'];
   localStorage.setItem('access_token', accessToken);
   localStorage.setItem('id_token', idToken);
   localStorage.setItem('expires_at', expiresAt);
   localStorage.setItem('user_id', idTokenPayload.sub);
   localStorage.setItem('summoner', summoner);
+  localStorage.setItem('summonerId', summonerId);
   // navigate to the home route
   routerHistory.replace('/entry');
   return {
@@ -68,6 +70,8 @@ export function logout() {
   localStorage.removeItem('access_token');
   localStorage.removeItem('id_token');
   localStorage.removeItem('expires_at');
+  localStorage.removeItem('summoner');
+  localStorage.removeItem('summonerId');
   // navigate to the home route
   routerHistory.replace('/entry');
 }
