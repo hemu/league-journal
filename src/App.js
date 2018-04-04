@@ -6,28 +6,41 @@ import { ConnectedRouter } from 'react-router-redux';
 import styled from 'styled-components';
 import client from './api/client';
 import { routerHistory } from './store';
-import Navbar from './Navigation';
+import NavBar from './Navigation';
 import './App.css';
 import Entry from './Entry';
-import Dashboard from './Dashboard';
-import SignIn from './Auth/SignIn';
-import SignUp from './Auth/SignUp';
+// import SignIn from './Auth/SignIn';
+// import SignUp from './Auth/SignUp';
+import Callback from './Auth/Callback';
+import { handleAuthentication } from './Auth';
 
-const MainContainer = styled.div``;
+const authenticate = ({ location }) => {
+  if (/access_token|id_token|error/.test(location.hash)) {
+    handleAuthentication();
+  }
+};
+
+const MainContainer = () => (
+  <div>
+    <NavBar />
+    <Switch>
+      <Route path="/entry" component={Entry} />
+      <Route
+        path="/callback"
+        render={(props) => {
+          authenticate(props);
+          return <Callback {...props} />;
+        }}
+      />
+    </Switch>
+  </div>
+);
 
 const App = () => (
   <BrowserRouter>
     <ApolloProvider client={client}>
       <ConnectedRouter history={routerHistory}>
-        <MainContainer>
-          {/* <Navbar /> */}
-          <Switch>
-            {/* <Route path="/signup" component={SignUp} />
-            <Route path="/signin" component={SignIn} /> */}
-            <Route exact path="/" component={Dashboard} />
-            <Route path="/entry" component={Entry} />
-          </Switch>
-        </MainContainer>
+        <MainContainer />
       </ConnectedRouter>
     </ApolloProvider>
   </BrowserRouter>

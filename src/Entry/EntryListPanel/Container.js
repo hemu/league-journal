@@ -60,11 +60,12 @@ const EntryListContainer = lifecycle({
 EntryListContainer.propTypes = {
   data: PropTypes.shape({}).isRequired,
   setEntryDetailId: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default compose(
   graphql(entriesByUserQuery, {
-    options: { variables: { user: HARDCODED_USER_ID } },
+    options: (props) => ({ variables: { user: props.userId } }),
   }),
   // graphql(createEntryMutation, {
   //   props: ({ mutate }) => ({

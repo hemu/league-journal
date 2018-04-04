@@ -10,12 +10,16 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const routerHistory = createHistory();
 
-export default function configureStore() {
-  const store = createStore(
-    rootReducer,
-    composeEnhancers(
-      applyMiddleware(epicMiddleware, thunk, routerMiddleware(routerHistory)),
-    ),
-  );
+let store = null;
+
+export default function getStore() {
+  if (store == null) {
+    store = createStore(
+      rootReducer,
+      composeEnhancers(
+        applyMiddleware(epicMiddleware, thunk, routerMiddleware(routerHistory)),
+      ),
+    );
+  }
   return store;
 }

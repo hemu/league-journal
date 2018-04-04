@@ -4,13 +4,13 @@ import { Provider } from 'react-redux';
 import 'semantic-ui-css/semantic.min.css';
 import 'rxjs';
 import './index.css';
-import configureStore from './store';
+import getStore from './store';
 import registerServiceWorker from './registerServiceWorker';
 // import client from './api/client';
 
 import App from './App';
 
-const store = configureStore();
+const store = getStore();
 
 // if (process.env.NODE_ENV !== "production") {
 //   const { whyDidYouUpdate } = require("why-did-you-update");

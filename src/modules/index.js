@@ -6,6 +6,7 @@ import { entryFormInitialState } from './entryForm';
 import { signinFormInitialState, signupFormInitialState } from './authForm';
 import { entryNoteFormInitialState } from './entryNoteForm';
 
+import auth from './auth';
 import match, { fetchRecentGamesEpic } from './match';
 
 import entry, {
@@ -38,6 +39,7 @@ export const rootEpic = combineEpics(
 );
 
 export const rootReducer = combineReducers({
+  auth,
   entry,
   match,
   forms: combineForms(
