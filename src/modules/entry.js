@@ -61,6 +61,8 @@ export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
 export const createEntryFromGame = createAction(
   CREATE_ENTRY_FROM_GAME,
   'gameId',
+  'userId',
+  'summonerId',
 );
 
 export const createNewEntrySuccess = createAction(
@@ -146,11 +148,11 @@ export const entryEditOnEpic = (action$) =>
 
 export const createEntryFromGameEpic = (action$) =>
   action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
-    getMatchDetails(action.gameId)
+    getMatchDetails(action.gameId, action.summonerId)
       .then((details) => createNewEntryApi({
         ...action.entry,
         ...details,
-        user: HARDCODED_USER_ID,
+        user: action.userId,
       }))
       .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 

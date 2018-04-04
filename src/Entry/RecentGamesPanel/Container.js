@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 import RecentGames from './RecentGames';
 import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
-import { HARDCODED_ACCOUNT_ID } from '../../const';
 
 class RecentGamesContainer extends React.Component {
   componentWillMount() {
-    this.props.fetchRecentGames(HARDCODED_ACCOUNT_ID);
+    this.props.fetchRecentGames(this.props.summonerId);
   }
 
   render() {
@@ -16,7 +15,13 @@ class RecentGamesContainer extends React.Component {
     return (
       <RecentGames
         games={games}
-        createEntryFromGameId={createEntryFromGameId}
+        createEntryFromGameId={(gameId) =>
+          createEntryFromGameId(
+            gameId,
+            this.props.userId,
+            this.props.summonerId,
+          )
+        }
       />
     );
   }
@@ -24,16 +29,21 @@ class RecentGamesContainer extends React.Component {
 
 RecentGamesContainer.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
+  summonerId: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
   fetchRecentGames: PropTypes.func.isRequired,
   createEntryFromGameId: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({ match: { recentGames } }) => ({
+  ({ match: { recentGames }, auth: { userId, summonerId } }) => ({
     games: recentGames.slice(0, 8),
+    summonerId,
+    userId,
   }),
   (dispatch) => ({
-    fetchRecentGames: (accountId) => dispatch(fetchRecentGamesApi(accountId)),
-    createEntryFromGameId: (gameId) => dispatch(createEntryFromGame(gameId)),
+    fetchRecentGames: (summonerId) => dispatch(fetchRecentGamesApi(summonerId)),
+    createEntryFromGameId: (gameId, userId, summonerId) =>
+      dispatch(createEntryFromGame(gameId, userId, summonerId)),
   }),
 )(RecentGamesContainer);

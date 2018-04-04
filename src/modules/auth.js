@@ -1,14 +1,16 @@
-import Rx from 'rxjs/Rx';
-import { push } from 'react-router-redux';
 import { createAction } from './helpers';
-import { HARDCODED_USER_ID } from '../const';
 
 const SIGN_IN = 'auth/SIGN_IN';
 const SIGN_OUT = 'auth/SIGN_OUT';
 
 // ----- ACTION CREATORS -------------------------------
 // ----------------------------------------------------------
-export const setAuth = createAction(SIGN_IN, 'userId', 'summoner', 'summonerId');
+export const setAuth = createAction(
+  SIGN_IN,
+  'userId',
+  'summoner',
+  'summonerId',
+);
 export const signOut = createAction(SIGN_OUT, 'userId', 'summoner');
 
 // ------- REDUCER -----------------------------------------------

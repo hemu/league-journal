@@ -15,7 +15,7 @@ const MainCont = styled.div`
   grid-template-columns: 220px auto 170px;
 `;
 
-const Entry = ({ match, auth, userId }) => {
+const Entry = ({ match, userId }) => {
   if (!isAuthenticated()) {
     login();
     return <div>Redirecting to login...</div>;
@@ -49,7 +49,7 @@ const Entry = ({ match, auth, userId }) => {
 
 Entry.propTypes = {
   match: PropTypes.shape({ params: PropTypes.object.isRequired }).isRequired,
-  auth: PropTypes.shape({}).isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default connect(
