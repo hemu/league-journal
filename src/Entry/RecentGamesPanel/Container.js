@@ -1,9 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import RecentGames from './RecentGames';
 import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
+
+function markGamesWithExistingEntries(entries, games) {
+  return games.map((game) => {
+    for (const entry of entries) {
+      if (entry.gameId === game.gameId.toString()) {
+        return {
+          ...game,
+          entryId: entry.id,
+        };
+      }
+    }
+    return game;
+  });
+}
 
 class RecentGamesContainer extends React.Component {
   componentWillMount() {
@@ -11,10 +26,22 @@ class RecentGamesContainer extends React.Component {
   }
 
   render() {
-    const { games, createEntryFromGameId } = this.props;
+    const {
+      games,
+      createEntryFromGameId,
+      isLoadingEntries,
+      entries,
+      showEntry,
+    } = this.props;
+
+    if (!entries || isLoadingEntries) {
+      return <div>Loading recent games ...</div>;
+    }
+    const markedGames = markGamesWithExistingEntries(entries, games);
+
     return (
       <RecentGames
-        games={games}
+        games={markedGames}
         createEntryFromGameId={(gameId) =>
           createEntryFromGameId(
             gameId,
@@ -22,6 +49,7 @@ class RecentGamesContainer extends React.Component {
             this.props.summonerId,
           )
         }
+        showEntry={showEntry}
       />
     );
   }
@@ -33,17 +61,20 @@ RecentGamesContainer.propTypes = {
   userId: PropTypes.string.isRequired,
   fetchRecentGames: PropTypes.func.isRequired,
   createEntryFromGameId: PropTypes.func.isRequired,
+  showEntry: PropTypes.func.isRequired,
+  isLoadingEntries: PropTypes.bool,
+  entries: PropTypes.array,
 };
 
 export default connect(
-  ({ match: { recentGames }, auth: { userId, summonerId } }) => ({
+  ({ match: { recentGames }, auth: { summonerId } }) => ({
     games: recentGames.slice(0, 8),
     summonerId,
-    userId,
   }),
   (dispatch) => ({
     fetchRecentGames: (summonerId) => dispatch(fetchRecentGamesApi(summonerId)),
     createEntryFromGameId: (gameId, userId, summonerId) =>
       dispatch(createEntryFromGame(gameId, userId, summonerId)),
+    showEntry: (entryId) => dispatch(push(`/entry/${entryId}`)),
   }),
 )(RecentGamesContainer);

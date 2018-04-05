@@ -43,6 +43,16 @@ const ListItem = styled.li`
 //   cursor: pointer;
 // `;
 
+const LinkEntryBtn = styled(Button)`
+  &&& {
+    background-color: ${grayBlue};
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+  }
+`;
+
 const NewEntryBtn = styled(Button)`
   &&& {
     background-color: #5f7885;
@@ -92,7 +102,32 @@ const Title = styled.div`
   padding: 10px 0;
 `;
 
-const GamesList = ({ games, createEntryFromGameId }) => (
+const Game = ({ game, createEntryFromGameId, showEntry }) => (
+  <ListItem key={game.gameId}>
+    {game.entryId ? (
+  <LinkEntryBtn onClick={() => showEntry(game.entryId)} icon>
+    <Icon name="external" />
+  </LinkEntryBtn>
+    ) : (
+  <NewEntryBtn onClick={() => createEntryFromGameId(game.gameId)} icon>
+    <Icon name="plus" />
+  </NewEntryBtn>
+    )}
+    <ChampImg src={getChampByName(game.champion).img} height={30} />
+    <EndCont>
+      <LaneCont>{game.lane}</LaneCont>
+      <DateCont>{moment(game.timestamp).fromNow()}</DateCont>
+    </EndCont>
+  </ListItem>
+);
+
+Game.propTypes = {
+  game: PropTypes.shape({}).isRequired,
+  createEntryFromGameId: PropTypes.func.isRequired,
+  showEntry: PropTypes.func.isRequired,
+};
+
+const GamesList = ({ games, createEntryFromGameId, showEntry }) => (
   <MainCont>
     <GenericErrorBoundary>
       <StyledList>
@@ -101,19 +136,11 @@ const GamesList = ({ games, createEntryFromGameId }) => (
           <div>No recent games found</div>
         ) : (
           games.map((game) => (
-            <ListItem key={game.gameId}>
-              <NewEntryBtn
-                onClick={() => createEntryFromGameId(game.gameId)}
-                icon
-              >
-                <Icon name="plus" />
-              </NewEntryBtn>
-              <ChampImg src={getChampByName(game.champion).img} height={30} />
-              <EndCont>
-                <LaneCont>{game.lane}</LaneCont>
-                <DateCont>{moment(game.timestamp).fromNow()}</DateCont>
-              </EndCont>
-            </ListItem>
+            <Game
+              game={game}
+              createEntryFromGameId={createEntryFromGameId}
+              showEntry={showEntry}
+            />
           ))
         )}
       </StyledList>
@@ -128,20 +155,23 @@ GamesList.propTypes = {
       lane: PropTypes.string.isRequired,
       timestamp: PropTypes.number.isRequired,
       champion: PropTypes.string.isRequired,
+      hasEntry: PropTypes.bool,
     }),
   ).isRequired,
   createEntryFromGameId: PropTypes.func.isRequired,
+  showEntry: PropTypes.func.isRequired,
 };
 
-const RecentGames = ({ games, createEntryFromGameId }) => (
+const RecentGames = (props) => (
   // <DashboardItem title="Recent Games" mainColor={mainColor}>
-  <GamesList games={games} createEntryFromGameId={createEntryFromGameId} />
+  <GamesList {...props} />
   // </DashboardItem>
 );
 
 RecentGames.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
   createEntryFromGameId: PropTypes.func.isRequired,
+  showEntry: PropTypes.func.isRequired,
 };
 
 export default RecentGames;

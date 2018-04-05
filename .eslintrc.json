@@ -20,14 +20,18 @@
       }
     ],
     "arrow-parens": ["error", "always"],
-    "function-paren-newline": ["error", "consistent"]
+    "function-paren-newline": ["error", "consistent"],
+    "quotes": ["error", "single"],
+    "rules": {
+      "prettier/prettier": "error"
+    }
   },
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true
     }
   },
-  "plugins": ["react", "jsx-a11y", "import"],
+  "plugins": ["react", "jsx-a11y", "import", "prettier"],
   "env": {
     "browser": true,
     "jest": true
