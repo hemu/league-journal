@@ -6,6 +6,8 @@ import { Image, Button, Icon } from 'semantic-ui-react';
 import { getChampByName } from '../../staticData/champion';
 import { grayBlue } from '../../const/colors';
 import { GenericErrorBoundary } from '../../Error';
+import { nullableType } from '../../helpers';
+import ErrorDisplay from '../../Error/ErrorDisplay';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -105,13 +107,13 @@ const Title = styled.div`
 const Game = ({ game, createEntryFromGameId, showEntry }) => (
   <ListItem key={game.gameId}>
     {game.entryId ? (
-  <LinkEntryBtn onClick={() => showEntry(game.entryId)} icon>
-    <Icon name="external" />
-  </LinkEntryBtn>
+      <LinkEntryBtn onClick={() => showEntry(game.entryId)} icon>
+        <Icon name="external" />
+      </LinkEntryBtn>
     ) : (
-  <NewEntryBtn onClick={() => createEntryFromGameId(game.gameId)} icon>
-    <Icon name="plus" />
-  </NewEntryBtn>
+      <NewEntryBtn onClick={() => createEntryFromGameId(game.gameId)} icon>
+        <Icon name="plus" />
+      </NewEntryBtn>
     )}
     <ChampImg src={getChampByName(game.champion).img} height={30} />
     <EndCont>
@@ -127,28 +129,22 @@ Game.propTypes = {
   showEntry: PropTypes.func.isRequired,
 };
 
-const GamesList = ({ games, createEntryFromGameId, showEntry }) => (
-  <MainCont>
-    <GenericErrorBoundary>
-      <StyledList>
-        <Title>Recent Games</Title>
-        {games.length === 0 ? (
-          <div>No recent games found</div>
-        ) : (
-          games.map((game) => (
-            <Game
-              game={game}
-              createEntryFromGameId={createEntryFromGameId}
-              showEntry={showEntry}
-            />
-          ))
-        )}
-      </StyledList>
-    </GenericErrorBoundary>
-  </MainCont>
-);
+const GamesList = ({ games, createEntryFromGameId, showEntry }) =>
+  (games.length === 0 ? (
+    <div>No recent games found</div>
+  ) : (
+    games.map((game) => (
+      <Game
+        game={game}
+        createEntryFromGameId={createEntryFromGameId}
+        showEntry={showEntry}
+      />
+    ))
+  ));
 
 GamesList.propTypes = {
+  createEntryFromGameId: PropTypes.func.isRequired,
+  error: PropTypes.string,
   games: PropTypes.arrayOf(
     PropTypes.shape({
       gameId: PropTypes.number.isRequired,
@@ -158,20 +154,33 @@ GamesList.propTypes = {
       hasEntry: PropTypes.bool,
     }),
   ).isRequired,
-  createEntryFromGameId: PropTypes.func.isRequired,
   showEntry: PropTypes.func.isRequired,
 };
 
 const RecentGames = (props) => (
-  // <DashboardItem title="Recent Games" mainColor={mainColor}>
-  <GamesList {...props} />
-  // </DashboardItem>
+  <MainCont>
+    <GenericErrorBoundary>
+      <StyledList>
+        <Title>Recent Games</Title>
+        {props.error ? (
+          <ErrorDisplay fontSize={12}>{props.error}</ErrorDisplay>
+        ) : (
+          <GamesList {...props} />
+        )}
+      </StyledList>
+    </GenericErrorBoundary>
+  </MainCont>
 );
 
 RecentGames.propTypes = {
-  games: PropTypes.arrayOf(PropTypes.object).isRequired,
   createEntryFromGameId: PropTypes.func.isRequired,
+  error: PropTypes.string,
+  games: PropTypes.arrayOf(PropTypes.object).isRequired,
   showEntry: PropTypes.func.isRequired,
+};
+
+RecentGames.defaultProps = {
+  error: '',
 };
 
 export default RecentGames;

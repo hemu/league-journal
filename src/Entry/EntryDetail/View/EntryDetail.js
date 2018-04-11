@@ -76,18 +76,23 @@ class EntryDetail extends React.Component {
   render() {
     const { props } = this;
     const {
+      createNote,
+      deleteNote,
       entry,
       entryLoading,
-      mistakes,
+      error,
       lessons,
-      createNote,
+      mistakes,
       updateNoteText,
-      deleteNote,
     } = props;
     const isLoading = entryLoading;
-    if (!entry || !mistakes || !lessons) {
-      return <div>Error contacting server.</div>;
+    if (error) {
+      return <div>{error}</div>;
     }
+    if(!entry) {
+      return <div>Choose an entry</div>;
+    }
+
     if (isLoading) {
       return <div>Loading entry...</div>;
     }
@@ -97,7 +102,6 @@ class EntryDetail extends React.Component {
       updateNoteText,
       deleteNote,
     );
-    // const onNoteMark = (id, marked) => props.markNote(id, entry.id, marked);
 
     return (
       <MainCont>
@@ -152,22 +156,23 @@ class EntryDetail extends React.Component {
 }
 
 EntryDetail.propTypes = {
-  entry: PropTypes.shape({ id: PropTypes.string }),
-  entryId: PropTypes.string,
-  fetchNotes: PropTypes.func.isRequired,
-  mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  lessons: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  entryLoading: PropTypes.bool.isRequired,
-  notesLoading: PropTypes.bool.isRequired,
-  markNote: PropTypes.func.isRequired,
-  updateNoteText: PropTypes.func.isRequired,
   createNote: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
+  entry: PropTypes.shape({ id: PropTypes.string }),
+  entryId: PropTypes.string,
+  entryLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  fetchNotes: PropTypes.func.isRequired,
+  lessons: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  notesLoading: PropTypes.bool.isRequired,
+  updateNoteText: PropTypes.func.isRequired,
 };
 
 EntryDetail.defaultProps = {
   entry: null,
   entryId: null,
+  error: null,
 };
 
 export default EntryDetail;

@@ -7,22 +7,32 @@ import { graphql, compose } from 'react-apollo';
 
 import EntryListContainer from './EntryListPanel/Container';
 import EntryDetailContainer from './EntryDetail/View/Container';
-import EntryDetailEditContainer from './EntryDetail/Edit/Container';
 import RecentGamesPanelContainer from './RecentGamesPanel/Container';
 import { isAuthenticated, login, handleAuthentication } from '../Auth';
 import { entriesByUserQuery } from '../api/entry';
+import ErrorDisplay from '../Error/ErrorDisplay';
 
 const MainCont = styled.div`
   display: grid;
   grid-template-columns: 220px auto 170px;
 `;
 
-const Entry = ({ match, userId, data }) => {
+export const Entry = ({ match, userId, data }) => {
   if (!isAuthenticated()) {
     login();
-    return <div>Redirecting to login...</div>;
+    return <ErrorDisplay fontSize={20}>Redirecting to login...</ErrorDisplay>;
   }
-  const { loading, entriesByUser } = data;
+  const { loading, entriesByUser, error } = data;
+
+  if (data.error) {
+    return (
+      <ErrorDisplay fontSize={20}>
+        Can't contact server to load entries. Are you sure you are connected to
+        the internet?
+      </ErrorDisplay>
+    );
+  }
+
   if (loading) {
     return <div>Finding entries and recent games...</div>;
   }

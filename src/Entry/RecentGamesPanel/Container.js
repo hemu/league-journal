@@ -20,35 +20,38 @@ function markGamesWithExistingEntries(entries, games) {
   });
 }
 
-class RecentGamesContainer extends React.Component {
+export class RecentGamesContainer extends React.Component {
   componentWillMount() {
     this.props.fetchRecentGames(this.props.summonerId);
   }
 
   render() {
     const {
-      games,
       createEntryFromGameId,
-      isLoadingEntries,
       entries,
+      fetchError,
+      games,
+      isLoadingEntries,
       showEntry,
+      isFetchingRecentGames,
     } = this.props;
 
-    if (!entries || isLoadingEntries) {
+    if (isLoadingEntries || isFetchingRecentGames) {
       return <div>Loading recent games ...</div>;
     }
     const markedGames = markGamesWithExistingEntries(entries, games);
 
     return (
       <RecentGames
-        games={markedGames}
         createEntryFromGameId={(gameId) =>
-          createEntryFromGameId(
-            gameId,
-            this.props.userId,
-            this.props.summonerId,
-          )
+            createEntryFromGameId(
+              gameId,
+              this.props.userId,
+              this.props.summonerId,
+            )
         }
+        error={fetchError}
+        games={markedGames}
         showEntry={showEntry}
       />
     );
@@ -56,19 +59,29 @@ class RecentGamesContainer extends React.Component {
 }
 
 RecentGamesContainer.propTypes = {
+  createEntryFromGameId: PropTypes.func.isRequired,
+  entries: PropTypes.array,
+  fetchError: PropTypes.string,
+  isFetchingRecentGames: PropTypes.bool.isRequired,
+  fetchRecentGames: PropTypes.func.isRequired,
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoadingEntries: PropTypes.bool,
+  showEntry: PropTypes.func.isRequired,
   summonerId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
-  fetchRecentGames: PropTypes.func.isRequired,
-  createEntryFromGameId: PropTypes.func.isRequired,
-  showEntry: PropTypes.func.isRequired,
-  isLoadingEntries: PropTypes.bool,
-  entries: PropTypes.array,
+};
+
+RecentGamesContainer.defaultProps = {
+  entries: [],
+  fetchError: null,
+  isLoadingEntries: false,
 };
 
 export default connect(
-  ({ match: { recentGames }, auth: { summonerId } }) => ({
-    games: recentGames.slice(0, 8),
+  ({ match: { error, games, fetchingRecentGames }, auth: { summonerId } }) => ({
+    isFetchingRecentGames: fetchingRecentGames,
+    fetchError: error,
+    games: games.slice(0, 8),
     summonerId,
   }),
   (dispatch) => ({

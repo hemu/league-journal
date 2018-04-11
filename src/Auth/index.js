@@ -7,7 +7,7 @@ export function isAuthenticated() {
   // Check whether the current time is past the
   // access token's expiry time
   const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-  if (new Date().getTime() < expiresAt) {
+  if (expiresAt && new Date().getTime() < expiresAt) {
     const userId = localStorage.getItem('user_id');
     const summoner = localStorage.getItem('summoner');
     const summonerId = localStorage.getItem('summonerId');
@@ -31,7 +31,9 @@ function setSession(authResult) {
   const { idTokenPayload, accessToken, idToken, expiresIn } = authResult;
   const expiresAt = JSON.stringify(expiresIn * 1000 + new Date().getTime());
   const userId = idTokenPayload.sub;
-  const { summoner, summonerId } = idTokenPayload['https://lol-journal.com/user_metadata'];
+  const { summoner, summonerId } = idTokenPayload[
+    'https://lol-journal.com/user_metadata'
+  ];
   localStorage.setItem('access_token', accessToken);
   localStorage.setItem('id_token', idToken);
   localStorage.setItem('expires_at', expiresAt);
@@ -67,6 +69,7 @@ export function handleAuthentication() {
 
 export function logout() {
   // Clear access token and ID token from local storage
+  console.log(localStorage);
   localStorage.removeItem('access_token');
   localStorage.removeItem('id_token');
   localStorage.removeItem('expires_at');

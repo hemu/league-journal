@@ -21,7 +21,7 @@
     ],
     "arrow-parens": ["error", "always"],
     "function-paren-newline": ["error", "consistent"],
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
     "rules": {
       "prettier/prettier": "error"
     }

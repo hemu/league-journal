@@ -1,5 +1,6 @@
 import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { NetworkError } from '../../../Error';
 
 import { entryByIdQuery } from '../../../api/entry';
 import {
@@ -16,10 +17,9 @@ import EntryDetail from './EntryDetail';
 
 export default compose(
   connect(
-    ({ forms: { entryNote } }, { match: { params } }) => ({
+    ({ forms: { entryNote }, entry: { error } }, { match: { params } }) => ({
       entryId: params ? params.entryId : null,
-      // mistakes: entryNote[SystemNoteTypeIds.Mistake] || [],
-      // lessons: entryNote[SystemNoteTypeIds.Lesson] || [],
+      error: null,
     }),
     (dispatch, ownProps) => ({
       fetchNotes: (entryId) => dispatch(fetchNotesApi(entryId)),
@@ -57,27 +57,27 @@ export default compose(
     },
     name: 'notesQuery',
   }),
-  graphql(markNoteMutation, {
-    props: ({ mutate }) => ({
-      markNote: (id, entry, marked) =>
-        mutate({
-          variables: {
-            id,
-            entry,
-            marked,
-          },
-          optimisticResponse: {
-            __typename: 'Mutation',
-            markNote: {
-              __typename: 'Note',
-              id,
-              entry,
-              marked,
-            },
-          },
-        }),
-    }),
-  }),
+  // graphql(markNoteMutation, {
+  //   props: ({ mutate }) => ({
+  //     markNote: (id, entry, marked) =>
+  //       mutate({
+  //         variables: {
+  //           id,
+  //           entry,
+  //           marked,
+  //         },
+  //         optimisticResponse: {
+  //           __typename: 'Mutation',
+  //           markNote: {
+  //             __typename: 'Note',
+  //             id,
+  //             entry,
+  //             marked,
+  //           },
+  //         },
+  //       }),
+  //   }),
+  // }),
   graphql(updateNoteMutation, {
     props: ({ mutate }) => ({
       updateNoteText: (id, entry, text) =>

@@ -93,7 +93,7 @@ const removeLessonSuccess = createAction(REMOVE_LESSON_SUCCESS);
 
 // const debugAction = createAction(DEBUG_ACTION, 'msg');
 export const fetchNotes = createAction(FETCH_NOTES, 'entryId');
-export const fetchNotesSuccess = createAction(FETCH_NOTES_SUCCESS);
+export const fetchNotesSuccess = createAction(FETCH_NOTES_SUCCESS, 'error');
 
 export const setEditMode = createAction(
   SET_EDIT_MODE,
@@ -149,11 +149,12 @@ export const entryEditOnEpic = (action$) =>
 export const createEntryFromGameEpic = (action$) =>
   action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
     getMatchDetails(action.gameId, action.summonerId)
-      .then((details) => createNewEntryApi({
-        ...action.entry,
-        ...details,
-        user: action.userId,
-      }))
+      .then((details) =>
+        createNewEntryApi({
+          ...action.entry,
+          ...details,
+          user: action.userId,
+        }))
       .then((success) => push(`/entry/${success.data.createEntry.id}`)));
 
 export const saveEntryEpic = (action$) =>
@@ -211,19 +212,39 @@ export const setEntryDetailEpic = (action$) =>
 
 export const fetchNotesEpic = (action$) =>
   action$.ofType(FETCH_NOTES).mergeMap((action) => {
-    const data = client.readQuery({
-      query: notesQuery,
-      variables: {
-        entry: action.entryId,
-      },
-    });
+    // const data = client.readQuery({
+    //   query: notesQuery,
+    //   variables: {
+    //     entry: action.entryId,
+    //   },
+    // });
+    // return Rx.Observable.of(
+    //   actions.load(
+    //     'forms.entryNote',
+    //     groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
+    //   ),
+    // );
 
-    return Rx.Observable.of(
-      actions.load(
-        'forms.entryNote',
-        groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
-      ),
-    );
+    try {
+      const data = client.readQuery({
+        query: notesQuery,
+        variables: {
+          entry: action.entryId,
+        },
+      });
+
+      return Rx.Observable.concat(
+        Rx.Observable.of(
+          actions.load(
+            'forms.entryNote',
+            groupBy(sortBy(data.notesByEntry, 'createdAt'), 'type'),
+          ),
+        ),
+        Rx.Observable.of(fetchNotesSuccess(null)),
+      );
+    } catch (err) {
+      return Rx.Observable.of(fetchNotesSuccess('Error fetching notes :('));
+    }
   });
 
 // ------- REDUCER -----------------------------------------------
@@ -233,7 +254,9 @@ const initialState = {
   // entryDetailId: '',
   editMode: false,
   fetchingNotes: false,
+  error: null,
 };
+
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     // case SET_ENTRY_DETAIL_ID:
@@ -262,6 +285,14 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         fetchingNotes: true,
+      };
+    }
+
+    case FETCH_NOTES_SUCCESS: {
+      return {
+        ...state,
+        fetchingNotes: false,
+        error: action.error ? action.error : null,
       };
     }
 

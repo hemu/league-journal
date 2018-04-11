@@ -22,3 +22,24 @@ export class GenericErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+export const NetworkError = (options) => (WrappedComponent) => {
+  // do things with options if you need more flexibility
+  return class NetworkErrorHandler extends React.Component {
+    componentDidMount = () => {
+      if (this.props.data && this.props.data.error) {
+        // do something with error
+        console.log('Caught error in HOC!');
+      }
+    };
+
+    componentWillReceiveProps = (nextProps) => {
+      if (nextProps.data && nextProps.data.error) {
+        // do something with error
+        console.log('Caught error in HOC!');
+      }
+    };
+
+    render = () => <WrappedComponent {...this.props} />;
+  };
+};

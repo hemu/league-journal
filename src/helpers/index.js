@@ -7,3 +7,4 @@ export function isLocalId(id) {
 export function isLocalEntry(entryId) {
   return entryId.startsWith(LOCAL_ID_PREFIX);
 }
+
