@@ -1,19 +1,15 @@
 import React from 'react';
-import { List, Button } from 'semantic-ui-react';
+import { List } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { isLocalEntry } from '../../helpers';
-import { grayBlue } from '../../const/colors';
+import { entryListPanelColors } from '../../const/colors';
 import { GenericErrorBoundary } from '../../Error';
 import EntryListItem from './EntryListItem';
 
 const MainCont = styled.div`
-  padding: 20px 8px;
-  background-color: ${grayBlue};
-`;
-
-const NewEntryBtnCont = styled.div`
-  text-align: center;
+  padding: 20px 0;
+  background-color: ${entryListPanelColors.bg};
 `;
 
 const EntryList = ({ entries, onSelectEntry, selectedId }) => (

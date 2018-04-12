@@ -41,8 +41,8 @@
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
     "rxjs": "^5.5.2",
-    "semantic-ui-css": "^2.2.12",
-    "semantic-ui-react": "^0.77.1",
+    "semantic-ui-css": "2.x",
+    "semantic-ui-react": "0.x",
     "styled-components": "^2.2.3",
     "validator": "^9.4.0"
   },

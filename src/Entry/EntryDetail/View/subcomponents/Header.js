@@ -7,7 +7,7 @@ import { entryColors } from '../../../../const/colors';
 import MatchupPortrait from './MatchupPortrait';
 
 function outcomeColor(outcome) {
-  return outcome === 'W' ? entryColors.win : entryColors.loss;
+  return outcome === 'W' ? entryColors.winHighlight : entryColors.lossHighlight;
 }
 
 const Container = styled.div`

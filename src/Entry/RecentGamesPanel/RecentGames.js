@@ -4,9 +4,8 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { Image, Button, Icon } from 'semantic-ui-react';
 import { getChampByName } from '../../staticData/champion';
-import { grayBlue } from '../../const/colors';
+import { recentGamesColors } from '../../const/colors';
 import { GenericErrorBoundary } from '../../Error';
-import { nullableType } from '../../helpers';
 import ErrorDisplay from '../../Error/ErrorDisplay';
 
 moment.updateLocale('en', {
@@ -17,8 +16,9 @@ moment.updateLocale('en', {
 
 const MainCont = styled.div`
   padding: 20px 8px;
-  background-color: ${grayBlue};
-  color: #fff;
+  background-color: ${recentGamesColors.bg};
+  color: ${recentGamesColors.font};
+  border-left: 1px solid #e8e8e8;
 `;
 
 const StyledList = styled.ul`
@@ -47,8 +47,8 @@ const ListItem = styled.li`
 
 const LinkEntryBtn = styled(Button)`
   &&& {
-    background-color: ${grayBlue};
-    color: #fff;
+    background-color: ${recentGamesColors.bg};
+    color: ${recentGamesColors.font};
     width: 22px;
     height: 22px;
     padding: 0;
@@ -57,11 +57,14 @@ const LinkEntryBtn = styled(Button)`
 
 const NewEntryBtn = styled(Button)`
   &&& {
-    background-color: #5f7885;
-    color: #fff;
+    background-color: ${recentGamesColors.bgNewBtn};
+    color: ${recentGamesColors.fontNewBtn};
     width: 22px;
     height: 22px;
     padding: 0;
+    :hover {
+      background-color: ${recentGamesColors.bgNewBtnHover};
+    }
   }
 `;
 
@@ -72,7 +75,7 @@ const EndCont = styled.div`
 
 const LaneCont = styled.div`
   font-size: 11px;
-  color: #ccc;
+  color: ${recentGamesColors.font};
   line-height: 11px;
   align-self: end;
   text-align: center;
@@ -81,7 +84,7 @@ const LaneCont = styled.div`
 const DateCont = styled.div`
   font-size: 9px;
   line-height: 11px;
-  color: #999;
+  color: ${recentGamesColors.font};
   align-self: start;
   text-align: center;
   font-style: italic;

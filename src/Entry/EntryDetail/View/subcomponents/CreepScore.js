@@ -33,6 +33,10 @@ const CreepScoreView = ({ creepScore }) => {
       },
     ],
   };
+
+  const maxValueToNearestTwenty =
+    Math.ceil(values[values.length - 1] / 20) * 20;
+
   const options = {
     title: {
       display: false,
@@ -68,6 +72,7 @@ const CreepScoreView = ({ creepScore }) => {
           display: true,
           ticks: {
             min: 0,
+            max: maxValueToNearestTwenty,
           },
         },
       ],

@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Icon } from 'semantic-ui-react';
 import moment from 'moment';
-import { entryColors } from '../../const/colors';
+import { entryListPanelColors } from '../../const/colors';
 
 const MAX_MATCHUP_LENGTH = 26;
 
@@ -14,26 +13,32 @@ moment.updateLocale('en', {
 });
 
 const ListItemCont = styled.div`
+  margin: 5px 0;
   display: grid;
   cursor: pointer;
-  grid-template-columns: 20px auto 70px;
+  grid-template-columns: 15px auto 70px;
   align-items: center;
   width: 100%;
   height: 36px;
   :hover {
-    background-color: #42535c;
+    background-color: ${entryListPanelColors.bgHover};
+    color: ${entryListPanelColors.fontHighlight};
   }
-  background-color: ${(props) => (props.active ? '#455761' : 'none')};
-  color: ${(props) => (props.active ? '#fff' : '#ccc')};
+  background-color: ${(props) =>
+    (props.active ? entryListPanelColors.bgHighlight : 'none')};
+  color: ${(props) =>
+    (props.active
+      ? entryListPanelColors.fontHighlight
+      : entryListPanelColors.font)};
 `;
 
-const WinIndicator = styled(Icon)`
-  color: ${entryColors.win};
+const WinIndicator = styled.div`
+  background-color: ${entryListPanelColors.winHighlight};
+  width: 5px;
+  height: 100%;
 `;
 
-const LossIndicator = styled(Icon)`
-  color: ${entryColors.loss};
-`;
+const LossIndicator = styled.div``;
 
 const EndCont = styled.div`
   display: grid;
@@ -85,13 +90,11 @@ const ListItem = ({ isLocalEntry, entry, active, entryIndex, onSelect }) => (
     active={active}
     className={active ? 'active' : ''}
   >
-    <div>
-      {entry.outcome === 'W' ? (
-        <WinIndicator name="circle" />
-      ) : (
-        <LossIndicator name="circle thin" />
-      )}
-    </div>
+    {entry.outcome === 'W' ? (
+      <WinIndicator />
+    ) : (
+      <LossIndicator name="circle thin" />
+    )}
     <Matchup
       champion={entry.champion}
       opponentChampion={entry.opponentChampion}

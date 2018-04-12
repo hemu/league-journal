@@ -20,21 +20,19 @@ const authenticate = ({ location }) => {
   }
 };
 
-const MainContainer = () => (
-  <div>
-    <NavBar />
-    <Switch>
-      <Route path="/entry" component={Entry} />
-      <Route
-        path="/callback"
-        render={(props) => {
-          authenticate(props);
-          return <Callback {...props} />;
-        }}
-      />
-    </Switch>
-  </div>
-);
+const MainContainer = () => [
+  // <NavBar />,
+  <Switch>
+    <Route path="/entry" component={Entry} />
+    <Route
+      path="/callback"
+      render={(props) => {
+        authenticate(props);
+        return <Callback {...props} />;
+      }}
+    />
+  </Switch>,
+];
 
 const App = () => (
   <BrowserRouter>

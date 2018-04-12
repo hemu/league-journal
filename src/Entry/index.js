@@ -15,6 +15,7 @@ import ErrorDisplay from '../Error/ErrorDisplay';
 const MainCont = styled.div`
   display: grid;
   grid-template-columns: 220px auto 170px;
+  height: 100%;
 `;
 
 export const Entry = ({ match, userId, data }) => {
@@ -49,22 +50,20 @@ export const Entry = ({ match, userId, data }) => {
           />
         )}
       />
-      <div>
-        <Switch>
-          <Route
-            path={`${match.url}/:entryId/edit`}
-            render={(props) => (
-              <EntryDetailContainer {...props} userId={userId} />
-            )}
-          />
-          <Route
-            path={`${match.url}/:entryId`}
-            render={(props) => (
-              <EntryDetailContainer {...props} userId={userId} />
-            )}
-          />
-        </Switch>
-      </div>
+      <Switch>
+        <Route
+          path={`${match.url}/:entryId/edit`}
+          render={(props) => (
+            <EntryDetailContainer {...props} userId={userId} />
+          )}
+        />
+        <Route
+          path={`${match.url}/:entryId`}
+          render={(props) => (
+            <EntryDetailContainer {...props} userId={userId} />
+          )}
+        />
+      </Switch>
       <RecentGamesPanelContainer
         userId={userId}
         isLoadingEntries={loading}

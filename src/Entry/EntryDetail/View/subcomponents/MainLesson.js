@@ -11,7 +11,7 @@ const LessonCont = styled.div`
   margin: 20px auto 50px auto;
   width: 70%;
   color: #636262;
-  font-size: 17px;
+  font-size: 20px;
   font-family: 'Lato';
   text-align: center;
   font-weight: bold;

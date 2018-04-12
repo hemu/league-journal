@@ -11,21 +11,29 @@ import MainLesson from './subcomponents/MainLesson';
 import NoteList from './subcomponents/Mistake/NoteList';
 import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
 import { GenericErrorBoundary } from '../../../Error';
+import { entryDetailColors } from '../../../const/colors';
 
 const MainCont = styled.div`
   padding: 20px;
 `;
 
-const MainCard = styled(Card)`
+const MainCard = styled.div`
   height: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  align-items: center;
+  /* justify-content: center; */
+  grid-template-columns: 150px auto;
   &&& {
-    border-radius: 0;
+    /* border-radius: 0; */
     margin-bottom: 15px;
   }
 `;
 
 const CardHeader = styled.div`
-  font-size: 16px;
+  font-size: 20px;
+  color: ${entryDetailColors.header};
   font-weight: 600;
   padding: 20px 20px 5px;
   text-align: center;
@@ -40,6 +48,8 @@ const CardContent = styled.div`
 
 function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   return (model, value, noteId) => (dispatch) => {
+    console.log('createChangeNoteHandler...');
+    console.log(noteId);
     dispatch(actions.change(model, value));
     if (!value || !value.trim()) {
       deleteNote(noteId, entryId);
@@ -89,7 +99,7 @@ class EntryDetail extends React.Component {
     if (error) {
       return <div>{error}</div>;
     }
-    if(!entry) {
+    if (!entry) {
       return <div>Choose an entry</div>;
     }
 
@@ -107,7 +117,7 @@ class EntryDetail extends React.Component {
       <MainCont>
         <Header {...entry} />
         <MainLesson changeNote={noteChangeHandler} />
-        <Grid stackable centered columns={2}>
+        <Grid centered columns={1}>
           <Grid.Column>
             <GenericErrorBoundary>
               <MainCard fluid raised>
@@ -142,7 +152,7 @@ class EntryDetail extends React.Component {
           <Grid.Column>
             <GenericErrorBoundary>
               <MainCard fluid raised>
-                <CardHeader>Creep Score</CardHeader>
+                <CardHeader>CS</CardHeader>
                 <CardContent>
                   <CreepScore creepScore={entry.cs} />
                 </CardContent>

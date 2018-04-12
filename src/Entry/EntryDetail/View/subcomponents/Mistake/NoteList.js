@@ -23,19 +23,15 @@ function ordinal(num) {
 }
 
 const List = ({ notes, onChange, onBlur, placeholderSuffix, recentlyAdded }) =>
-  (notes.length > 0 ? (
-    notes.map((note, elemIndex) => (
-      <EditableNote
-        key={note.id}
-        model={note.model}
-        initWithEditFocus={recentlyAdded && elemIndex === notes.length - 1}
-        emptyPlaceholder={`My ${ordinal(elemIndex + 1)} ${placeholderSuffix}`}
-        changeAction={(model, value) => onChange(model, value, note.id)}
-        onBlur={onBlur}
-      />
-    ))
-  ) : (
-    <div>No mistakes yet...</div>
+  notes.map((note, elemIndex) => (
+    <EditableNote
+      key={note.id}
+      model={note.model}
+      initWithEditFocus={recentlyAdded && elemIndex === notes.length - 1}
+      emptyPlaceholder={`My ${ordinal(elemIndex + 1)} ${placeholderSuffix}`}
+      changeAction={(model, value) => onChange(model, value, note.id)}
+      onBlur={onBlur}
+    />
   ));
 
 List.propTypes = {
