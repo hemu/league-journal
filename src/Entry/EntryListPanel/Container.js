@@ -5,8 +5,27 @@ import { lifecycle } from 'recompose';
 import EntryList from './EntryList';
 import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
 
-export const EntryListContainer = lifecycle({
+function fetchMoreEntries(props) {
+  const { userId, lastEvaluatedKey, fetchMoreQuery } = props;
+  fetchMoreQuery({
+    variables: {
+      user: userId,
+      lastEvaluatedGameDate: lastEvaluatedKey.gameDate,
+      lastEvaluatedID: lastEvaluatedKey.id,
+    },
+    updateQuery: (previousResult, { fetchMoreResult }) => ({
+      entriesByUser: {
+        entries: [
+          ...previousResult.entriesByUser.entries,
+          ...fetchMoreResult.entriesByUser.entries,
+        ],
+        lastEvaluatedKey: fetchMoreResult.entriesByUser.lastEvaluatedKey,
+      },
+    }),
+  });
+}
 
+export const EntryListContainer = lifecycle({
   componentDidMount() {
     if (
       !this.props.isLoadingEntries &&
@@ -31,8 +50,16 @@ export const EntryListContainer = lifecycle({
       }
     }
   },
-
-})(({ entries, isLoadingEntries, setEntryDetailId, createEntry, match }) => {
+})((props) => {
+  const {
+    entries,
+    isLoadingEntries,
+    setEntryDetailId,
+    createEntry,
+    match,
+    canLoadMore,
+  } = props;
+  // fetchMoreEntries,
   if (isLoadingEntries) {
     return <div>Finding entries...</div>;
   }
@@ -45,6 +72,8 @@ export const EntryListContainer = lifecycle({
       onSelectEntry={setEntryDetailId}
       createEntry={createEntry}
       selectedId={match.params.entryId || ''}
+      fetchMoreEntries={() => fetchMoreEntries(props)}
+      canLoadMore={canLoadMore}
     />
   );
 });
@@ -57,13 +86,16 @@ EntryListContainer.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({ entryId: PropTypes.string }).isRequired,
   }).isRequired,
+  fetchMoreQuery: PropTypes.func.isRequired,
+  lastEvaluatedKey: PropTypes.shape({}).isRequired,
+  canLoadMore: PropTypes.bool.isRequired,
 };
 
 EntryListContainer.defaultProps = {
   entries: [],
   isLoadingEntries: false,
-}
+};
 
-export default connect(null, (dispatch) => ({
+export default connect(null, (dispatch, ownProps) => ({
   setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),
 }))(EntryListContainer);

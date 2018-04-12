@@ -23,7 +23,7 @@ export const Entry = ({ match, userId, data }) => {
     login();
     return <ErrorDisplay fontSize={20}>Redirecting to login...</ErrorDisplay>;
   }
-  const { loading, entriesByUser, error } = data;
+  const { loading, entriesByUser, error, fetchMore } = data;
 
   if (data.error) {
     return (
@@ -46,7 +46,14 @@ export const Entry = ({ match, userId, data }) => {
             {...props}
             userId={userId}
             isLoadingEntries={loading}
-            entries={entriesByUser}
+            entries={entriesByUser.entries}
+            fetchMoreQuery={fetchMore}
+            lastEvaluatedKey={
+              entriesByUser.lastEvaluatedKey
+                ? entriesByUser.lastEvaluatedKey
+                : {}
+            }
+            canLoadMore={entriesByUser.lastEvaluatedKey != null}
           />
         )}
       />
@@ -67,7 +74,7 @@ export const Entry = ({ match, userId, data }) => {
       <RecentGamesPanelContainer
         userId={userId}
         isLoadingEntries={loading}
-        entries={entriesByUser}
+        entries={entriesByUser.entries}
       />
     </MainCont>
   );
@@ -88,15 +95,18 @@ Entry.defaultProps = {
 
 export default compose(
   connect(
-    ({ auth }) => ({
+    ({ auth, entry }) => ({
       userId: auth.userId,
+      // lastEvaluatedKey: entry.lastEvaluatedKey,
     }),
     null,
   ),
   graphql(entriesByUserQuery, {
     skip: (ownProps) => !ownProps.userId || ownProps.userId === '',
-    options: (props) => ({ variables: { user: props.userId } }),
+    options: (props) => ({
+      variables: {
+        user: props.userId,
+      },
+    }),
   }),
 )(Entry);
-
-// export default Entry;

@@ -5,18 +5,33 @@ import { updateLessonMutation, deleteLessonMutation } from './lesson';
 import { entryFormInitialState } from '../modules/entryForm';
 
 export const entriesByUserQuery = gql`
-  query entriesByUserQuery($user: String!) {
-    entriesByUser(user: $user) {
-      id
-      champion
-      opponentChampion
-      gameDate
-      outcome
-      role
-      kills
-      deaths
-      assists
-      gameId
+  query entriesByUserQuery(
+    $user: String!
+    $lastEvaluatedGameDate: String
+    $lastEvaluatedID: ID
+  ) {
+    entriesByUser(
+      user: $user
+      lastEvaluatedGameDate: $lastEvaluatedGameDate
+      lastEvaluatedID: $lastEvaluatedID
+    ) @connection(key: "userEntries") {
+      entries {
+        id
+        champion
+        opponentChampion
+        gameDate
+        outcome
+        role
+        kills
+        deaths
+        assists
+        gameId
+      }
+      lastEvaluatedKey {
+        gameDate
+        user
+        id
+      }
     }
   }
 `;
@@ -164,6 +179,21 @@ export const createLessonMutation = gql`
     }
   }
 `;
+
+export function fetchMoreEntries(user, lastEvaluatedKey) {
+  if (lastEvaluatedKey.gameDate && lastEvaluatedKey.id) {
+    return client.query({
+      query: entriesByUserQuery,
+      variables: {
+        user,
+        lastEvaluatedGameDate: lastEvaluatedKey.gameDate,
+        lastEvaluatedID: lastEvaluatedKey.id,
+      },
+      fetchPolicy: 'network-only',
+    });
+  }
+  return Promise.resolve();
+}
 
 export function fetchDetailEntry(entryId) {
   return client.query({
@@ -325,7 +355,7 @@ export function createNewEntry(entry) {
         });
         // Add our comment from the mutation to the end.
         if (data.entriesByUser) {
-          data.entriesByUser.push(createEntry);
+          data.entriesByUser.entries.push(createEntry);
           // Write our data back to the cache.
           proxy.writeQuery({
             query: entriesByUserQuery,
@@ -394,7 +424,7 @@ export function removeEntry(entryId, mistakes, lessons) {
         query: entriesByUserQuery,
       });
       // Add our comment from the mutation to the end.
-      data.entriesByUser = data.entriesByUser.filter(
+      data.entriesByUser = data.entriesByUser.entries.filter(
         (entry) => entry.id !== updateResults.id,
       );
       // Write our data back to the cache.
