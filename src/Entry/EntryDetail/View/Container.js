@@ -1,12 +1,12 @@
 import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { NetworkError } from '../../../Error';
+import { actions } from 'react-redux-form';
 
-import { entryByIdQuery } from '../../../api/entry';
+import { entryByIdQuery, updateEntryMutation } from '../../../api/entry';
 import {
   notesQuery,
   updateNoteMutation,
-  markNoteMutation,
   createNoteMutation,
   deleteNoteMutation,
 } from '../../../api/note';
@@ -17,12 +17,18 @@ import EntryDetail from './EntryDetail';
 
 export default compose(
   connect(
-    ({ forms: { entryNote }, entry: { error } }, { match: { params } }) => ({
+    (
+      { forms: { entryNote, entry }, entry: { error } },
+      { match: { params } },
+    ) => ({
       entryId: params ? params.entryId : null,
       error: null,
+      videoUrl: entry.video,
     }),
     (dispatch, ownProps) => ({
       fetchNotes: (entryId) => dispatch(fetchNotesApi(entryId)),
+      setVideoForm: (videoUrl) =>
+        dispatch(actions.change('forms.entry.video', videoUrl)),
     }),
   ),
   graphql(entryByIdQuery, {
@@ -78,6 +84,28 @@ export default compose(
   //       }),
   //   }),
   // }),
+  graphql(updateEntryMutation, {
+    props: ({ mutate }) => ({
+      updateEntryVideo: (id, gameDate, videoUrl) =>
+        mutate({
+          variables: {
+            id,
+            gameDate,
+            video: videoUrl,
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateEntry: {
+              __typename: 'Entry',
+              id,
+              gameDate,
+              video: videoUrl,
+              updatedAt: new Date().toISOString(),
+            },
+          },
+        }),
+    }),
+  }),
   graphql(updateNoteMutation, {
     props: ({ mutate }) => ({
       updateNoteText: (id, entry, text) =>

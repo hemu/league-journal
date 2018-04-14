@@ -109,54 +109,26 @@ export const createEntryMutation = gql`
   ${fullEntryFragment}
 `;
 
-export const saveEntryMutation = gql`
-  mutation SaveEntry(
+export const updateEntryMutation = gql`
+  mutation UpdateEntry(
     $id: ID!
-    $gameDate: DateTime!
-    $rank: String
-    $outcome: String
-    $role: String!
-    $kills: Int
-    $deaths: Int
-    $assists: Int
-    $champion: String!
-    $opponentChampion: String!
+    $gameDate: String!
+    $role: String
+    $champion: String
+    $opponentChampion: String
     $partner: String
     $opponentPartner: String
-    $csPerMin: Float
-    $csAt5Min: Int
-    $csAt10Min: Int
-    $csAt15Min: Int
-    $csAt20Min: Int
-    $positives: [String!]
-    $deathReasons: [String!]
-    $csReasons: [String!]
     $video: String
-    $gameId: String
   ) {
     updateEntry(
       id: $id
       gameDate: $gameDate
-      rank: $rank
-      outcome: $outcome
       role: $role
-      kills: $kills
-      deaths: $deaths
-      assists: $assists
       champion: $champion
       opponentChampion: $opponentChampion
       partner: $partner
       opponentPartner: $opponentPartner
-      csPerMin: $csPerMin
-      csAt5Min: $csAt5Min
-      csAt10Min: $csAt10Min
-      csAt15Min: $csAt15Min
-      csAt20Min: $csAt20Min
-      positives: $positives
-      deathReasons: $deathReasons
-      csReasons: $csReasons
       video: $video
-      gameId: $gameId
     ) {
       ...FullEntry
     }

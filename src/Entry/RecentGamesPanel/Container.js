@@ -44,11 +44,11 @@ export class RecentGamesContainer extends React.Component {
     return (
       <RecentGames
         createEntryFromGameId={(gameId) =>
-            createEntryFromGameId(
-              gameId,
-              this.props.userId,
-              this.props.summonerId,
-            )
+          createEntryFromGameId(
+            gameId,
+            this.props.userId,
+            this.props.summonerId,
+          )
         }
         error={fetchError}
         games={markedGames}
@@ -81,7 +81,7 @@ export default connect(
   ({ match: { error, games, fetchingRecentGames }, auth: { summonerId } }) => ({
     isFetchingRecentGames: fetchingRecentGames,
     fetchError: error,
-    games: games.slice(0, 8),
+    games,
     summonerId,
   }),
   (dispatch) => ({

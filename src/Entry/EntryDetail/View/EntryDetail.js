@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid, Card } from 'semantic-ui-react';
-import { actions, track } from 'react-redux-form';
+import { Grid, Card, Input, Embed } from 'semantic-ui-react';
+import { actions, track, Control } from 'react-redux-form';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CreepScore from './subcomponents/CreepScore';
@@ -39,6 +39,10 @@ const CardHeader = styled.div`
   text-align: center;
 `;
 
+const FullWidthInput = styled(Input)`
+  width: 100%;
+`;
+
 const CardContent = styled.div`
   &&& {
     padding: 10px 20px;
@@ -48,8 +52,6 @@ const CardContent = styled.div`
 
 function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   return (model, value, noteId) => (dispatch) => {
-    console.log('createChangeNoteHandler...');
-    console.log(noteId);
     dispatch(actions.change(model, value));
     if (!value || !value.trim()) {
       deleteNote(noteId, entryId);
@@ -81,6 +83,17 @@ class EntryDetail extends React.Component {
     if (switchToNewEntry || switchToPrevEntry) {
       this.props.fetchNotes(nextProps.entryId);
     }
+
+    // XXX: This is a quick fix... refactor how video url gets loaded into form.
+    // load video url
+    if (
+      (!this.props.entry && nextProps.entry) ||
+      (this.props.entry &&
+        nextProps.entry &&
+        this.props.entry.video !== nextProps.entry.video)
+    ) {
+      this.props.setVideoForm(nextProps.entry.video);
+    }
   }
 
   render() {
@@ -94,6 +107,8 @@ class EntryDetail extends React.Component {
       lessons,
       mistakes,
       updateNoteText,
+      updateEntryVideo,
+      videoUrl,
     } = props;
     const isLoading = entryLoading;
     if (error) {
@@ -113,9 +128,27 @@ class EntryDetail extends React.Component {
       deleteNote,
     );
 
+    const videoChangeHandler = (model, value) => (dispatch) => {
+      dispatch(actions.change(model, value));
+      updateEntryVideo(entry.id, entry.gameDate, value);
+    };
+
+    const videoIdMatches = videoUrl
+      ? videoUrl.match(
+        /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/,
+      )
+      : null;
+    const videoId =
+      videoIdMatches && videoIdMatches.length > 0 ? videoIdMatches[1] : null;
+
     return (
       <MainCont>
         <Header {...entry} />
+        {videoId && (
+          <Grid.Column>
+            <Embed id={videoId} source="youtube" autoplay />
+          </Grid.Column>
+        )}
         <MainLesson changeNote={noteChangeHandler} />
         <Grid centered columns={1}>
           <Grid.Column>
@@ -159,6 +192,22 @@ class EntryDetail extends React.Component {
               </MainCard>
             </GenericErrorBoundary>
           </Grid.Column>
+          <Grid.Column>
+            <GenericErrorBoundary>
+              <MainCard fluid raised>
+                <CardHeader>YouTube</CardHeader>
+                <CardContent>
+                  <Control.text
+                    component={FullWidthInput}
+                    changeAction={videoChangeHandler}
+                    model="forms.entry.video"
+                    placeholder="https://www.youtube.com/watch?v=whJ5iwc6pts"
+                    updateOn="blur"
+                  />
+                </CardContent>
+              </MainCard>
+            </GenericErrorBoundary>
+          </Grid.Column>
         </Grid>
       </MainCont>
     );
@@ -168,7 +217,7 @@ class EntryDetail extends React.Component {
 EntryDetail.propTypes = {
   createNote: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
-  entry: PropTypes.shape({ id: PropTypes.string }),
+  entry: PropTypes.shape({ id: PropTypes.string, video: PropTypes.string }),
   entryId: PropTypes.string,
   entryLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
@@ -177,6 +226,9 @@ EntryDetail.propTypes = {
   mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   notesLoading: PropTypes.bool.isRequired,
   updateNoteText: PropTypes.func.isRequired,
+  updateEntryVideo: PropTypes.func.isRequired,
+  setVideoForm: PropTypes.func.isRequired,
+  videoUrl: PropTypes.func.isRequired,
 };
 
 EntryDetail.defaultProps = {
