@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import moment from 'moment';
-import { Image, Button, Icon } from 'semantic-ui-react';
+import { Image, Button, Icon, Loader } from 'semantic-ui-react';
 import { getChampByName } from '../../staticData/champion';
 import { recentGamesColors } from '../../const/colors';
 import { GenericErrorBoundary } from '../../Error';
@@ -107,6 +107,11 @@ const Title = styled.div`
   padding: 10px 0;
 `;
 
+const EmptyMessage = styled.div`
+  text-align: center;
+  padding-top: 10px;
+`
+
 const Game = ({ game, createEntryFromGameId, showEntry }) => (
   <ListItem key={game.gameId}>
     {game.entryId ? (
@@ -133,9 +138,10 @@ Game.propTypes = {
 };
 
 const GamesList = ({ games, createEntryFromGameId, showEntry }) =>
-  (games.length === 0 ? (
-    <div>No recent games found</div>
-  ) : (
+  (games.length === 0 ? [
+    <EmptyMessage>You haven't played any recent Ranked or Normal 5v5 games.</EmptyMessage>,
+    <EmptyMessage>Come back and check after you play!</EmptyMessage>
+  ] : (
     games.map((game) => (
       <Game
         game={game}
@@ -160,12 +166,22 @@ GamesList.propTypes = {
   showEntry: PropTypes.func.isRequired,
 };
 
+const LoaderCont = styled.div`
+  width: 100%;
+  text-align: center;
+  padding-top: 50px;
+`;
+
 const RecentGames = (props) => (
   <MainCont>
     <GenericErrorBoundary>
       <StyledList>
         <Title>Recent Games</Title>
-        {props.error ? (
+        {props.isLoading ? (
+          <LoaderCont>
+            <Loader size="small" active inline />
+          </LoaderCont>
+        ) : props.error ? (
           <ErrorDisplay fontSize={12}>{props.error}</ErrorDisplay>
         ) : (
           <GamesList {...props} />
@@ -180,6 +196,7 @@ RecentGames.propTypes = {
   error: PropTypes.string,
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
   showEntry: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };
 
 RecentGames.defaultProps = {

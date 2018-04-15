@@ -53,18 +53,14 @@ export const EntryListContainer = lifecycle({
 })((props) => {
   const {
     entries,
-    isLoadingEntries,
     setEntryDetailId,
     createEntry,
     match,
     canLoadMore,
   } = props;
   // fetchMoreEntries,
-  if (isLoadingEntries) {
-    return <div>Finding entries...</div>;
-  }
   if (!entries || entries.length === 0) {
-    return <div>No entries</div>;
+    return <div />;
   }
   return (
     <EntryList
@@ -79,7 +75,6 @@ export const EntryListContainer = lifecycle({
 });
 
 EntryListContainer.propTypes = {
-  isLoadingEntries: PropTypes.bool,
   entries: PropTypes.arrayOf(PropTypes.object),
   setEntryDetailId: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
@@ -93,7 +88,6 @@ EntryListContainer.propTypes = {
 
 EntryListContainer.defaultProps = {
   entries: [],
-  isLoadingEntries: false,
 };
 
 export default connect(null, (dispatch, ownProps) => ({

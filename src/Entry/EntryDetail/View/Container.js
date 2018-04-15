@@ -63,27 +63,6 @@ export default compose(
     },
     name: 'notesQuery',
   }),
-  // graphql(markNoteMutation, {
-  //   props: ({ mutate }) => ({
-  //     markNote: (id, entry, marked) =>
-  //       mutate({
-  //         variables: {
-  //           id,
-  //           entry,
-  //           marked,
-  //         },
-  //         optimisticResponse: {
-  //           __typename: 'Mutation',
-  //           markNote: {
-  //             __typename: 'Note',
-  //             id,
-  //             entry,
-  //             marked,
-  //           },
-  //         },
-  //       }),
-  //   }),
-  // }),
   graphql(updateEntryMutation, {
     props: ({ mutate }) => ({
       updateEntryVideo: (id, gameDate, videoUrl) =>

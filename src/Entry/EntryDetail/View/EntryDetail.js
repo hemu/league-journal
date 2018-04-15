@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, Input, Embed } from 'semantic-ui-react';
+import { Grid, Card, Input, Embed, Loader } from 'semantic-ui-react';
 import { actions, track, Control } from 'react-redux-form';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -114,13 +114,19 @@ class EntryDetail extends React.Component {
     if (error) {
       return <div>{error}</div>;
     }
+
+    if (isLoading) {
+      return (
+        <div>
+          <Loader size='massive' active={true} />
+        </div>
+      )
+    }
+
     if (!entry) {
       return <div>Choose an entry</div>;
     }
 
-    if (isLoading) {
-      return <div>Loading entry...</div>;
-    }
 
     const noteChangeHandler = createChangeNoteHandler(
       entry.id,

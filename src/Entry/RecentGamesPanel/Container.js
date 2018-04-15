@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import { Image} from 'semantic-ui-react';
 import RecentGames from './RecentGames';
 import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
@@ -36,13 +37,12 @@ export class RecentGamesContainer extends React.Component {
       isFetchingRecentGames,
     } = this.props;
 
-    if (isLoadingEntries || isFetchingRecentGames) {
-      return <div>Loading recent games ...</div>;
-    }
-    const markedGames = markGamesWithExistingEntries(entries, games);
+    const isLoading = (isLoadingEntries || isFetchingRecentGames);
+    const markedGames = isLoading ? [] : markGamesWithExistingEntries(entries, games);
 
     return (
       <RecentGames
+        isLoading={isLoadingEntries || isFetchingRecentGames}
         createEntryFromGameId={(gameId) =>
           createEntryFromGameId(
             gameId,
