@@ -2,19 +2,15 @@ import axios from 'axios';
 
 export function getRecentGames(summonerId) {
   return axios
-    .post(
-      // 'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/recentGames',
-      'http://localhost:8080/recentGames',
-      {
-        summonerId,
-      },
-    )
+    .post(process.env.REACT_APP_RECENT_GAMES_ENDPOINT, {
+      summonerId,
+    })
     .then((result) => ({ error: null, games: result.data }))
     .catch((error) => {
       if (error.response) {
         return {
           error:
-            "Can't find your recent games because riot's servers won't talk back to us :(",
+            "Can't find your recent games because riot's servers won't talk back to us right now :(",
           games: [],
         };
       } else if (error.request) {
@@ -34,13 +30,9 @@ export function getRecentGames(summonerId) {
 
 export function getMatchDetails(matchId, summonerId) {
   return axios
-    .post(
-      // 'https://i4p7uxr4ze.execute-api.us-east-1.amazonaws.com/dev/matchDetail',
-      'http://localhost:8080/matchDetail',
-      {
-        summonerId,
-        matchId,
-      },
-    )
+    .post(process.env.REACT_APP_MATCH_DETAILS_ENDPOINT, {
+      summonerId,
+      matchId,
+    })
     .then((result) => result.data);
 }

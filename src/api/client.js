@@ -9,10 +9,6 @@ import { onError } from 'apollo-link-error';
 import { Message } from 'semantic-ui-react';
 import { render } from 'react-dom';
 
-// const SIMPLE_ENDPOINT =
-//   'https://api.graph.cool/simple/v1/cj9u0jd5w1gjg0174wsaj3k3w';
-const SIMPLE_ENDPOINT = 'http://localhost:4000/graphql';
-
 const errorLink = onError(({ networkError, graphQLErrors }) => {
   const messageRoot = document.getElementById('alert-cont');
   render(
@@ -46,7 +42,9 @@ const errorLink = onError(({ networkError, graphQLErrors }) => {
   // }
 });
 
-const httpLink = new BatchHttpLink({ uri: SIMPLE_ENDPOINT });
+const httpLink = new BatchHttpLink({
+  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+});
 const link = ApolloLink.from([errorLink, httpLink]);
 
 const client = new ApolloClient({
