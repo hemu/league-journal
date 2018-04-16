@@ -7,7 +7,7 @@ import {
   entryByIdQuery,
   entriesByUserQuery,
   saveEntry as saveEntryApi,
-  removeEntry as removeEntryApi,
+  // removeEntry as removeEntryApi,
   updateMistake as updateMistakeApi,
   updateLesson as updateLessonApi,
   removeMistake as removeMistakeApi,
@@ -70,12 +70,12 @@ export const createNewEntrySuccess = createAction(
   'entry',
 );
 
-export const removeEntry = createAction(
-  REMOVE_ENTRY,
-  'entryId',
-  'mistakes',
-  'lessons',
-);
+// export const removeEntry = createAction(
+//   REMOVE_ENTRY,
+//   'entryId',
+//   'mistakes',
+//   'lessons',
+// );
 export const removeEntrySuccess = createAction(REMOVE_ENTRY_SUCCESS);
 // const removeEntryWithApiSuccess = createAction(REMOVE_ENTRY_WITH_API_SUCCESS);
 
@@ -163,12 +163,12 @@ export const saveEntryEpic = (action$) =>
     .mergeMap((action) =>
       saveEntryApi(action.entry).then(() => saveEntrySuccess()));
 
-export const removeEntryEpic = (action$) =>
-  action$.ofType(REMOVE_ENTRY).mergeMap((action) => {
-    const { entryId, mistakes, lessons } = action;
-    return removeEntryApi(entryId, mistakes, lessons).then(() =>
-      setEntryDetailId(''));
-  });
+// export const removeEntryEpic = (action$) =>
+//   action$.ofType(REMOVE_ENTRY).mergeMap((action) => {
+//     const { entryId, mistakes, lessons } = action;
+//     return removeEntryApi(entryId, mistakes, lessons).then(() =>
+//       setEntryDetailId(''));
+//   });
 
 export const updateMistakeEpic = (action$) =>
   action$

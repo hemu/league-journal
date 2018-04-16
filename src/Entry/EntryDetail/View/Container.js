@@ -1,9 +1,13 @@
 import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { NetworkError } from '../../../Error';
 import { actions } from 'react-redux-form';
-
-import { entryByIdQuery, updateEntryMutation } from '../../../api/entry';
+import { NetworkError } from '../../../Error';
+import {
+  entryByIdQuery,
+  updateEntryMutation,
+  deleteEntryMutation,
+  entriesByUserQuery,
+} from '../../../api/entry';
 import {
   notesQuery,
   updateNoteMutation,
@@ -183,6 +187,38 @@ export default compose(
               data,
             });
             fetchNotes(entry);
+          },
+        }),
+    }),
+  }),
+  graphql(deleteEntryMutation, {
+    props: ({ ownProps: { fetchNotes }, mutate }) => ({
+      deleteEntry: (entry) =>
+        mutate({
+          variables: {
+            id: entry.id,
+            gameDate: entry.gameDate,
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            deleteEntry: true,
+          },
+          update: (proxy, { data: { deleteEntry } }) => {
+            const data = proxy.readQuery({
+              query: entriesByUserQuery,
+              variables: { user: entry.user },
+            });
+            if (data.entriesByUser) {
+              data.entriesByUser.entries = data.entriesByUser.entries.filter(
+                (queryEntry) => queryEntry.id !== entry.id,
+              );
+              // Write our data back to the cache.
+              proxy.writeQuery({
+                query: entriesByUserQuery,
+                variables: { user: entry.user },
+                data,
+              });
+            }
           },
         }),
     }),

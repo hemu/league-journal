@@ -1,12 +1,19 @@
 import React from 'react';
-import { Grid, Card, Input, Embed, Loader } from 'semantic-ui-react';
+import {
+  Grid,
+  Card,
+  Input,
+  Embed,
+  Loader,
+  Button,
+  Confirm,
+  Popup,
+} from 'semantic-ui-react';
 import { actions, track, Control } from 'react-redux-form';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CreepScore from './subcomponents/CreepScore';
-// import SecondaryList from './subcomponents/SecondaryList';
 import Header from './subcomponents/Header';
-// import MarkableList from './subcomponents/MarkableList';
 import MainLesson from './subcomponents/MainLesson';
 import NoteList from './subcomponents/Mistake/NoteList';
 import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
@@ -50,6 +57,18 @@ const CardContent = styled.div`
   }
 `;
 
+const TrashBtn = styled(Button)`
+  &&& {
+    margin-left: 30px;
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    :hover {
+      color: #111111;
+      background-color: #f9f9f9;
+    }
+  }
+`;
+
 function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   return (model, value, noteId) => (dispatch) => {
     dispatch(actions.change(model, value));
@@ -61,7 +80,35 @@ function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   };
 }
 
+const DeleteConfirmMessage = styled.div`
+  padding: 5px;
+  text-align: center;
+`;
+
+const DeleteConfirmBtnCont = styled.div`
+  padding: 5px;
+  text-align: center;
+`;
+
+const DeletePopup = ({ onCancel, onConfirm }) => [
+  <DeleteConfirmMessage>
+    Are you sure you want to delete this entry?
+  </DeleteConfirmMessage>,
+  <DeleteConfirmBtnCont>
+    <Button color="gray" content="Cancel" onClick={onCancel} />
+    <Button color="red" content="Yes" onClick={onConfirm} />
+  </DeleteConfirmBtnCont>,
+];
+
 class EntryDetail extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isDeleteDialogVisible: false,
+    };
+    this.showDeleteDialog = this.showDeleteDialog.bind(this);
+  }
+
   componentDidMount() {
     const { notesLoading, entryId } = this.props;
     if (notesLoading === false && entryId) {
@@ -96,6 +143,12 @@ class EntryDetail extends React.Component {
     }
   }
 
+  showDeleteDialog(shouldShow) {
+    this.setState({
+      isDeleteDialogVisible: shouldShow,
+    });
+  }
+
   render() {
     const { props } = this;
     const {
@@ -118,15 +171,14 @@ class EntryDetail extends React.Component {
     if (isLoading) {
       return (
         <div>
-          <Loader size='massive' active={true} />
+          <Loader size="massive" active />
         </div>
-      )
+      );
     }
 
     if (!entry) {
       return <div>Choose an entry</div>;
     }
-
 
     const noteChangeHandler = createChangeNoteHandler(
       entry.id,
@@ -149,6 +201,27 @@ class EntryDetail extends React.Component {
 
     return (
       <MainCont>
+        <Popup
+          trigger={
+            <TrashBtn
+              icon="trash alternate outline"
+              floated="left"
+              circular
+              size="large"
+            />
+          }
+          content={
+            <DeletePopup
+              onCancel={() => this.showDeleteDialog(false)}
+              onConfirm={() => this.props.deleteEntry(this.props.entry)}
+            />
+          }
+          on="click"
+          open={this.state.isDeleteDialogVisible}
+          onOpen={() => this.showDeleteDialog(true)}
+          onClose={() => this.showDeleteDialog(false)}
+          position="bottom right"
+        />
         <Header {...entry} />
         {videoId && (
           <Grid.Column>
@@ -222,6 +295,7 @@ class EntryDetail extends React.Component {
 
 EntryDetail.propTypes = {
   createNote: PropTypes.func.isRequired,
+  deleteEntry: PropTypes.func.isRequired,
   deleteNote: PropTypes.func.isRequired,
   entry: PropTypes.shape({ id: PropTypes.string, video: PropTypes.string }),
   entryId: PropTypes.string,
