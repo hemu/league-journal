@@ -63,6 +63,7 @@ export const createEntryFromGame = createAction(
   'gameId',
   'userId',
   'summonerId',
+  'regionId',
 );
 
 export const createNewEntrySuccess = createAction(
@@ -148,10 +149,9 @@ export const entryEditOnEpic = (action$) =>
 
 export const createEntryFromGameEpic = (action$) =>
   action$.ofType(CREATE_ENTRY_FROM_GAME).mergeMap((action) =>
-    getMatchDetails(action.gameId, action.summonerId)
+    getMatchDetails(action.gameId, action.summonerId, action.regionId)
       .then((details) =>
         createNewEntryApi({
-          ...action.entry,
           ...details,
           user: action.userId,
         }))
@@ -199,6 +199,7 @@ export const setEntryDetailEpic = (action$) =>
   action$.ofType(SET_ENTRY_DETAIL_ID).mergeMap((action) => {
     let { entryId } = action;
     // if no entry id is specified, automatically set to the first entry
+
     if (!entryId) {
       const data = client.readQuery({
         query: entriesByUserQuery,
@@ -206,6 +207,9 @@ export const setEntryDetailEpic = (action$) =>
       if (data.entriesByUser.length > 0) {
         entryId = data.entriesByUser[0].id;
       }
+    }
+    if (!entryId) {
+      return Rx.Observable.of(push(`/entry`));
     }
     return Rx.Observable.of(push(`/entry/${entryId}`));
   });

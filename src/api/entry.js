@@ -26,6 +26,7 @@ export const entriesByUserQuery = gql`
         deaths
         assists
         gameId
+        regionId
       }
       lastEvaluatedKey {
         gameDate
@@ -56,6 +57,7 @@ const fullEntryFragment = gql`
     cs
     video
     gameId
+    regionId
   }
 `;
 
@@ -72,8 +74,8 @@ export const createEntryMutation = gql`
   mutation CreateEntry(
     $user: String!
     $gameId: String!
+    $regionId: String!
     $gameDate: String
-    # $rank: String
     $outcome: String
     $role: String
     $kills: Int
@@ -89,8 +91,8 @@ export const createEntryMutation = gql`
     createEntry(
       user: $user
       gameId: $gameId
+      regionId: $regionId
       gameDate: $gameDate
-      # rank: $rank
       outcome: $outcome
       role: $role
       kills: $kills
@@ -101,7 +103,7 @@ export const createEntryMutation = gql`
       partner: $partner
       opponentPartner: $opponentPartner
       csPerMin: $csPerMin
-      cs: $cs # video: $video
+      cs: $cs 
     ) {
       ...FullEntry
     }
@@ -210,28 +212,9 @@ function createMistakesAndLessonsMutation(mistakes, lessons, entryId) {
   `;
 }
 
-// function updateMistakesAndLessons(mistakes, lessons, entryId) {
-//   const newMistakes = mistakes.filter(
-//     (mistake) => isLocalId(mistake.id) && mistake.text.trim().length !== 0,
-//   );
-//   const newLessons = lessons.filter(
-//     (lesson) => isLocalId(lesson.id) && lesson.text.trim().length !== 0,
-//   );
-//   if (newMistakes.length === 0 && newLessons.length === 0) {
-//     return Promise.resolve();
-//   }
-//   const mutation = createMistakesAndLessonsMutation(
-//     newMistakes,
-//     newLessons,
-//     entryId,
-//   );
-//   return client.mutate({
-//     mutation,
-//   });
-// }
-
 const validateNum = (val) => (Number.isNaN(parseInt(val, 10)) ? 0 : val);
 
+// XXX: What uses this functon? doesn't return anything...
 export function saveEntry(entry) {
   const { lessons, mistakes, ...rest } = entry;
 
@@ -258,14 +241,6 @@ export function saveEntry(entry) {
       .map((item) => item.text)
       .filter((p) => p.trim().length !== 0),
   };
-
-  // return updateMistakesAndLessons(mistakes, lessons, entry.id).then(() =>
-  //   client.mutate({
-  //     mutation: saveEntryMutation,
-  //     variables: {
-  //       ...finalEntry,
-  //     },
-  //   }));
 }
 
 export function updateMistake(id, text) {

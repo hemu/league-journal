@@ -14,7 +14,10 @@ import {
   createNoteMutation,
   deleteNoteMutation,
 } from '../../../api/note';
-import { fetchNotes as fetchNotesApi } from '../../../modules/entry';
+import {
+  fetchNotes as fetchNotesApi,
+  setEntryDetailId,
+} from '../../../modules/entry';
 import { SystemNoteTypeIds } from '../../../const';
 
 import EntryDetail from './EntryDetail';
@@ -33,6 +36,7 @@ export default compose(
       fetchNotes: (entryId) => dispatch(fetchNotesApi(entryId)),
       setVideoForm: (videoUrl) =>
         dispatch(actions.change('forms.entry.video', videoUrl)),
+      resetSelectedEntry: () => dispatch(setEntryDetailId()),
     }),
   ),
   graphql(entryByIdQuery, {

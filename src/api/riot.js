@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-export function getRecentGames(summonerId) {
+export function getRecentGames(summonerId, regionId) {
   return axios
     .post(process.env.REACT_APP_RECENT_GAMES_ENDPOINT, {
       summonerId,
+      regionId,
     })
     .then((result) => ({ error: null, games: result.data }))
     .catch((error) => {
@@ -28,11 +29,12 @@ export function getRecentGames(summonerId) {
     });
 }
 
-export function getMatchDetails(matchId, summonerId) {
+export function getMatchDetails(matchId, summonerId, regionId) {
   return axios
     .post(process.env.REACT_APP_MATCH_DETAILS_ENDPOINT, {
       summonerId,
       matchId,
+      regionId,
     })
     .then((result) => result.data);
 }

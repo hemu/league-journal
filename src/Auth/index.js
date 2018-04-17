@@ -11,7 +11,8 @@ export function isAuthenticated() {
     const userId = localStorage.getItem('user_id');
     const summoner = localStorage.getItem('summoner');
     const summonerId = localStorage.getItem('summonerId');
-    getStore().dispatch(setAuth(userId, summoner, summonerId));
+    const regionId = localStorage.getItem('regionId');
+    getStore().dispatch(setAuth(userId, summoner, summonerId, regionId));
     return true;
   }
   return false;
@@ -31,7 +32,7 @@ function setSession(authResult) {
   const { idTokenPayload, accessToken, idToken, expiresIn } = authResult;
   const expiresAt = JSON.stringify(expiresIn * 1000 + new Date().getTime());
   const userId = idTokenPayload.sub;
-  const { summoner, summonerId } = idTokenPayload[
+  const { summoner, summonerId, regionId } = idTokenPayload[
     'https://lol-journal.com/user_metadata'
   ];
   localStorage.setItem('access_token', accessToken);
@@ -40,11 +41,14 @@ function setSession(authResult) {
   localStorage.setItem('user_id', idTokenPayload.sub);
   localStorage.setItem('summoner', summoner);
   localStorage.setItem('summonerId', summonerId);
+  localStorage.setItem('regionId', regionId);
   // navigate to the home route
   routerHistory.replace('/entry');
   return {
     userId,
     summoner,
+    summonerId,
+    regionId,
   };
 }
 
@@ -56,8 +60,8 @@ export function handleAuthentication() {
   authService.parseHash((err, authResult) => {
     console.log(authResult);
     if (authResult && authResult.accessToken && authResult.idToken) {
-      const { userId, summoner } = setSession(authResult);
-      getStore().dispatch(setAuth(userId, summoner));
+      const { userId, summoner, summonerId, regionId } = setSession(authResult);
+      getStore().dispatch(setAuth(userId, summoner, summonerId, regionId));
       routerHistory.replace('/entry');
     } else if (err) {
       routerHistory.replace('/entry');
@@ -69,12 +73,12 @@ export function handleAuthentication() {
 
 export function logout() {
   // Clear access token and ID token from local storage
-  console.log(localStorage);
   localStorage.removeItem('access_token');
   localStorage.removeItem('id_token');
   localStorage.removeItem('expires_at');
   localStorage.removeItem('summoner');
   localStorage.removeItem('summonerId');
+  localStorage.removeItem('regionId');
   // navigate to the home route
   routerHistory.replace('/entry');
 }

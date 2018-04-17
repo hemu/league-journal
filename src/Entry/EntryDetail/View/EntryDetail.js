@@ -69,6 +69,28 @@ const TrashBtn = styled(Button)`
   }
 `;
 
+const EmptyMessage = styled.div`
+  margin-top: 50px;
+  margin-left: 30px;
+  font-size: 17px;
+  color: gray;
+  div {
+    padding: 10px;
+    line-height: 30px;
+  }
+  img {
+    width: 300px;
+    height: 299px;
+  }
+`
+
+const EmptyMessageTitle = styled.div`
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 21px;
+  color: gray;
+`
+
 function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   return (model, value, noteId) => (dispatch) => {
     dispatch(actions.change(model, value));
@@ -95,7 +117,7 @@ const DeletePopup = ({ onCancel, onConfirm }) => [
     Are you sure you want to delete this entry?
   </DeleteConfirmMessage>,
   <DeleteConfirmBtnCont>
-    <Button color="gray" content="Cancel" onClick={onCancel} />
+    <Button color="grey" content="Cancel" onClick={onCancel} />
     <Button color="red" content="Yes" onClick={onConfirm} />
   </DeleteConfirmBtnCont>,
 ];
@@ -177,7 +199,12 @@ class EntryDetail extends React.Component {
     }
 
     if (!entry) {
-      return <div>Choose an entry</div>;
+      return (
+        <EmptyMessage>
+          <EmptyMessageTitle>Select an available entry.</EmptyMessageTitle>
+          <div>Pick an entry from the entries list to see details here.</div>
+        </EmptyMessage>
+      )
     }
 
     const noteChangeHandler = createChangeNoteHandler(
@@ -213,7 +240,11 @@ class EntryDetail extends React.Component {
           content={
             <DeletePopup
               onCancel={() => this.showDeleteDialog(false)}
-              onConfirm={() => this.props.deleteEntry(this.props.entry)}
+              onConfirm={() => {
+                this.props.deleteEntry(this.props.entry);
+                this.showDeleteDialog(false);
+                this.props.resetSelectedEntry();
+              }}
             />
           }
           on="click"
@@ -309,6 +340,7 @@ EntryDetail.propTypes = {
   updateEntryVideo: PropTypes.func.isRequired,
   setVideoForm: PropTypes.func.isRequired,
   videoUrl: PropTypes.func.isRequired,
+  resetSelectedEntry: PropTypes.func.isRequired,
 };
 
 EntryDetail.defaultProps = {

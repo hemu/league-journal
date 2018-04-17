@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { Image} from 'semantic-ui-react';
+import { Image } from 'semantic-ui-react';
 import RecentGames from './RecentGames';
 import { createEntryFromGame } from '../../modules/entry';
 import { fetchRecentGames as fetchRecentGamesApi } from '../../modules/match';
@@ -23,31 +23,38 @@ function markGamesWithExistingEntries(entries, games) {
 
 export class RecentGamesContainer extends React.Component {
   componentWillMount() {
-    this.props.fetchRecentGames(this.props.summonerId);
+    const { summonerId, regionId } = this.props;
+    this.props.fetchRecentGames(summonerId, regionId);
   }
 
   render() {
     const {
-      createEntryFromGameId,
+      createEntryForUser,
       entries,
       fetchError,
       games,
       isLoadingEntries,
       showEntry,
       isFetchingRecentGames,
+      userId,
+      summonerId,
+      regionId
     } = this.props;
 
-    const isLoading = (isLoadingEntries || isFetchingRecentGames);
-    const markedGames = isLoading ? [] : markGamesWithExistingEntries(entries, games);
+    const isLoading = isLoadingEntries || isFetchingRecentGames;
+    const markedGames = isLoading
+      ? []
+      : markGamesWithExistingEntries(entries, games);
 
     return (
       <RecentGames
         isLoading={isLoadingEntries || isFetchingRecentGames}
         createEntryFromGameId={(gameId) =>
-          createEntryFromGameId(
+          createEntryForUser(
             gameId,
-            this.props.userId,
-            this.props.summonerId,
+            userId,
+            summonerId,
+            regionId,
           )
         }
         error={fetchError}
@@ -59,7 +66,7 @@ export class RecentGamesContainer extends React.Component {
 }
 
 RecentGamesContainer.propTypes = {
-  createEntryFromGameId: PropTypes.func.isRequired,
+  createEntryForUser: PropTypes.func.isRequired,
   entries: PropTypes.array,
   fetchError: PropTypes.string,
   isFetchingRecentGames: PropTypes.bool.isRequired,
@@ -78,16 +85,21 @@ RecentGamesContainer.defaultProps = {
 };
 
 export default connect(
-  ({ match: { error, games, fetchingRecentGames }, auth: { summonerId } }) => ({
+  ({
+    match: { error, games, fetchingRecentGames },
+    auth: { summonerId, regionId },
+  }) => ({
     isFetchingRecentGames: fetchingRecentGames,
     fetchError: error,
     games,
     summonerId,
+    regionId,
   }),
   (dispatch) => ({
-    fetchRecentGames: (summonerId) => dispatch(fetchRecentGamesApi(summonerId)),
-    createEntryFromGameId: (gameId, userId, summonerId) =>
-      dispatch(createEntryFromGame(gameId, userId, summonerId)),
+    fetchRecentGames: (summonerId, regionId) =>
+      dispatch(fetchRecentGamesApi(summonerId, regionId)),
+    createEntryForUser: (gameId, userId, summonerId, regionId) =>
+      dispatch(createEntryFromGame(gameId, userId, summonerId, regionId)),
     showEntry: (entryId) => dispatch(push(`/entry/${entryId}`)),
   }),
 )(RecentGamesContainer);

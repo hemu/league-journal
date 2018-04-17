@@ -5,14 +5,14 @@ import { getRecentGames } from '../api/riot';
 const FETCH_RECENT_GAMES = 'recentGames/FETCH_RECENT_GAMES';
 const RECENT_GAMES_SUCCESS = 'recentGames/RECENT_GAMES_SUCCESS';
 
-export const fetchRecentGames = createAction(FETCH_RECENT_GAMES, 'accountId');
+export const fetchRecentGames = createAction(FETCH_RECENT_GAMES, 'accountId', 'regionId');
 export const recentGamesSuccess = createAction(RECENT_GAMES_SUCCESS, 'results');
 
 export const fetchRecentGamesEpic = (action$) =>
   action$
     .ofType(FETCH_RECENT_GAMES)
     .mergeMap((action) =>
-      getRecentGames(action.accountId).then((results) =>
+      getRecentGames(action.accountId, action.regionId).then((results) =>
         recentGamesSuccess(results)));
 
 const initialState = {

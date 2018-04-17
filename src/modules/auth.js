@@ -10,8 +10,9 @@ export const setAuth = createAction(
   'userId',
   'summoner',
   'summonerId',
+  'regionId',
 );
-export const signOut = createAction(SIGN_OUT, 'userId', 'summoner');
+export const signOut = createAction(SIGN_OUT);
 
 // ------- REDUCER -----------------------------------------------
 // ----------------------------------------------------------
@@ -19,6 +20,7 @@ const initialState = {
   userId: '',
   summoner: '',
   summonerId: '',
+  regionId: '',
   isAuthenticated: false,
 };
 
@@ -30,6 +32,7 @@ export default function reducer(state = initialState, action = {}) {
         userId: action.userId,
         summoner: action.summoner,
         summonerId: action.summonerId,
+        regionId: action.regionId,
         isAuthenticated: true,
       };
     }
@@ -39,6 +42,7 @@ export default function reducer(state = initialState, action = {}) {
         userId: '',
         summoner: '',
         summonerId: '',
+        regionId: '',
         isAuthenticated: false,
       };
     }
