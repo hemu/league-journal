@@ -2,8 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { lifecycle } from 'recompose';
+import { graphql, compose } from 'react-apollo';
 import EntryList from './EntryList';
-import { setEntryDetailId as _setEntryDetailId } from '../../modules/entry';
+import {
+  setEntryDetailId as _setEntryDetailId,
+  setChampFilter as _setChampFilter,
+} from '../../modules/entry';
+import { filteredEntriesByUserQuery } from '../../api/entry';
 
 function fetchMoreEntries(props) {
   const { userId, lastEvaluatedKey, fetchMoreQuery } = props;
@@ -27,41 +32,57 @@ function fetchMoreEntries(props) {
 
 export const EntryListContainer = lifecycle({
   componentDidMount() {
+    const loading = !this.props.data || this.props.data.loading;
+
     if (
-      !this.props.isLoadingEntries &&
-      (!this.props.match ||
-        !this.props.match.params ||
-        !this.props.match.params.entryId)
+      (!loading && !this.props.match) ||
+      !this.props.match.params ||
+      !this.props.match.params.entryId
     ) {
-      const { entries, setEntryDetailId } = this.props;
-      if (entries && entries.length > 0) {
-        setEntryDetailId(entries[0].id);
+      const { unfilteredEntries, setEntryDetailId } = this.props;
+      if (unfilteredEntries && unfilteredEntries.length > 0) {
+        setEntryDetailId(unfilteredEntries[0].id);
       }
     }
   },
 
   componentWillReceiveProps(nextProps) {
+    const loading = nextProps.data && nextProps.data.loading;
     // if going from loading to done loading,
     // and no current selectedId, set default detail entry to first entry
-    if (!nextProps.isLoadingEntries && !nextProps.match.params.entryId) {
-      const { entries, setEntryDetailId } = nextProps;
-      if (entries && entries.length > 0) {
-        setEntryDetailId(entries[0].id);
+    if (nextProps.champFilter !== this.props.champFilter && this.props.data) {
+      this.props.data.refetch();
+    }
+
+    if (!loading && !nextProps.match.params.entryId) {
+      const { unfilteredEntries, setEntryDetailId } = nextProps;
+      if (unfilteredEntries && unfilteredEntries.length > 0) {
+        setEntryDetailId(unfilteredEntries[0].id);
       }
     }
   },
 })((props) => {
   const {
-    entries,
+    unfilteredEntries,
     setEntryDetailId,
     createEntry,
     match,
     canLoadMore,
+    setChampFilter,
+    champFilter,
+    data,
   } = props;
-  // fetchMoreEntries,
-  if (!entries || entries.length === 0) {
+
+  if ((!unfilteredEntries || unfilteredEntries.length === 0) && !champFilter) {
     return <div />;
   }
+
+  let entries = unfilteredEntries;
+
+  if (champFilter) {
+    entries = data.entriesByUser ? data.entriesByUser.entries : [];
+  }
+
   return (
     <EntryList
       entries={entries}
@@ -70,12 +91,15 @@ export const EntryListContainer = lifecycle({
       selectedId={match.params.entryId || ''}
       fetchMoreEntries={() => fetchMoreEntries(props)}
       canLoadMore={canLoadMore}
+      setChampFilter={setChampFilter}
+      champFilter={champFilter}
+      loading={data && data.loading}
     />
   );
 });
 
 EntryListContainer.propTypes = {
-  entries: PropTypes.arrayOf(PropTypes.object),
+  unfilteredEntries: PropTypes.arrayOf(PropTypes.object),
   setEntryDetailId: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
   match: PropTypes.shape({
@@ -84,12 +108,34 @@ EntryListContainer.propTypes = {
   fetchMoreQuery: PropTypes.func.isRequired,
   lastEvaluatedKey: PropTypes.shape({}).isRequired,
   canLoadMore: PropTypes.bool.isRequired,
+  setChampFilter: PropTypes.func.isRequired,
+  champFilter: PropTypes.string.isRequired,
+  data: PropTypes.shape({}),
 };
 
 EntryListContainer.defaultProps = {
   entries: [],
 };
 
-export default connect(null, (dispatch, ownProps) => ({
-  setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),
-}))(EntryListContainer);
+export default compose(
+  connect(
+    ({ auth, entry }) => ({
+      champFilter: entry.champFilter,
+    }),
+    (dispatch, ownProps) => ({
+      setEntryDetailId: (entryId) => dispatch(_setEntryDetailId(entryId)),
+      setChampFilter: (champ) => dispatch(_setChampFilter(champ)),
+    }),
+  ),
+  graphql(filteredEntriesByUserQuery, {
+    skip: (ownProps) =>
+      !ownProps.userId || ownProps.userId === '' || ownProps.champFilter === '',
+    options: (props) => ({
+      variables: {
+        user: props.userId,
+        champion: props.champFilter,
+      },
+      notifyOnNetworkStatusChange: true,
+    }),
+  }),
+)(EntryListContainer);

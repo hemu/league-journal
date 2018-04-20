@@ -48,12 +48,16 @@ const REMOVE_LESSON_SUCCESS = 'entries/REMOVE_LESSON_SUCCESS';
 const FETCH_NOTES = 'entries/FETCH_NOTES';
 const FETCH_NOTES_SUCCESS = 'entries/FETCH_NOTES_SUCCESS';
 
+const SET_CHAMP_FILTER = 'entries/SET_CHAMP_FILTER';
+
 // const DEBUG_ACTION = 'entries/DEBUG_ACTION';
 
 const SET_EDIT_MODE = 'entries/SET_EDIT_MODE';
 
 // ----- ACTION CREATORS -------------------------------
 // ----------------------------------------------------------
+export const setChampFilter = createAction(SET_CHAMP_FILTER, 'champ');
+
 export const setEntryDetailId = createAction(SET_ENTRY_DETAIL_ID, 'entryId');
 export const saveEntry = createAction(SAVE_ENTRY, 'entry');
 export const saveEntrySuccess = createAction(SAVE_ENTRY_SUCCESS);
@@ -259,6 +263,7 @@ const initialState = {
   editMode: false,
   fetchingNotes: false,
   error: null,
+  champFilter: '',
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -283,6 +288,13 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         editMode: action.editMode,
       };
+    }
+
+    case SET_CHAMP_FILTER: {
+      return {
+        ...state,
+        champFilter: action.champ,
+      }
     }
 
     case FETCH_NOTES: {

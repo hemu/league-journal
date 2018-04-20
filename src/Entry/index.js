@@ -35,50 +35,72 @@ const EmptyMessage = styled.div`
     width: 300px;
     height: 299px;
   }
-`
+`;
 
 const EmptyMessageTitle = styled.div`
   margin-top: 10px;
   font-weight: bold;
   font-size: 25px;
   color: gray;
-`
+`;
 
-export const Entry = ({ match, userId, data }) => {
-  if (!isAuthenticated()) {
-    login();
-    return <ErrorDisplay fontSize={20}>Redirecting to login...</ErrorDisplay>;
-  }
-  const { loading, entriesByUser, error, fetchMore } = data;
+export class Entry extends React.Component {
 
-  if (data.error) {
-    return (
-      <ErrorDisplay fontSize={20}>
-        Can't contact server to load entries. Are you sure you are connected to
-        the internet?
-      </ErrorDisplay>
-    );
-  }
+  render() {
+    const { match, userId, data, champFilter } = this.props;
+    if (!isAuthenticated()) {
+      login();
+      return <ErrorDisplay fontSize={20}>Redirecting to login...</ErrorDisplay>;
+    }
+    const { loading, entriesByUser, error, fetchMore, networkStatus } = data;
 
-  if (loading) {
-    return (
+    if (data.error) {
+      return (
+        <ErrorDisplay fontSize={20}>
+          Can't contact server to load entries. Are you sure you are connected
+          to the internet?
+        </ErrorDisplay>
+      );
+    }
+
+    if (loading) {
+      return (
         <div>
-          <Loader size='massive' active={true} />
+          <Loader size="massive" active />
         </div>
-    )
-  }
+      );
+    }
 
-  const { entriesByUser: { entries, lastEvaluatedKey } } = data;
+    const { entriesByUser: { entries, lastEvaluatedKey } } = data;
 
-  if (!loading && (!entries || entries.length === 0)) {
+    const isChampFilterSet = champFilter !== '';
+
     return (
       <MainCont>
-        <div />
-        <EmptyMessage>
-          <Image src={WelcomeImage}/>
-          <EmptyMessageTitle>Hey! You don't have any entries yet.</EmptyMessageTitle>
-          <div>Create an entry from your list of recent games to get started.</div>
-        </EmptyMessage>
+        <Route
+          path={`${match.url}/:entryId?`}
+          render={(props) => (
+            <EntryListContainer
+              {...props}
+              userId={userId}
+              unfilteredEntries={entries}
+              fetchMoreQuery={fetchMore}
+              lastEvaluatedKey={lastEvaluatedKey || {}}
+              canLoadMore={lastEvaluatedKey != null}
+            />
+          )}
+        />
+        <Route
+          path={`${match.url}/:entryId?`}
+          render={(props) => (
+            <EntryDetailContainer
+              {...props}
+              userId={userId}
+              noEntries={!entries || entries.length === 0}
+              isChampFilterSet={isChampFilterSet}
+            />
+          )}
+        />
         <RecentGamesPanelContainer
           userId={userId}
           isLoadingEntries={loading}
@@ -87,33 +109,7 @@ export const Entry = ({ match, userId, data }) => {
       </MainCont>
     );
   }
-  return (
-    <MainCont>
-      <Route
-        path={`${match.url}/:entryId?`}
-        render={(props) => (
-          <EntryListContainer
-            {...props}
-            userId={userId}
-            entries={entries}
-            fetchMoreQuery={fetchMore}
-            lastEvaluatedKey={lastEvaluatedKey || {}}
-            canLoadMore={lastEvaluatedKey != null}
-          />
-        )}
-      />
-      <Route
-        path={`${match.url}/:entryId?`}
-        render={(props) => <EntryDetailContainer {...props} userId={userId} />}
-      />
-      <RecentGamesPanelContainer
-        userId={userId}
-        isLoadingEntries={loading}
-        entries={entries}
-      />
-    </MainCont>
-  );
-};
+}
 
 Entry.propTypes = {
   match: PropTypes.shape({ params: PropTypes.object.isRequired }).isRequired,
@@ -133,6 +129,7 @@ export default compose(
     ({ auth, entry }) => ({
       userId: auth.userId,
       // lastEvaluatedKey: entry.lastEvaluatedKey,
+      champFilter: entry.champFilter,
     }),
     null,
   ),

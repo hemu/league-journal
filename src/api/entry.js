@@ -4,6 +4,41 @@ import { updateMistakeMutation, deleteMistakeMutation } from './mistake';
 import { updateLessonMutation, deleteLessonMutation } from './lesson';
 import { entryFormInitialState } from '../modules/entryForm';
 
+export const filteredEntriesByUserQuery = gql`
+  query filteredEntriesByUserQuery(
+    $user: String!
+    $lastEvaluatedGameDate: String
+    $lastEvaluatedID: ID
+    $champion: String
+  ) {
+    entriesByUser(
+      user: $user
+      lastEvaluatedGameDate: $lastEvaluatedGameDate
+      lastEvaluatedID: $lastEvaluatedID
+      champion: $champion
+    ) @connection(key: "filteredEntries") {
+      entries {
+        id
+        champion
+        opponentChampion
+        gameDate
+        outcome
+        role
+        kills
+        deaths
+        assists
+        gameId
+        regionId
+      }
+      lastEvaluatedKey {
+        gameDate
+        user
+        id
+      }
+    }
+  }
+`;
+
 export const entriesByUserQuery = gql`
   query entriesByUserQuery(
     $user: String!
@@ -14,7 +49,7 @@ export const entriesByUserQuery = gql`
       user: $user
       lastEvaluatedGameDate: $lastEvaluatedGameDate
       lastEvaluatedID: $lastEvaluatedID
-    ) @connection(key: "userEntries") {
+    ) @connection(key: "unfilteredEntries") {
       entries {
         id
         champion

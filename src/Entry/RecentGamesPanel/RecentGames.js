@@ -102,7 +102,7 @@ const ChampImg = styled(Image)`
 
 const Title = styled.div`
   text-align: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: bold;
   padding: 10px 0;
 `;

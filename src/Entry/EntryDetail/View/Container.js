@@ -7,6 +7,7 @@ import {
   updateEntryMutation,
   deleteEntryMutation,
   entriesByUserQuery,
+  filteredEntriesByUserQuery,
 } from '../../../api/entry';
 import {
   notesQuery,
@@ -196,7 +197,7 @@ export default compose(
     }),
   }),
   graphql(deleteEntryMutation, {
-    props: ({ ownProps: { fetchNotes }, mutate }) => ({
+    props: ({ ownProps: { fetchNotes, userId }, mutate }) => ({
       deleteEntry: (entry) =>
         mutate({
           variables: {
@@ -208,21 +209,39 @@ export default compose(
             deleteEntry: true,
           },
           update: (proxy, { data: { deleteEntry } }) => {
+
             const data = proxy.readQuery({
               query: entriesByUserQuery,
-              variables: { user: entry.user },
+              variables: { user: userId },
             });
             if (data.entriesByUser) {
               data.entriesByUser.entries = data.entriesByUser.entries.filter(
                 (queryEntry) => queryEntry.id !== entry.id,
               );
-              // Write our data back to the cache.
               proxy.writeQuery({
                 query: entriesByUserQuery,
-                variables: { user: entry.user },
+                variables: { user: userId },
                 data,
               });
             }
+
+
+            const filteredData = proxy.readQuery({
+              query: filteredEntriesByUserQuery,
+              variables: { user: userId, champion: entry.champion },
+            });
+            if (filteredData.entriesByUser) {
+              filteredData.entriesByUser.entries = filteredData.entriesByUser.entries.filter(
+                (queryEntry) => queryEntry.id !== entry.id,
+              );
+              proxy.writeQuery({
+                query: filteredEntriesByUserQuery,
+                variables: {user: userId, champion: entry.champion },
+                data: filteredData,
+              });
+            }
+
+
           },
         }),
     }),

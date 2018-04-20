@@ -3,6 +3,7 @@ import {
   Grid,
   Card,
   Input,
+  Image,
   Embed,
   Loader,
   Button,
@@ -19,6 +20,7 @@ import NoteList from './subcomponents/Mistake/NoteList';
 import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
 import { GenericErrorBoundary } from '../../../Error';
 import { entryDetailColors } from '../../../const/colors';
+import WelcomeImage from '../../soraka_welcome.png';
 
 const MainCont = styled.div`
   padding: 20px;
@@ -179,11 +181,13 @@ class EntryDetail extends React.Component {
       entry,
       entryLoading,
       error,
+      isChampFilterSet,
       lessons,
       mistakes,
       updateNoteText,
       updateEntryVideo,
       videoUrl,
+      noEntries,
     } = props;
     const isLoading = entryLoading;
     if (error) {
@@ -196,6 +200,20 @@ class EntryDetail extends React.Component {
           <Loader size="massive" active />
         </div>
       );
+    }
+
+    if(noEntries) {
+      return (
+        <EmptyMessage>
+          <Image src={WelcomeImage} />
+          <EmptyMessageTitle>
+            Hey! You don't have any entries yet.
+          </EmptyMessageTitle>
+          <div>
+            Create an entry from your list of recent games to get started.
+          </div>
+        </EmptyMessage>
+      )
     }
 
     if (!entry) {
@@ -333,6 +351,8 @@ EntryDetail.propTypes = {
   entryLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   fetchNotes: PropTypes.func.isRequired,
+  noEntries: PropTypes.func.isRequired,
+  isChampFilterSet: PropTypes.func.isRequired,
   lessons: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   notesLoading: PropTypes.bool.isRequired,
