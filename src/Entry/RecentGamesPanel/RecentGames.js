@@ -29,8 +29,8 @@ const StyledList = styled.ul`
 
 const ListItem = styled.li`
   display: grid;
-  grid-template-columns: 30px 30px 82px;
-  padding: 5px 0;
+  grid-template-columns: 30px 35px 82px;
+  margin: 13px 0;
   justify-content: center;
   align-items: center;
 `;
@@ -70,7 +70,7 @@ const NewEntryBtn = styled(Button)`
 
 const EndCont = styled.div`
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
 `;
 
 const LaneCont = styled.div`
@@ -90,6 +90,18 @@ const DateCont = styled.div`
   font-style: italic;
 `;
 
+const QueueCont = styled.div`
+  font-size: 9px;
+  line-height: 11px;
+  color: ${recentGamesColors.font};
+  align-self: start;
+  text-align: center;
+`;
+
+const QueueRankedCont = styled(QueueCont)`
+  font-weight: bold;
+`;
+
 // const ChampText = styled.div`
 //   font-size: 11px;
 //   color: #ccc;
@@ -97,7 +109,7 @@ const DateCont = styled.div`
 // `;
 
 const ChampImg = styled(Image)`
-  margin-left: 8px;
+  margin-left: 7px;
 `;
 
 const Title = styled.div`
@@ -110,7 +122,7 @@ const Title = styled.div`
 const EmptyMessage = styled.div`
   text-align: center;
   padding-top: 10px;
-`
+`;
 
 const Game = ({ game, createEntryFromGameId, showEntry }) => (
   <ListItem key={game.gameId}>
@@ -123,9 +135,14 @@ const Game = ({ game, createEntryFromGameId, showEntry }) => (
         <Icon name="plus" />
       </NewEntryBtn>
     )}
-    <ChampImg src={getChampByName(game.champion).img} height={30} />
+    <ChampImg src={getChampByName(game.champion).img} height={35} rounded />
     <EndCont>
       <LaneCont>{game.lane}</LaneCont>
+      {game.queue === 'Ranked' ? (
+        <QueueRankedCont>{game.queue}</QueueRankedCont>
+      ) : (
+        <QueueCont>{game.queue}</QueueCont>
+      )}
       <DateCont>{moment(game.timestamp).fromNow()}</DateCont>
     </EndCont>
   </ListItem>
@@ -138,18 +155,20 @@ Game.propTypes = {
 };
 
 const GamesList = ({ games, createEntryFromGameId, showEntry }) =>
-  (games.length === 0 ? [
-    <EmptyMessage>You haven't played any recent Ranked or Normal 5v5 games.</EmptyMessage>,
-    <EmptyMessage>Come back and check after you play!</EmptyMessage>
-  ] : (
-    games.map((game) => (
+  (games.length === 0
+    ? [
+      <EmptyMessage>
+          You haven't played any recent Ranked or Normal 5v5 games.
+      </EmptyMessage>,
+      <EmptyMessage>Come back and check after you play!</EmptyMessage>,
+    ]
+    : games.map((game) => (
       <Game
         game={game}
         createEntryFromGameId={createEntryFromGameId}
         showEntry={showEntry}
       />
-    ))
-  ));
+    )));
 
 GamesList.propTypes = {
   createEntryFromGameId: PropTypes.func.isRequired,
