@@ -30,8 +30,7 @@ function champBorder(outcome, isOpponent) {
 }
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 0.3fr 0.81fr;
+  position: relative;
   text-align: center;
   ${''};
 `;
@@ -44,9 +43,10 @@ const Container = styled.div`
 
 const ChampImage = styled.div`
   &&& {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    margin-left: 55px;
+    top: 10px;
+    z-index: 2;
     img {
       border: ${(props) => champInnerBorder(props.outcome, false)};
       box-shadow: ${(props) => champBorder(props.outcome, false)};
@@ -59,9 +59,9 @@ const ChampImage = styled.div`
 
 const OpponentImage = styled(ChampImage)`
   &&& {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-left: 153px;
+    top: 41px;
+    z-index: 1;
     img {
       border: ${(props) => champInnerBorder(props.outcome, true)};
       box-shadow: ${(props) => champBorder(props.outcome, true)};
@@ -88,9 +88,6 @@ const MatchupPortrait = ({ champion, opponentChampion, role, outcome }) => {
       <ChampImage outcome={outcome}>
         <Image src={champImg} height={110} circular />
       </ChampImage>
-      <SeparatorContainer>
-        <RoleImg src={getRoleImg(role)} />
-      </SeparatorContainer>
       <OpponentImage outcome={outcome}>
         <Image src={opponentImg} height={75} circular />
       </OpponentImage>

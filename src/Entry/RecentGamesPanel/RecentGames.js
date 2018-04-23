@@ -27,9 +27,13 @@ const StyledList = styled.ul`
   padding: 0;
 `;
 
+const ChampImg = styled(Image)`
+  margin-left: 7px;
+`;
+
 const ListItem = styled.li`
   display: grid;
-  grid-template-columns: 30px 35px 82px;
+  grid-template-columns: 30px 30px 82px;
   margin: 13px 0;
   justify-content: center;
   align-items: center;
@@ -74,7 +78,7 @@ const EndCont = styled.div`
 `;
 
 const LaneCont = styled.div`
-  font-size: 11px;
+  font-size: 9px;
   color: ${recentGamesColors.font};
   line-height: 11px;
   align-self: end;
@@ -108,10 +112,6 @@ const QueueRankedCont = styled(QueueCont)`
 //   text-align: center;
 // `;
 
-const ChampImg = styled(Image)`
-  margin-left: 7px;
-`;
-
 const Title = styled.div`
   text-align: center;
   font-size: 15px;
@@ -135,7 +135,7 @@ const Game = ({ game, createEntryFromGameId, showEntry }) => (
         <Icon name="plus" />
       </NewEntryBtn>
     )}
-    <ChampImg src={getChampByName(game.champion).img} height={35} rounded />
+    <ChampImg src={getChampByName(game.champion).img} height={30} rounded />
     <EndCont>
       <LaneCont>{game.lane}</LaneCont>
       {game.queue === 'Ranked' ? (
