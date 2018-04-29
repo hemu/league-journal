@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { Dropdown, Icon } from 'semantic-ui-react';
 import { entryColors } from '../../../../const/colors';
+import { champOptions } from '../../../../staticData';
 
 import MatchupPortrait from './MatchupPortrait';
 
@@ -12,7 +14,7 @@ function outcomeColor(outcome) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 95px 310px 90px;
+  grid-template-columns: 95px 260px 90px;
   width: 485px;
   height: 150px;
   margin: 0 auto 15px auto;
@@ -57,6 +59,49 @@ const DeathText = styled.span`
   ${''};
 `;
 
+const FilterDropdown = styled(Dropdown)`
+  &&&& {
+    background-color: #ffffff;
+    border: none;
+    color: #cacaca;
+    input {
+      color: #aaaaaa;
+    }
+    float: right;
+  }
+  &&&&:hover {
+    border: none;
+  }
+`;
+
+// class ChampPicker extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       open: false,
+//       value: props.champion,
+//     };
+//   }
+
+//   render() {
+//     return (
+//         <FilterDropdown
+//           text=" "
+//           options={champOptions}
+//           onChange={(e, data) => props.updateOpponentChamp(data.value)}
+//           button
+//           icon='pencil'
+//           className='icon'
+//         />
+//     );
+//   }
+// }
+
+// ChampPicker.propTypes = {
+//   value: PropTypes.string.isRequired,
+//   updateOpponentChamp: PropTypes.func.isRequired,
+// }
+
 const Header = ({
   kills,
   deaths,
@@ -66,17 +111,28 @@ const Header = ({
   champion,
   opponentChampion,
   role,
+  updateOpponentChamp,
 }) => (
   <Container>
     <OutcomeCont>
       <OutcomeText outcome={outcome}>{outcome}</OutcomeText>
     </OutcomeCont>
-    <MatchupPortrait
-      champion={champion}
-      opponentChampion={opponentChampion}
-      role={role}
-      outcome={outcome}
-    />
+    <div>
+      <MatchupPortrait
+        champion={champion}
+        opponentChampion={opponentChampion}
+        role={role}
+        outcome={outcome}
+      />
+      <FilterDropdown
+        text=" "
+        options={champOptions}
+        onChange={(e, data) => updateOpponentChamp(data.value)}
+        button
+        icon="pencil"
+        className="icon"
+      />
+    </div>
     <KDACont>
       <KDAText rowPos={2}>
         {kills}/<DeathText>{deaths}</DeathText>/{assists}
@@ -118,6 +174,7 @@ Header.propTypes = {
   champion: PropTypes.string.isRequired,
   opponentChampion: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
+  updateOpponentChamp: PropTypes.func.isRequired,
 };
 
 export default Header;

@@ -84,14 +84,14 @@ const EmptyMessage = styled.div`
     width: 300px;
     height: 299px;
   }
-`
+`;
 
 const EmptyMessageTitle = styled.div`
   margin-top: 10px;
   font-weight: bold;
   font-size: 21px;
   color: gray;
-`
+`;
 
 function createChangeNoteHandler(entryId, updateNoteText, deleteNote) {
   return (model, value, noteId) => (dispatch) => {
@@ -186,6 +186,7 @@ class EntryDetail extends React.Component {
       mistakes,
       updateNoteText,
       updateEntryVideo,
+      updateOpponentChamp,
       videoUrl,
       noEntries,
     } = props;
@@ -202,7 +203,7 @@ class EntryDetail extends React.Component {
       );
     }
 
-    if(noEntries) {
+    if (noEntries) {
       return (
         <EmptyMessage>
           <Image src={WelcomeImage} />
@@ -213,7 +214,7 @@ class EntryDetail extends React.Component {
             Create an entry from your list of recent games to get started.
           </div>
         </EmptyMessage>
-      )
+      );
     }
 
     if (!entry) {
@@ -222,7 +223,7 @@ class EntryDetail extends React.Component {
           <EmptyMessageTitle>Select an available entry.</EmptyMessageTitle>
           <div>Pick an entry from the entries list to see details here.</div>
         </EmptyMessage>
-      )
+      );
     }
 
     const noteChangeHandler = createChangeNoteHandler(
@@ -250,7 +251,7 @@ class EntryDetail extends React.Component {
           trigger={
             <TrashBtn
               icon="trash alternate outline"
-              floated="left"
+              floated="right"
               circular
               size="large"
             />
@@ -271,7 +272,7 @@ class EntryDetail extends React.Component {
           onClose={() => this.showDeleteDialog(false)}
           position="bottom right"
         />
-        <Header {...entry} />
+        <Header {...entry} updateOpponentChamp={(champ) => updateOpponentChamp(entry.id, entry.gameDate, champ)} />
         {videoId && (
           <Grid.Column>
             <Embed id={videoId} source="youtube" autoplay />
@@ -358,6 +359,7 @@ EntryDetail.propTypes = {
   notesLoading: PropTypes.bool.isRequired,
   updateNoteText: PropTypes.func.isRequired,
   updateEntryVideo: PropTypes.func.isRequired,
+  updateOpponentChamp: PropTypes.func.isRequired,
   setVideoForm: PropTypes.func.isRequired,
   videoUrl: PropTypes.func.isRequired,
   resetSelectedEntry: PropTypes.func.isRequired,

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { entryColors, white } from '../../../../const/colors';
 import { getChampByName } from '../../../../staticData/champion';
-import { getRoleImg } from '../../../../staticData';
+import { getRoleImg, champOptions } from '../../../../staticData';
 
 function champInnerBorder(outcome, isOpponent) {
   if ((outcome === 'W' && !isOpponent) || (outcome !== 'W' && isOpponent)) {
@@ -45,7 +45,7 @@ const ChampImage = styled.div`
   &&& {
     position: absolute;
     margin-left: 55px;
-    top: 10px;
+    top: 3px;
     z-index: 2;
     img {
       border: ${(props) => champInnerBorder(props.outcome, false)};
@@ -60,12 +60,13 @@ const ChampImage = styled.div`
 const OpponentImage = styled(ChampImage)`
   &&& {
     margin-left: 153px;
-    top: 41px;
+    top: 31px;
     z-index: 1;
     img {
       border: ${(props) => champInnerBorder(props.outcome, true)};
       box-shadow: ${(props) => champBorder(props.outcome, true)};
     }
+    pointer: cursor;
   }
 `;
 
@@ -86,10 +87,13 @@ const MatchupPortrait = ({ champion, opponentChampion, role, outcome }) => {
   return (
     <Container>
       <ChampImage outcome={outcome}>
-        <Image src={champImg} height={110} circular />
+        <Image src={champImg} height={120} circular />
       </ChampImage>
-      <OpponentImage outcome={outcome}>
-        <Image src={opponentImg} height={75} circular />
+      <OpponentImage
+        outcome={outcome}
+        onClick={() => console.log('editing opponent image...')}
+      >
+        <Image src={opponentImg} height={70} circular />
       </OpponentImage>
     </Container>
   );

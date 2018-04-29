@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
 
 const CreepScoreView = ({ creepScore }) => {
+  if(!creepScore) {
+    return <div />
+  }
   const dataPoints = [[0, 0], ...creepScore].filter((v) => v != null);
   const labels = dataPoints.map(([min, score]) => min);
   const values = dataPoints.map(([min, score]) => score);

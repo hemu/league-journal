@@ -94,6 +94,28 @@ export default compose(
         }),
     }),
   }),
+  graphql(updateEntryMutation, {
+    props: ({ mutate }) => ({
+      updateOpponentChamp: (id, gameDate, champ) =>
+        mutate({
+          variables: {
+            id,
+            gameDate,
+            opponentChampion: champ,
+          },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateEntry: {
+              __typename: 'Entry',
+              id,
+              gameDate,
+              opponentChampion: champ,
+              updatedAt: new Date().toISOString(),
+            },
+          },
+        }),
+    }),
+  }),
   graphql(updateNoteMutation, {
     props: ({ mutate }) => ({
       updateNoteText: (id, entry, text) =>
@@ -209,7 +231,6 @@ export default compose(
             deleteEntry: true,
           },
           update: (proxy, { data: { deleteEntry } }) => {
-
             const data = proxy.readQuery({
               query: entriesByUserQuery,
               variables: { user: userId },
@@ -225,7 +246,6 @@ export default compose(
               });
             }
 
-
             const filteredData = proxy.readQuery({
               query: filteredEntriesByUserQuery,
               variables: { user: userId, champion: entry.champion },
@@ -236,12 +256,10 @@ export default compose(
               );
               proxy.writeQuery({
                 query: filteredEntriesByUserQuery,
-                variables: {user: userId, champion: entry.champion },
+                variables: { user: userId, champion: entry.champion },
                 data: filteredData,
               });
             }
-
-
           },
         }),
     }),
