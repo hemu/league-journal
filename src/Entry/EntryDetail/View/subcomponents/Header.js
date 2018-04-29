@@ -4,7 +4,6 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Dropdown, Icon } from 'semantic-ui-react';
 import { entryColors } from '../../../../const/colors';
-import { champOptions } from '../../../../staticData';
 
 import MatchupPortrait from './MatchupPortrait';
 
@@ -102,6 +101,15 @@ const FilterDropdown = styled(Dropdown)`
 //   updateOpponentChamp: PropTypes.func.isRequired,
 // }
 
+function champOptions(champs) {
+  return champs.map((champ) => ({
+    text: champ,
+    value: champ,
+    // image: champ.img
+  }));
+}
+
+
 const Header = ({
   kills,
   deaths,
@@ -110,6 +118,7 @@ const Header = ({
   gameDate,
   champion,
   opponentChampion,
+  opponents,
   role,
   updateOpponentChamp,
 }) => (
@@ -126,7 +135,7 @@ const Header = ({
       />
       <FilterDropdown
         text=" "
-        options={champOptions}
+        options={champOptions(opponents)}
         onChange={(e, data) => updateOpponentChamp(data.value)}
         button
         icon="pencil"
@@ -173,6 +182,7 @@ Header.propTypes = {
   gameDate: PropTypes.string.isRequired,
   champion: PropTypes.string.isRequired,
   opponentChampion: PropTypes.string.isRequired,
+  opponents: PropTypes.arrayOf(PropTypes.string).isRequired,
   role: PropTypes.string.isRequired,
   updateOpponentChamp: PropTypes.func.isRequired,
 };

@@ -86,6 +86,7 @@ const fullEntryFragment = gql`
     assists
     champion
     opponentChampion
+    opponents
     partner
     opponentPartner
     csPerMin
@@ -118,6 +119,7 @@ export const createEntryMutation = gql`
     $assists: Int
     $champion: String
     $opponentChampion: String
+    $opponents: [String]
     $partner: String
     $opponentPartner: String
     $csPerMin: Float
@@ -135,6 +137,7 @@ export const createEntryMutation = gql`
       assists: $assists
       champion: $champion
       opponentChampion: $opponentChampion
+      opponents: $opponents
       partner: $partner
       opponentPartner: $opponentPartner
       csPerMin: $csPerMin

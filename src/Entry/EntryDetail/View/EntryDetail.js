@@ -260,7 +260,7 @@ class EntryDetail extends React.Component {
             <DeletePopup
               onCancel={() => this.showDeleteDialog(false)}
               onConfirm={() => {
-                this.props.deleteEntry(this.props.entry);
+                this.props.deleteEntry(entry);
                 this.showDeleteDialog(false);
                 this.props.resetSelectedEntry();
               }}
@@ -272,7 +272,12 @@ class EntryDetail extends React.Component {
           onClose={() => this.showDeleteDialog(false)}
           position="bottom right"
         />
-        <Header {...entry} updateOpponentChamp={(champ) => updateOpponentChamp(entry.id, entry.gameDate, champ)} />
+        <Header
+          {...entry}
+          updateOpponentChamp={(champ) =>
+            updateOpponentChamp(entry.id, entry.gameDate, champ)
+          }
+        />
         {videoId && (
           <Grid.Column>
             <Embed id={videoId} source="youtube" autoplay />
