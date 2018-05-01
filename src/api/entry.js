@@ -83,6 +83,7 @@ const fullEntryFragment = gql`
     role
     kills
     deaths
+    deathTimes
     assists
     champion
     opponentChampion
@@ -116,6 +117,7 @@ export const createEntryMutation = gql`
     $role: String
     $kills: Int
     $deaths: Int
+    $deathTimes: [String]
     $assists: Int
     $champion: String
     $opponentChampion: String
@@ -134,6 +136,7 @@ export const createEntryMutation = gql`
       role: $role
       kills: $kills
       deaths: $deaths
+      deathTimes: $deathTimes
       assists: $assists
       champion: $champion
       opponentChampion: $opponentChampion
@@ -323,7 +326,6 @@ export function createNewEntry(entry) {
   return client.mutate({
     mutation: createEntryMutation,
     variables: {
-      // ...entryFormInitialState,
       gameDate: new Date().toISOString(),
       ...entry,
     },
@@ -332,7 +334,6 @@ export function createNewEntry(entry) {
       createEntry: {
         __typename: 'Entry',
         id: 'TEMP_LOCAL_ID',
-        // ...entryFormInitialState,
         gameDate: new Date().toISOString(),
         ...entry,
       },
