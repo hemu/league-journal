@@ -67,6 +67,7 @@ export default compose(
           (note) => note.type === SystemNoteTypeIds.Mistake,
         ),
         lessons: notes.filter((note) => note.type === SystemNoteTypeIds.Lesson),
+        deathNotes: notes.filter((note) => note.type === SystemNoteTypeIds.Death),
         notesLoading: query.loading,
       };
     },
@@ -138,7 +139,7 @@ export default compose(
   }),
   graphql(createNoteMutation, {
     props: ({ ownProps: { fetchNotes }, mutate }) => ({
-      createNote: (entry, user, marked, text, type) =>
+      createNote: (entry, user, marked, text, type, meta) =>
         mutate({
           variables: {
             entry,
@@ -146,6 +147,7 @@ export default compose(
             marked,
             text: text || ' ',
             type,
+            meta: meta ? meta : [],
           },
           optimisticResponse: {
             __typename: 'Mutation',
@@ -155,6 +157,7 @@ export default compose(
               text: text || ' ',
               type,
               marked,
+              metadata: meta ? meta : [],
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             },

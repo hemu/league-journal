@@ -12,4 +12,5 @@ export const RequestStatus = {
 export const SystemNoteTypeIds = {
   Mistake: 'system-mistake-type-id',
   Lesson: 'system-lesson-type-id',
+  Death: 'system-death-type-id',
 };

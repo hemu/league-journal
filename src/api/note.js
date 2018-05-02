@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-// import client from '../api/client';
 
 export const latestNotesQuery = gql`
   query LatestNotesQuery {
@@ -37,6 +36,7 @@ export const notesQuery = gql`
       marked
       text
       type
+      meta
     }
   }
 `;
@@ -48,6 +48,7 @@ export const createNoteMutation = gql`
     $marked: Boolean!
     $text: String!
     $type: String!
+    $meta: [String]
   ) {
     createNote(
       entry: $entry
@@ -55,6 +56,7 @@ export const createNoteMutation = gql`
       marked: $marked
       text: $text
       type: $type
+      meta: $meta
     ) {
       id
       text
@@ -62,6 +64,7 @@ export const createNoteMutation = gql`
       createdAt
       updatedAt
       marked
+      meta
     }
   }
 `;

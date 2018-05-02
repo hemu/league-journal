@@ -27,6 +27,15 @@ export const FormInput = styled(Control.text)`
   width: 100%;
 `;
 
+export const ContWithMeta = styled.div`
+  display: grid;
+  grid-template-columns: 50px auto;
+  align-items: center;
+`;
+
+export const ContNoMeta = styled.div`
+`;
+
 const TextDisplay = ({ value, onClick, emptyPlaceholder }) =>
   (value && value.trim() ? (
     <DisplayCont onClick={onClick}>{value}</DisplayCont>
@@ -43,6 +52,21 @@ TextDisplay.propTypes = {
 TextDisplay.defaultProps = {
   value: '',
 };
+
+
+const MetaText = styled.div`
+  font-style: italic;
+  color: #adadad;
+  font-size: 12px;
+  font-weight: bold;
+`
+
+const MetaElem = ({text}) => {
+  if(!text) {
+    return <div />
+  }
+  return <MetaText>{text}</MetaText>
+}
 
 class EditableNote extends React.Component {
   constructor(props) {
@@ -85,36 +109,45 @@ class EditableNote extends React.Component {
   }
 
   render() {
-    const { changeAction, emptyPlaceholder, model, onBlur } = this.props;
+    const { changeAction, emptyPlaceholder, model, onBlur, meta } = this.props;
+
+    const Container = meta && meta.length > 0 ? ContWithMeta : ContNoMeta; 
+
     return this.state.editMode ? (
-      <FormInput
-        component={Input}
-        getRef={(node) => {
-          this.inputRef = node;
-        }}
-        model={model}
-        onBlur={() => {
-          this.handleInputBlur();
-          onBlur();
-        }}
-        onFocus={(e) => {
-          // this trick puts cursor at end of input on focus
-          const val = e.target.value;
-          e.target.value = '';
-          e.target.value = val;
-        }}
-        onKeyPress={this.handleKeyPress}
-        size="mini"
-        updateOn="blur"
-        changeAction={changeAction}
-      />
+      <Container>
+        <MetaElem text={meta}/>
+        <FormInput
+          component={Input}
+          getRef={(node) => {
+            this.inputRef = node;
+          }}
+          model={model}
+          onBlur={() => {
+            this.handleInputBlur();
+            onBlur();
+          }}
+          onFocus={(e) => {
+            // this trick puts cursor at end of input on focus
+            const val = e.target.value;
+            e.target.value = '';
+            e.target.value = val;
+          }}
+          onKeyPress={this.handleKeyPress}
+          size="mini"
+          updateOn="blur"
+          changeAction={changeAction}
+        />
+      </Container>
     ) : (
-      <Control
-        component={TextDisplay}
-        model={model}
-        emptyPlaceholder={emptyPlaceholder}
-        onClick={this.handleDisplayClick}
-      />
+      <Container>
+        <MetaElem text={meta}/>
+        <Control
+          component={TextDisplay}
+          model={model}
+          emptyPlaceholder={emptyPlaceholder}
+          onClick={this.handleDisplayClick}
+        />
+      </Container>
     );
   }
 }
@@ -126,6 +159,7 @@ EditableNote.propTypes = {
   initWithEditFocus: PropTypes.bool.isRequired,
   model: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
+  meta: PropTypes.string
 };
 
 EditableNote.defaultProps = {

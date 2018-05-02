@@ -9,6 +9,7 @@ import {
   Button,
   Confirm,
   Popup,
+  Icon
 } from 'semantic-ui-react';
 import { actions, track, Control } from 'react-redux-form';
 import PropTypes from 'prop-types';
@@ -16,7 +17,7 @@ import styled from 'styled-components';
 import CreepScore from './subcomponents/CreepScore';
 import Header from './subcomponents/Header';
 import MainLesson from './subcomponents/MainLesson';
-import NoteList from './subcomponents/Mistake/NoteList';
+import NoteList from './subcomponents/Note/NoteList';
 import { SystemNoteTypeIds, HARDCODED_USER_ID } from '../../../const';
 import { GenericErrorBoundary } from '../../../Error';
 import { entryDetailColors } from '../../../const/colors';
@@ -184,6 +185,7 @@ class EntryDetail extends React.Component {
       isChampFilterSet,
       lessons,
       mistakes,
+      deathNotes,
       updateNoteText,
       updateEntryVideo,
       updateOpponentChamp,
@@ -288,9 +290,44 @@ class EntryDetail extends React.Component {
           <Grid.Column>
             <GenericErrorBoundary>
               <MainCard fluid raised>
+                <CardHeader>Deaths</CardHeader>
+                <CardContent>
+                  <NoteList
+                    btnTextGenerator={(deathTime) => <span>{deathTime}<Icon name="crosshairs" />I died because...</span>}
+                    notes={deathNotes}
+                    placeholderSuffix="I died because..."
+                    onChange={noteChangeHandler}
+                    metaSource={entry.deathTimes}
+                    createFormModel={(id) =>
+                        track(
+                          `forms.entryNote[${SystemNoteTypeIds.Death}][].text`,
+                          {
+                            id,
+                          },
+                        )
+                    }
+                    onAddNote={(metadata) =>
+                        createNote(
+                          entry.id,
+                          HARDCODED_USER_ID,
+                          false,
+                          '',
+                          SystemNoteTypeIds.Death,
+                          metadata
+                        )
+                    }
+                  />
+                </CardContent>
+              </MainCard>
+            </GenericErrorBoundary>
+          </Grid.Column>
+          <Grid.Column>
+            <GenericErrorBoundary>
+              <MainCard fluid raised>
                 <CardHeader>Mistakes</CardHeader>
                 <CardContent>
                   <NoteList
+                    btnTextGenerator={() => <span><Icon name="add" />ADD MISTAKE</span>}
                     notes={mistakes}
                     placeholderSuffix="mistake was..."
                     onChange={noteChangeHandler}
@@ -302,13 +339,14 @@ class EntryDetail extends React.Component {
                         },
                       )
                     }
-                    onAddNote={() =>
+                    onAddNote={(metadata) =>
                       createNote(
                         entry.id,
                         HARDCODED_USER_ID,
                         false,
                         '',
                         SystemNoteTypeIds.Mistake,
+                        metadata
                       )
                     }
                   />
@@ -361,6 +399,7 @@ EntryDetail.propTypes = {
   isChampFilterSet: PropTypes.func.isRequired,
   lessons: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   mistakes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  deathNotes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   notesLoading: PropTypes.bool.isRequired,
   updateNoteText: PropTypes.func.isRequired,
   updateEntryVideo: PropTypes.func.isRequired,
